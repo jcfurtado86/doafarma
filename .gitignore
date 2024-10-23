@@ -1,0 +1,74 @@
+# Geral
+node_modules/
+.DS_Store
+.env
+.env.local
+.idea/
+.vscode/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Log e cache
+*.log
+logs/
+tmp/
+.cache/
+
+# Arquivos de build
+dist/
+build/
+coverage/
+
+# ----------------------------------------
+# Laravel - Backend API
+# ----------------------------------------
+
+# Diretórios de cache e build
+/vendor/
+bootstrap/cache/
+
+# Arquivo de configuração local
+.env
+.env.*.backup
+
+# Chave SSH e outros arquivos sensíveis
+*.key
+
+# Storage (excluindo arquivos públicos importantes)
+storage/app/public/*
+!storage/app/public/.gitignore
+
+# ----------------------------------------
+# React Native - Mobile Frontend
+# ----------------------------------------
+
+# Diretórios de dependências
+node_modules/
+*.log
+
+# Android
+/android/.gradle/
+/android/.idea/
+/android/local.properties
+/android/.cxx/
+/android/app/build/
+
+# iOS
+/ios/Pods/
+/ios/*.xcworkspace
+/ios/build/
+/ios/DerivedData/
+
+# React Native cache e artefatos de build
+.expo/
+.expo-shared/
+web-build/
+*.hmap
+*.ipa
+*.jks
+
+# Arquivos de configuração local
+*.keystore
+appcenter-pre-build.sh
+fastlane

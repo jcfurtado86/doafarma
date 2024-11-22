@@ -60,6 +60,26 @@
         ],
         "pint": [
             "./vendor/bin/pint"
+        ],
+        "fix": [
+            "./vendor/bin/phpstan analyse",
+            "./vendor/bin/pint",
+            "./vendor/bin/pest --parallel"
+        ],
+        "t": [
+            "./vendor/bin/pest"
+        ],
+        "tp": [
+            "./vendor/bin/pest --parallel"
+        ],
+        "td": [
+            "./vendor/bin/pest --dirty"
+        ],
+        "tr": [
+            "./vendor/bin/pest --retry"
+        ],
+        "tf": [
+            "./vendor/bin/pest --filter "
         ]
     },
     "extra": {

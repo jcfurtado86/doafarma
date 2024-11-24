@@ -7,8 +7,8 @@ Red='\033[1;31m'
 Green='\033[1;32m'
 
 # Verificando o projeto web
-echo
 echo "${Green}Verificando o projeto 'web':${NC}" 
+echo
 cd 'web'
 
 # Rodar o phpstan
@@ -35,6 +35,39 @@ echo "${Blue}3. Formatando os arquivos com o Laravel Pint${NC}"
 for FILE in $STAGED_FILES
 do
   ./vendor/bin/pint "${FILE}" > /dev/null >&1;
+  git add "${FILE}"
+done
+
+# Verificando o projeto mobile
+echo
+echo "${Green}Verificando o projeto 'mobile':${NC}" 
+echo
+cd '../mobile'
+
+# Rodar o ESLint
+echo "${Blue}1. Rodando o ESLint${NC}"
+npm run lint
+if [ $? -ne 0 ]; then
+  echo "${Red} O ESLint encontrou erros. ${NC}"
+  exit 1
+fi
+
+# Rodar os testes
+echo "${Blue}2. Rodando o Testes em paralelo${NC}"
+npm run test
+if [ $? -ne 0 ]; then
+  echo "${Red} Tivemos erro em algum teste, revise o código ou o teste! ${NC}"
+  exit 1
+fi
+
+# Formatar cada arquivo alterado usando o Prettier
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E "\.(js|jsx|ts|tsx)$") || true
+
+echo "${Blue}3. Formatando os arquivos com o Prettier${NC}"
+
+for FILE in $STAGED_FILES
+do
+  npx prettier --write "${FILE}" > /dev/null >&1;
   git add "${FILE}"
 done
 

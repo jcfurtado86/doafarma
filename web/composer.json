@@ -21,7 +21,8 @@
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.1",
         "pestphp/pest": "^3.5",
-        "pestphp/pest-plugin-laravel": "^3.0"
+        "pestphp/pest-plugin-laravel": "^3.0",
+        "rector/rector": "^2.0"
     },
     "autoload": {
         "psr-4": {
@@ -62,6 +63,7 @@
             "./vendor/bin/pint"
         ],
         "fix": [
+            "./vendor/bin/rector",
             "./vendor/bin/phpstan analyse",
             "./vendor/bin/pint",
             "./vendor/bin/pest --parallel"

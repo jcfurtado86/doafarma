@@ -7,7 +7,7 @@ use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
 
-test('email can be verified', function () {
+test('email can be verified', function (): void {
     $user = User::factory()->unverified()->create();
 
     Event::fake();
@@ -15,7 +15,7 @@ test('email can be verified', function () {
     $verificationUrl = URL::temporarySignedRoute(
         'verification.verify',
         now()->addMinutes(60),
-        ['id' => $user->id, 'hash' => sha1($user->email)]
+        ['id' => $user->id, 'hash' => sha1((string) $user->email)]
     );
 
     $response = $this->actingAs($user)->get($verificationUrl);
@@ -25,7 +25,7 @@ test('email can be verified', function () {
     $response->assertRedirect(config('app.frontend_url') . '/dashboard?verified=1');
 });
 
-test('email is not verified with invalid hash', function () {
+test('email is not verified with invalid hash', function (): void {
     $user = User::factory()->unverified()->create();
 
     $verificationUrl = URL::temporarySignedRoute(

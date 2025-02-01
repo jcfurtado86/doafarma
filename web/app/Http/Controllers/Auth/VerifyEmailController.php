@@ -16,9 +16,21 @@ class VerifyEmailController extends Controller
      */
     public function __invoke(EmailVerificationRequest $request): RedirectResponse
     {
+        $frontendUrl = config('app.frontend_url');
+
+        if (! is_string($frontendUrl)) {
+            throw new \RuntimeException('Frontend URL is not a string');
+        }
+
+        if (! $request->user()) {
+            return redirect()->intended(
+                $frontendUrl . '/login'
+            );
+        }
+
         if ($request->user()->hasVerifiedEmail()) {
             return redirect()->intended(
-                config('app.frontend_url') . '/dashboard?verified=1'
+                $frontendUrl . '/dashboard?verified=1'
             );
         }
 
@@ -27,7 +39,7 @@ class VerifyEmailController extends Controller
         }
 
         return redirect()->intended(
-            config('app.frontend_url') . '/dashboard?verified=1'
+            $frontendUrl . '/dashboard?verified=1'
         );
     }
 }

@@ -82,6 +82,10 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
+        if (! is_string($this->input('email'))) {
+            throw new \RuntimeException('Email is not a string');
+        }
+
         return Str::transliterate(Str::lower($this->input('email')) . '|' . $this->ip());
     }
 }

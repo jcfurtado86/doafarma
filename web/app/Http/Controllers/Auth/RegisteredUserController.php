@@ -39,6 +39,7 @@ class RegisteredUserController extends Controller
                 continue;
             }
             Address::create([
+                'user_id'       => $user->id,
                 'location_name' => $address['location_name'] ?? '',
                 'full_address'  => $address['full_address'] ?? '',
                 'complement'    => $address['complement'] ?? '',

@@ -5,13 +5,14 @@ declare(strict_types = 1);
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterUserRequest;
+use App\Models\Address;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
 
 class RegisteredUserController extends Controller
 {
@@ -20,24 +21,35 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): Response
+    public function store(RegisterUserRequest $request): Response
     {
-        $request->validate([
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        $user = User::create([
+            'name'              => $request->name,
+            'email'             => $request->email,
+            'password'          => Hash::make($request->string('password')->toString()),
+            'phone_number'      => $request->phone_number,
+            'crm'               => $request->crm,
+            'crm_uf'            => $request->crm_uf,
+            'terms_accepted'    => $request->terms_accepted,
+            'terms_accepted_at' => now(),
         ]);
 
-        $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->string('password')->toString()),
-        ]);
+        foreach ((array)($request->addresses ?? []) as $address) {
+            if (! is_array($address)) {
+                continue;
+            }
+            Address::create([
+                'location_name' => $address['location_name'] ?? '',
+                'full_address'  => $address['full_address'] ?? '',
+                'complement'    => $address['complement'] ?? '',
+                'cep'           => $address['cep'] ?? '',
+            ]);
+        }
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return response()->noContent();
+        return response()->noContent(Response::HTTP_CREATED);
     }
 }

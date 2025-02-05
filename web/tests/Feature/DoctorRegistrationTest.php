@@ -59,6 +59,37 @@ it('should be able to register a doctor', function (): void {
     assertDatabaseCount('addresses', 1);
 });
 
+it('should ensure that there is a relationship between the user and their doctor profile', function (): void {
+    postJson(route('register'), [
+        'name'                  => 'John Doe',
+        'email'                 => 'test@example.com',
+        'phone_number'          => '(96) 98765-4321',
+        'crm'                   => '123456',
+        'crm_uf'                => 'SP',
+        'password'              => 'password',
+        'password_confirmation' => 'password',
+        'addresses'             => [
+            [
+                'location_name' => 'Clínica X',
+                'full_address'  => 'Rua A, 123',
+                'complement'    => 'Sala 1',
+                'cep'           => '12345-678',
+            ],
+        ],
+        'terms_accepted' => true,
+        'user_type'      => 'doctor',
+    ])->assertCreated();
+
+    $user   = User::whereEmail('test@example.com')->first();
+    $doctor = $user->doctor;
+
+    expect($doctor)
+        ->not->toBeNull()
+        ->and($doctor->user_id)->toBe($user->id)
+        ->and($doctor->crm)->toBe('123456')
+        ->and($doctor->crm_uf)->toBe('SP');
+});
+
 it('should ensure that there is a relationship between the user and their addresses', function (): void {
     postJson(route('register'), [
         'name'                  => 'John Doe',

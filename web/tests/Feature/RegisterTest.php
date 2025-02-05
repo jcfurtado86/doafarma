@@ -77,6 +77,7 @@ it('should ensure that there is a relationship between the user and their addres
             ],
         ],
         'terms_accepted' => true,
+        'user_type'      => 'doctor',
     ])->assertCreated();
 
     $user    = User::whereEmail('test@example.com')->first();
@@ -111,6 +112,7 @@ it('should be able to register without a complement and with multiple addresses'
             ],
         ],
         'terms_accepted' => true,
+        'user_type'      => 'doctor',
     ])->assertCreated();
 
     $user = User::whereEmail('test@example.com')->first();
@@ -136,6 +138,7 @@ it('should validate required fields', function (): void {
             'password',
             'addresses',
             'terms_accepted',
+            'user_type',
         ]);
 
     postJson(route('register'), [
@@ -153,6 +156,7 @@ it('should validate required fields', function (): void {
         ]);
 
     assertDatabaseCount('users', 0);
+    assertDatabaseCount('doctors', 0);
     assertDatabaseCount('addresses', 0);
 });
 
@@ -174,6 +178,7 @@ it('should validate email format', function (): void {
             ],
         ],
         'terms_accepted' => true,
+        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['email']);
@@ -203,6 +208,7 @@ it('should validate unique email', function (): void {
             ],
         ],
         'terms_accepted' => true,
+        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['email']);
@@ -228,6 +234,7 @@ it('should validate phone number format', function (): void {
             ],
         ],
         'terms_accepted' => true,
+        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['phone_number']);
@@ -253,6 +260,7 @@ it('should validate password confirmation', function (): void {
             ],
         ],
         'terms_accepted' => true,
+        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['password']);
@@ -271,6 +279,7 @@ it('should validate addresses array format', function (): void {
         'password_confirmation' => 'password',
         'addresses'             => 'not-an-array',
         'terms_accepted'        => true,
+        'user_type'             => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['addresses']);
@@ -289,6 +298,7 @@ it('should validate required address fields', function (): void {
         'password_confirmation' => 'password',
         'addresses'             => [[]],
         'terms_accepted'        => true,
+        'user_type'             => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors([
@@ -318,6 +328,7 @@ it('should validate CEP format', function (): void {
             ],
         ],
         'terms_accepted' => true,
+        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['addresses.0.cep']);
@@ -343,6 +354,7 @@ it('should validate CRM format and length', function (): void {
             ],
         ],
         'terms_accepted' => true,
+        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['crm']);
@@ -389,6 +401,7 @@ it('should validate CRM UF is valid state', function (): void {
             ],
         ],
         'terms_accepted' => true,
+        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['crm_uf']);
@@ -414,9 +427,36 @@ it('should validate terms_accepted is true', function (): void {
             ],
         ],
         'terms_accepted' => false,
+        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['terms_accepted']);
+
+    assertDatabaseCount('users', 0);
+});
+
+it('should validate user_type is doctor or patient', function (): void {
+    postJson(route('register'), [
+        'name'                  => 'John Doe',
+        'email'                 => 'test@example.com',
+        'phone_number'          => '(96) 98765-4321',
+        'crm'                   => '123456',
+        'crm_uf'                => 'SP',
+        'password'              => 'password',
+        'password_confirmation' => 'password',
+        'addresses'             => [
+            [
+                'location_name' => 'Clínica X',
+                'full_address'  => 'Rua A, 123',
+                'complement'    => 'Sala 1',
+                'cep'           => '12345-678',
+            ],
+        ],
+        'terms_accepted' => true,
+        'user_type'      => 'invalid_type',
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['user_type']);
 
     assertDatabaseCount('users', 0);
 });
@@ -439,6 +479,7 @@ it('should validate address has valid location name length', function (): void {
             ],
         ],
         'terms_accepted' => true,
+        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['addresses.0.location_name']);
@@ -464,6 +505,7 @@ it('should validate full_address is not empty', function (): void {
             ],
         ],
         'terms_accepted' => true,
+        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['addresses.0.full_address']);
@@ -472,10 +514,7 @@ it('should validate full_address is not empty', function (): void {
 });
 
 it('should not allow duplicate CRM numbers', function (): void {
-    User::factory()->create([
-        'crm'    => '123456',
-        'crm_uf' => 'SP',
-    ]);
+    User::factory()->doctor(crm: '123456', crm_uf: 'SP')->create();
 
     postJson(route('register'), [
         'name'                  => 'John Doe',

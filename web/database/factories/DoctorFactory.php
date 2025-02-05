@@ -19,7 +19,9 @@ class DoctorFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'user_id' => 1,
+            'crm'     => fake()->unique()->numerify('########'),
+            'crm_uf'  => fake()->randomElement(['SP', 'RJ', 'MG', 'RS', 'PR', 'SC', 'DF', 'GO', 'MT', 'MS', 'AM', 'PA', 'BA', 'CE', 'MA', 'PB', 'PE', 'PI', 'RN', 'AL', 'ES', 'SE', 'TO', 'AC', 'AP', 'RR']),
         ];
     }
 }

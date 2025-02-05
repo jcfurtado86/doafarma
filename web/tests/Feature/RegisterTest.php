@@ -9,7 +9,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\postJson;
 use function PHPUnit\Framework\assertTrue;
 
-it('should be able to register', function (): void {
+it('should be able to register a doctor', function (): void {
     postJson(route('register'), [
         'name'                  => 'John Doe',
         'email'                 => 'test@example.com',
@@ -27,19 +27,25 @@ it('should be able to register', function (): void {
             ],
         ],
         'terms_accepted' => true,
+        'user_type'      => 'doctor',
     ])->assertCreated();
 
     assertDatabaseHas('users', [
         'name'              => 'John Doe',
         'email'             => 'test@example.com',
         'phone_number'      => '96987654321',
-        'crm'               => '123456',
-        'crm_uf'            => 'SP',
+        'user_type'         => 'doctor',
         'terms_accepted'    => 1,
         'terms_accepted_at' => now(),
     ]);
 
     assertTrue(password_verify('password', (string) User::whereEmail('test@example.com')->first()->password));
+
+    assertDatabaseHas('doctors', [
+        'user_id' => User::whereEmail('test@example.com')->first()->id,
+        'crm'     => '123456',
+        'crm_uf'  => 'SP',
+    ]);
 
     assertDatabaseHas('addresses', [
         'location_name' => 'Clínica X',
@@ -49,6 +55,7 @@ it('should be able to register', function (): void {
     ]);
 
     assertDatabaseCount('users', 1);
+    assertDatabaseCount('doctors', 1);
     assertDatabaseCount('addresses', 1);
 });
 

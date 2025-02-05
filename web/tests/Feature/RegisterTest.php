@@ -113,28 +113,347 @@ it('should validate required fields', function (): void {
     assertDatabaseCount('addresses', 0);
 });
 
-todo('should validate email format');
+it('should validate email format', function (): void {
+    postJson(route('register'), [
+        'name'                  => 'John Doe',
+        'email'                 => 'invalid-email',
+        'phone_number'          => '(96) 98765-4321',
+        'crm'                   => '123456',
+        'crm_uf'                => 'SP',
+        'password'              => 'password',
+        'password_confirmation' => 'password',
+        'addresses'             => [
+            [
+                'location_name' => 'Clínica X',
+                'full_address'  => 'Rua A, 123',
+                'complement'    => 'Sala 1',
+                'cep'           => '12345-678',
+            ],
+        ],
+        'terms_accepted' => true,
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['email']);
 
-todo('should validate unique email');
+    assertDatabaseCount('users', 0);
+});
 
-todo('should validate phone number format');
+it('should validate unique email', function (): void {
+    User::factory()->create([
+        'email' => 'test@example.com',
+    ]);
 
-todo('should validate password confirmation');
+    postJson(route('register'), [
+        'name'                  => 'John Doe',
+        'email'                 => 'test@example.com',
+        'phone_number'          => '(96) 98765-4321',
+        'crm'                   => '123456',
+        'crm_uf'                => 'SP',
+        'password'              => 'password',
+        'password_confirmation' => 'password',
+        'addresses'             => [
+            [
+                'location_name' => 'Clínica X',
+                'full_address'  => 'Rua A, 123',
+                'complement'    => 'Sala 1',
+                'cep'           => '12345-678',
+            ],
+        ],
+        'terms_accepted' => true,
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['email']);
 
-todo('should validate addresses array format');
+    assertDatabaseCount('users', 1);
+});
 
-todo('should validate required address fields');
+it('should validate phone number format', function (): void {
+    postJson(route('register'), [
+        'name'                  => 'John Doe',
+        'email'                 => 'test@example.com',
+        'phone_number'          => 'invalid-phone',
+        'crm'                   => '123456',
+        'crm_uf'                => 'SP',
+        'password'              => 'password',
+        'password_confirmation' => 'password',
+        'addresses'             => [
+            [
+                'location_name' => 'Clínica X',
+                'full_address'  => 'Rua A, 123',
+                'complement'    => 'Sala 1',
+                'cep'           => '12345-678',
+            ],
+        ],
+        'terms_accepted' => true,
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['phone_number']);
 
-todo('should validate CEP format');
+    assertDatabaseCount('users', 0);
+});
 
-todo('should validate CRM format and length');
+it('should validate password confirmation', function (): void {
+    postJson(route('register'), [
+        'name'                  => 'John Doe',
+        'email'                 => 'test@example.com',
+        'phone_number'          => '(96) 98765-4321',
+        'crm'                   => '123456',
+        'crm_uf'                => 'SP',
+        'password'              => 'password',
+        'password_confirmation' => 'different-password',
+        'addresses'             => [
+            [
+                'location_name' => 'Clínica X',
+                'full_address'  => 'Rua A, 123',
+                'complement'    => 'Sala 1',
+                'cep'           => '12345-678',
+            ],
+        ],
+        'terms_accepted' => true,
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['password']);
 
-todo('should validate CRM UF is valid state');
+    assertDatabaseCount('users', 0);
+});
 
-todo('should validate terms_accepted is true');
+it('should validate addresses array format', function (): void {
+    postJson(route('register'), [
+        'name'                  => 'John Doe',
+        'email'                 => 'test@example.com',
+        'phone_number'          => '(96) 98765-4321',
+        'crm'                   => '123456',
+        'crm_uf'                => 'SP',
+        'password'              => 'password',
+        'password_confirmation' => 'password',
+        'addresses'             => 'not-an-array',
+        'terms_accepted'        => true,
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['addresses']);
 
-todo('should validate address has valid location name length');
+    assertDatabaseCount('users', 0);
+});
 
-todo('should validate full_address is not empty');
+it('should validate required address fields', function (): void {
+    postJson(route('register'), [
+        'name'                  => 'John Doe',
+        'email'                 => 'test@example.com',
+        'phone_number'          => '(96) 98765-4321',
+        'crm'                   => '123456',
+        'crm_uf'                => 'SP',
+        'password'              => 'password',
+        'password_confirmation' => 'password',
+        'addresses'             => [[]],
+        'terms_accepted'        => true,
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors([
+            'addresses.0.location_name',
+            'addresses.0.full_address',
+            'addresses.0.cep',
+        ]);
 
-todo('should not allow duplicate CRM numbers');
+    assertDatabaseCount('users', 0);
+});
+
+it('should validate CEP format', function (): void {
+    postJson(route('register'), [
+        'name'                  => 'John Doe',
+        'email'                 => 'test@example.com',
+        'phone_number'          => '(96) 98765-4321',
+        'crm'                   => '123456',
+        'crm_uf'                => 'SP',
+        'password'              => 'password',
+        'password_confirmation' => 'password',
+        'addresses'             => [
+            [
+                'location_name' => 'Clínica X',
+                'full_address'  => 'Rua A, 123',
+                'complement'    => 'Sala 1',
+                'cep'           => 'invalid-cep',
+            ],
+        ],
+        'terms_accepted' => true,
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['addresses.0.cep']);
+
+    assertDatabaseCount('users', 0);
+});
+
+it('should validate CRM format and length', function (): void {
+    postJson(route('register'), [
+        'name'                  => 'John Doe',
+        'email'                 => 'test@example.com',
+        'phone_number'          => '(96) 98765-4321',
+        'crm'                   => 'ABC123',  // Invalid format
+        'crm_uf'                => 'SP',
+        'password'              => 'password',
+        'password_confirmation' => 'password',
+        'addresses'             => [
+            [
+                'location_name' => 'Clínica X',
+                'full_address'  => 'Rua A, 123',
+                'complement'    => 'Sala 1',
+                'cep'           => '12345-678',
+            ],
+        ],
+        'terms_accepted' => true,
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['crm']);
+
+    postJson(route('register'), [
+        'name'                  => 'John Doe',
+        'email'                 => 'test@example.com',
+        'phone_number'          => '(96) 98765-4321',
+        'crm'                   => '12',  // Too short
+        'crm_uf'                => 'SP',
+        'password'              => 'password',
+        'password_confirmation' => 'password',
+        'addresses'             => [
+            [
+                'location_name' => 'Clínica X',
+                'full_address'  => 'Rua A, 123',
+                'complement'    => 'Sala 1',
+                'cep'           => '12345-678',
+            ],
+        ],
+        'terms_accepted' => true,
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['crm']);
+
+    assertDatabaseCount('users', 0);
+});
+
+it('should validate CRM UF is valid state', function (): void {
+    postJson(route('register'), [
+        'name'                  => 'John Doe',
+        'email'                 => 'test@example.com',
+        'phone_number'          => '(96) 98765-4321',
+        'crm'                   => '123456',
+        'crm_uf'                => 'XX', // Invalid state
+        'password'              => 'password',
+        'password_confirmation' => 'password',
+        'addresses'             => [
+            [
+                'location_name' => 'Clínica X',
+                'full_address'  => 'Rua A, 123',
+                'complement'    => 'Sala 1',
+                'cep'           => '12345-678',
+            ],
+        ],
+        'terms_accepted' => true,
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['crm_uf']);
+
+    assertDatabaseCount('users', 0);
+});
+
+it('should validate terms_accepted is true', function (): void {
+    postJson(route('register'), [
+        'name'                  => 'John Doe',
+        'email'                 => 'test@example.com',
+        'phone_number'          => '(96) 98765-4321',
+        'crm'                   => '123456',
+        'crm_uf'                => 'SP',
+        'password'              => 'password',
+        'password_confirmation' => 'password',
+        'addresses'             => [
+            [
+                'location_name' => 'Clínica X',
+                'full_address'  => 'Rua A, 123',
+                'complement'    => 'Sala 1',
+                'cep'           => '12345-678',
+            ],
+        ],
+        'terms_accepted' => false,
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['terms_accepted']);
+
+    assertDatabaseCount('users', 0);
+});
+
+it('should validate address has valid location name length', function (): void {
+    postJson(route('register'), [
+        'name'                  => 'John Doe',
+        'email'                 => 'test@example.com',
+        'phone_number'          => '(96) 98765-4321',
+        'crm'                   => '123456',
+        'crm_uf'                => 'SP',
+        'password'              => 'password',
+        'password_confirmation' => 'password',
+        'addresses'             => [
+            [
+                'location_name' => str_repeat('a', 256), // Too long
+                'full_address'  => 'Rua A, 123',
+                'complement'    => 'Sala 1',
+                'cep'           => '12345-678',
+            ],
+        ],
+        'terms_accepted' => true,
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['addresses.0.location_name']);
+
+    assertDatabaseCount('users', 0);
+});
+
+it('should validate full_address is not empty', function (): void {
+    postJson(route('register'), [
+        'name'                  => 'John Doe',
+        'email'                 => 'test@example.com',
+        'phone_number'          => '(96) 98765-4321',
+        'crm'                   => '123456',
+        'crm_uf'                => 'SP',
+        'password'              => 'password',
+        'password_confirmation' => 'password',
+        'addresses'             => [
+            [
+                'location_name' => 'Clínica X',
+                'full_address'  => '',
+                'complement'    => 'Sala 1',
+                'cep'           => '12345-678',
+            ],
+        ],
+        'terms_accepted' => true,
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['addresses.0.full_address']);
+
+    assertDatabaseCount('users', 0);
+});
+
+it('should not allow duplicate CRM numbers', function (): void {
+    User::factory()->create([
+        'crm'    => '123456',
+        'crm_uf' => 'SP',
+    ]);
+
+    postJson(route('register'), [
+        'name'                  => 'John Doe',
+        'email'                 => 'test@example.com',
+        'phone_number'          => '(96) 98765-4321',
+        'crm'                   => '123456',
+        'crm_uf'                => 'SP',
+        'password'              => 'password',
+        'password_confirmation' => 'password',
+        'addresses'             => [
+            [
+                'location_name' => 'Clínica X',
+                'full_address'  => 'Rua A, 123',
+                'complement'    => 'Sala 1',
+                'cep'           => '12345-678',
+            ],
+        ],
+        'terms_accepted' => true,
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['crm']);
+
+    assertDatabaseCount('users', 1);
+});

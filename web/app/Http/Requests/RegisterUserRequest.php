@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Http\Requests;
 
 use App\Models\User;
+use App\Rules\ValidUF;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules;
 
@@ -29,8 +30,8 @@ class RegisterUserRequest extends FormRequest
             'name'                      => ['required', 'string', 'max:255'],
             'email'                     => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'phone_number'              => ['required', 'string', 'min:10', 'max:11'],
-            'crm'                       => ['required', 'string', 'max:255'],
-            'crm_uf'                    => ['required', 'string', 'size:2'],
+            'crm'                       => ['required', 'string', 'size:6', 'regex:/^[0-9]{6}$/', 'unique:' . User::class],
+            'crm_uf'                    => ['required', 'string', 'size:2', new ValidUF()],
             'password'                  => ['required', 'confirmed', Rules\Password::defaults()],
             'addresses'                 => ['array', 'min:1'],
             'addresses.*.location_name' => ['required', 'string', 'max:255'],

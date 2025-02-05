@@ -26,10 +26,18 @@ class RegisterUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'      => ['required', 'string', 'max:255'],
-            'email'     => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-            'password'  => ['required', 'confirmed', Rules\Password::defaults()],
-            'addresses' => ['array', 'min:1'],
+            'name'                      => ['required', 'string', 'max:255'],
+            'email'                     => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'phone_number'              => ['required', 'string', 'min:10', 'max:11'],
+            'crm'                       => ['required', 'string', 'max:255'],
+            'crm_uf'                    => ['required', 'string', 'size:2'],
+            'password'                  => ['required', 'confirmed', Rules\Password::defaults()],
+            'addresses'                 => ['array', 'min:1'],
+            'addresses.*.location_name' => ['required', 'string', 'max:255'],
+            'addresses.*.full_address'  => ['required', 'string', 'max:255'],
+            'addresses.*.complement'    => ['nullable', 'string', 'max:255'],
+            'addresses.*.cep'           => ['required', 'string', 'size:8'],
+            'terms_accepted'            => ['required', 'accepted'],
         ];
     }
 

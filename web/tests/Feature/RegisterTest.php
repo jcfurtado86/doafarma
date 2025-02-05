@@ -80,3 +80,61 @@ it('should ensure that there is a relationship between the user and their addres
         ->and($address->user_id)->toBe($user->id)
         ->and($address->location_name)->toBe('Clínica X');
 });
+
+it('should validate required fields', function (): void {
+    postJson(route('register'), [])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors([
+            'name',
+            'email',
+            'phone_number',
+            'crm',
+            'crm_uf',
+            'password',
+            'addresses',
+            'terms_accepted',
+        ]);
+
+    postJson(route('register'), [
+        'addresses' => [
+            [
+                // Empty address fields
+            ],
+        ],
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors([
+            'addresses.0.location_name',
+            'addresses.0.full_address',
+            'addresses.0.cep',
+        ]);
+
+    assertDatabaseCount('users', 0);
+    assertDatabaseCount('addresses', 0);
+});
+
+todo('should validate email format');
+
+todo('should validate unique email');
+
+todo('should validate phone number format');
+
+todo('should validate password confirmation');
+
+todo('should validate addresses array format');
+
+todo('should validate required address fields');
+
+todo('should validate CEP format');
+
+todo('should validate CRM format and length');
+
+todo('should validate CRM UF is valid state');
+
+todo('should validate terms_accepted is true');
+
+todo('should validate address has valid location name length');
+
+todo('should validate full_address is not empty');
+
+todo('should not allow duplicate CRM numbers');

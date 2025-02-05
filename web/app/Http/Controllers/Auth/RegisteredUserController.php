@@ -42,7 +42,7 @@ class RegisteredUserController extends Controller
                 'user_id'       => $user->id,
                 'location_name' => $address['location_name'] ?? '',
                 'full_address'  => $address['full_address'] ?? '',
-                'complement'    => $address['complement'] ?? '',
+                'complement'    => $address['complement'] ?? null,
                 'cep'           => $address['cep'] ?? '',
             ]);
         }

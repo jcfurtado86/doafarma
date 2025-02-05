@@ -81,6 +81,42 @@ it('should ensure that there is a relationship between the user and their addres
         ->and($address->location_name)->toBe('Clínica X');
 });
 
+it('should be able to register without a complement and with multiple addresses', function (): void {
+    postJson(route('register'), [
+        'name'                  => 'John Doe',
+        'email'                 => 'test@example.com',
+        'phone_number'          => '(96) 98765-4321',
+        'crm'                   => '123456',
+        'crm_uf'                => 'SP',
+        'password'              => 'password',
+        'password_confirmation' => 'password',
+        'addresses'             => [
+            [
+                'location_name' => 'Clínica X',
+                'full_address'  => 'Rua A, 123, Bairro B, Cidade C, Estado D',
+                'cep'           => '12345-678',
+            ],
+            [
+                'location_name' => 'Clínica Y',
+                'full_address'  => 'Rua B, 456, Bairro C, Cidade D, Estado E',
+                'complement'    => 'Sala 2',
+                'cep'           => '98765-432',
+            ],
+        ],
+        'terms_accepted' => true,
+    ])->assertCreated();
+
+    $user = User::whereEmail('test@example.com')->first();
+
+    expect($user->addresses)
+        ->toHaveCount(2)
+        ->and($user->addresses[0]->complement)->toBeNull()
+        ->and($user->addresses[1]->complement)->toBe('Sala 2');
+
+    assertDatabaseCount('users', 1);
+    assertDatabaseCount('addresses', 2);
+});
+
 it('should validate required fields', function (): void {
     postJson(route('register'), [])
         ->assertUnprocessable()

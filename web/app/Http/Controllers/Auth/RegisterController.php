@@ -14,14 +14,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class RegisteredUserController extends Controller
+class RegisterController extends Controller
 {
     /**
      * Handle an incoming registration request.
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(RegisterUserRequest $request): Response
+    public function __invoke(RegisterUserRequest $request): Response
     {
         return DB::transaction(function () use ($request) {
             $user = User::create([

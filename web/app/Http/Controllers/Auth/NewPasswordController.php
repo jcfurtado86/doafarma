@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -14,27 +17,24 @@ use Illuminate\Validation\ValidationException;
 
 class NewPasswordController extends Controller
 {
-    /**
-     * Handle an incoming new password request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'token' => ['required'],
-            'email' => ['required', 'email'],
+            'token'    => ['required'],
+            'email'    => ['required', 'email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // Here we will attempt to reset the user's password. If it is successful we
-        // will update the password on an actual user model and persist it to the
-        // database. Otherwise we will parse the error and return the response.
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user) use ($request) {
+            function ($user) use ($request): void {
+                if (! $user instanceof Authenticatable) {
+                    throw new \RuntimeException('User must be an instance of Authenticatable');
+                }
+
+                /** @var \App\Models\User $user */
                 $user->forceFill([
-                    'password' => Hash::make($request->string('password')),
+                    'password'       => Hash::make($request->string('password')->toString()),
                     'remember_token' => Str::random(60),
                 ])->save();
 
@@ -44,10 +44,10 @@ class NewPasswordController extends Controller
 
         if ($status != Password::PASSWORD_RESET) {
             throw ValidationException::withMessages([
-                'email' => [__($status)],
+                'email' => [__(is_string($status) ? $status : 'Password reset failed')],
             ]);
         }
 
-        return response()->json(['status' => __($status)]);
+        return response()->json(['status' => __(is_string($status) ? $status : 'Password reset failed')]);
     }
 }

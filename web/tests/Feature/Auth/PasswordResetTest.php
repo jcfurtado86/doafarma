@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types = 1);
-
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Notification;
 
-test('reset password link can be requested', function (): void {
+test('reset password link can be requested', function () {
     Notification::fake();
 
     $user = User::factory()->create();
@@ -16,18 +14,18 @@ test('reset password link can be requested', function (): void {
     Notification::assertSentTo($user, ResetPassword::class);
 });
 
-test('password can be reset with valid token', function (): void {
+test('password can be reset with valid token', function () {
     Notification::fake();
 
     $user = User::factory()->create();
 
     $this->post('/forgot-password', ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class, function (object $notification) use ($user): true {
+    Notification::assertSentTo($user, ResetPassword::class, function (object $notification) use ($user) {
         $response = $this->post('/reset-password', [
-            'token'                 => $notification->token,
-            'email'                 => $user->email,
-            'password'              => 'password',
+            'token' => $notification->token,
+            'email' => $user->email,
+            'password' => 'password',
             'password_confirmation' => 'password',
         ]);
 

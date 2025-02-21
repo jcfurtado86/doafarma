@@ -5,8 +5,9 @@ import { Stack } from 'expo-router';
 export default function Home() {
   return (
     <>
-      <Stack.Screen options={{ headerShown: false }} />
+      <Stack.Screen options={{ headerShown: false  }} />
       <InitialScreen/>
     </>
   );
 }
+

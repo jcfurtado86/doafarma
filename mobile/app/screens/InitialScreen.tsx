@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet, Image, ImageBackground } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
+
 
 export default function InitialScreen() {
   const router = useRouter();
@@ -17,7 +18,7 @@ export default function InitialScreen() {
           <Text style={styles.title}>Bem vindo ao DoaFarma!</Text>
           <Text style={styles.caption}>Aqui sua doação é mais fácil</Text>
 
-          <Pressable style={styles.buttonPrimary} onPress={() => router.push('/screens/RegisterScreen')}>
+          <Pressable style={styles.buttonPrimary} onPress={() => router.push('./screens/RegisterScreen')}>
             <Text style={styles.buttonTextPrimary}>Registrar</Text>
           </Pressable>
 

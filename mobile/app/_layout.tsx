@@ -50,9 +50,7 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-
-      <Stack screenOptions={{ headerShown: false, headerTitle: "" }} /> 
-      
+      <Stack screenOptions={{ headerShown: false, headerTitle: '' }} />
     </ThemeProvider>
   );
 }

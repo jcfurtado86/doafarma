@@ -1,15 +1,16 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet, Image, ImageBackground } from 'react-native';
-import { useRouter, Stack } from 'expo-router';
-
+import { useRouter } from 'expo-router';
 
 export default function InitialScreen() {
   const router = useRouter();
 
   return (
-    <ImageBackground source={require('@/assets/images/img-fundo.svg')} style={styles.imageBackground}>
+    <ImageBackground
+      source={require('@/assets/images/img-fundo.svg')}
+      style={styles.imageBackground}
+    >
       <View style={styles.container}>
-        
         <View style={styles.imageContainer}>
           <Image source={require('@/assets/images/LogoIcon.png')} style={styles.logo} />
         </View>
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
     height: '100%',
     resizeMode: 'cover',
     position: 'absolute',
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
   },
 
   container: {
@@ -79,7 +80,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '500',
-    
   },
 
   caption: {

@@ -1,26 +1,24 @@
 import React from 'react';
-import { useRouter } from "expo-router";
+import { useRouter } from 'expo-router';
 import { View, Text, Pressable, StyleSheet, Image, ImageBackground } from 'react-native';
-import { Ionicons, } from "@expo/vector-icons";
+import { Ionicons } from '@expo/vector-icons';
 
 export default function RegisterScreen() {
   const router = useRouter();
 
   return (
-    <ImageBackground source={require('@/assets/images/img-fundo2.svg')} style={styles.imageBackground}>
-        
-        <Pressable 
-        style={({ pressed }) => [
-          styles.backButton, 
-          pressed ? styles.backButtonPressed : null
-        ]}
+    <ImageBackground
+      source={require('@/assets/images/img-fundo2.svg')}
+      style={styles.imageBackground}
+    >
+      <Pressable
+        style={({ pressed }) => [styles.backButton, pressed ? styles.backButtonPressed : null]}
         onPress={() => router.back()}
       >
         <Ionicons name="arrow-back" size={28} color="#A4C457" />
       </Pressable>
-        
-      <View style={styles.container}>
 
+      <View style={styles.container}>
         <View style={styles.textContainer}>
           <Text style={styles.title}>Crie sua Conta</Text>
           <Text style={styles.subtitle}>Nos diga se você é um paciente ou um médico</Text>
@@ -31,10 +29,7 @@ export default function RegisterScreen() {
 
           <Pressable
             onPress={() => console.log('Paciente')}
-            style={({ pressed }) => [
-              styles.buttonPrimary,
-              pressed && styles.buttonHover, 
-            ]}
+            style={({ pressed }) => [styles.buttonPrimary, pressed && styles.buttonHover]}
           >
             <Text style={styles.buttonText}>Paciente</Text>
           </Pressable>
@@ -43,17 +38,13 @@ export default function RegisterScreen() {
 
           <Pressable
             onPress={() => console.log('Médico')}
-            style={({ pressed }) => [
-              styles.buttonSecondary,
-              pressed && styles.buttonHover, 
-            ]}
+            style={({ pressed }) => [styles.buttonSecondary, pressed && styles.buttonHover]}
           >
             <Text style={styles.buttonText}>Médico</Text>
           </Pressable>
         </View>
       </View>
     </ImageBackground>
-  
   );
 }
 
@@ -64,7 +55,7 @@ const styles = StyleSheet.create({
     height: '100%',
     resizeMode: 'cover',
     position: 'absolute',
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
   },
 
   container: {
@@ -76,16 +67,16 @@ const styles = StyleSheet.create({
   },
 
   backButton: {
-    position: "absolute",
-    top: 20, 
-    left: 10, 
-    zIndex: 10, 
-    padding: 10, 
+    position: 'absolute',
+    top: 20,
+    left: 10,
+    zIndex: 10,
+    padding: 10,
   },
 
   textContainer: {
-    textAlign: 'left', 
-    justifyContent: "flex-start",
+    textAlign: 'left',
+    justifyContent: 'flex-start',
   },
 
   title: {
@@ -134,7 +125,7 @@ const styles = StyleSheet.create({
   },
 
   buttonHover: {
-    backgroundColor: '#8FA743', 
+    backgroundColor: '#8FA743',
   },
 
   buttonText: {
@@ -144,6 +135,6 @@ const styles = StyleSheet.create({
   },
 
   backButtonPressed: {
-    opacity: 0.7, 
+    opacity: 0.7,
   },
 });

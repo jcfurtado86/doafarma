@@ -9,9 +9,15 @@ export default function RegisterScreen() {
   return (
     <ImageBackground source={require('@/assets/images/img-fundo2.svg')} style={styles.imageBackground}>
         
-        <Pressable style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={28} color= "#A4C457" />
-        </Pressable>
+        <Pressable 
+        style={({ pressed }) => [
+          styles.backButton, 
+          pressed ? styles.backButtonPressed : null
+        ]}
+        onPress={() => router.back()}
+      >
+        <Ionicons name="arrow-back" size={28} color="#A4C457" />
+      </Pressable>
         
       <View style={styles.container}>
 
@@ -27,7 +33,7 @@ export default function RegisterScreen() {
             onPress={() => console.log('Paciente')}
             style={({ pressed }) => [
               styles.buttonPrimary,
-              pressed && styles.buttonHover, // Efeito "hover"
+              pressed && styles.buttonHover, 
             ]}
           >
             <Text style={styles.buttonText}>Paciente</Text>
@@ -39,7 +45,7 @@ export default function RegisterScreen() {
             onPress={() => console.log('Médico')}
             style={({ pressed }) => [
               styles.buttonSecondary,
-              pressed && styles.buttonHover, // Efeito "hover"
+              pressed && styles.buttonHover, 
             ]}
           >
             <Text style={styles.buttonText}>Médico</Text>
@@ -73,8 +79,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 20, 
     left: 10, 
-    zIndex: 10, // Para garantir que fique na frente
-    padding: 10, // Área clicável maior
+    zIndex: 10, 
+    padding: 10, 
   },
 
   textContainer: {
@@ -128,7 +134,7 @@ const styles = StyleSheet.create({
   },
 
   buttonHover: {
-    backgroundColor: '#8FA743', // Cor mais escura ao pressionar
+    backgroundColor: '#8FA743', 
   },
 
   buttonText: {
@@ -137,4 +143,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
+  backButtonPressed: {
+    opacity: 0.7, 
+  },
 });

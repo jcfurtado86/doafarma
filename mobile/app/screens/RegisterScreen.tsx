@@ -23,14 +23,26 @@ export default function RegisterScreen() {
         <View style={styles.imageContainer}>
           <Image source={require('@/assets/images/Paciente.png')} style={styles.image} />
 
-          <Pressable style={styles.buttonPrimary} onPress={() => console.log('Paciente')}>
+          <Pressable
+            onPress={() => console.log('Paciente')}
+            style={({ pressed }) => [
+              styles.buttonPrimary,
+              pressed && styles.buttonHover, // Efeito "hover"
+            ]}
+          >
             <Text style={styles.buttonText}>Paciente</Text>
           </Pressable>
 
           <Image source={require('@/assets/images/Medico.png')} style={styles.image} />
 
-          <Pressable style={styles.buttonSecondary} onPress={() => console.log('Médico')}>
-            <Text style={styles.buttonText}>Medico</Text>
+          <Pressable
+            onPress={() => console.log('Médico')}
+            style={({ pressed }) => [
+              styles.buttonSecondary,
+              pressed && styles.buttonHover, // Efeito "hover"
+            ]}
+          >
+            <Text style={styles.buttonText}>Médico</Text>
           </Pressable>
         </View>
       </View>
@@ -113,6 +125,10 @@ const styles = StyleSheet.create({
     height: 48,
     width: '100%',
     alignItems: 'center',
+  },
+
+  buttonHover: {
+    backgroundColor: '#8FA743', // Cor mais escura ao pressionar
   },
 
   buttonText: {

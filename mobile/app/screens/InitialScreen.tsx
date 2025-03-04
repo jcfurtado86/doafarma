@@ -18,11 +18,23 @@ export default function InitialScreen() {
           <Text style={styles.title}>Bem vindo ao DoaFarma!</Text>
           <Text style={styles.caption}>Aqui sua doação é mais fácil</Text>
 
-          <Pressable style={styles.buttonPrimary} onPress={() => router.push('./screens/RegisterScreen')}>
+          <Pressable
+            onPress={() => router.push('./screens/RegisterScreen')}
+            style={({ pressed }) => [
+              styles.buttonPrimary,
+              pressed && styles.buttonHover, // Efeito de "hover"
+            ]}
+          >
             <Text style={styles.buttonTextPrimary}>Registrar</Text>
           </Pressable>
 
-          <Pressable style={styles.buttonSecondary} onPress={() => console.log('Entrar')}>
+          <Pressable
+            onPress={() => console.log('Entrar')}
+            style={({ pressed }) => [
+              styles.buttonSecondary,
+              pressed && styles.buttonHoverSecondary, // Efeito de "hover"
+            ]}
+          >
             <Text style={styles.buttonTextSecondary}>Entrar</Text>
           </Pressable>
         </View>
@@ -95,6 +107,14 @@ const styles = StyleSheet.create({
     height: 56,
     width: '100%',
     alignItems: 'center',
+  },
+
+  buttonHover: {
+    backgroundColor: '#8FA743', // Cor mais escura ao pressionar
+  },
+
+  buttonHoverSecondary: {
+    backgroundColor: '#D9E6B5', // Cor mais escura para o botão secundário
   },
 
   buttonTextPrimary: {

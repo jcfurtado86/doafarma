@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet, Image, ImageBackground } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Colors } from '@/constants/Colors';
 
 export default function InitialScreen() {
   const router = useRouter();
@@ -21,10 +22,7 @@ export default function InitialScreen() {
 
           <Pressable
             onPress={() => router.push('./screens/RegisterScreen')}
-            style={({ pressed }) => [
-              styles.buttonPrimary,
-              pressed && styles.buttonHover, // Efeito de "hover"
-            ]}
+            style={({ pressed }) => [styles.buttonPrimary, pressed && styles.buttonHoverPrimary]}
           >
             <Text style={styles.buttonTextPrimary}>Registrar</Text>
           </Pressable>
@@ -33,10 +31,16 @@ export default function InitialScreen() {
             onPress={() => console.log('Entrar')}
             style={({ pressed }) => [
               styles.buttonSecondary,
-              pressed && styles.buttonHoverSecondary, // Efeito de "hover"
+              pressed && styles.buttonHoverSecondary,
             ]}
           >
-            <Text style={styles.buttonTextSecondary}>Entrar</Text>
+            {({ pressed }) => (
+              <Text
+                style={[styles.buttonTextSecondary, pressed && styles.buttonTextSecondaryHover]}
+              >
+                Entrar
+              </Text>
+            )}
           </Pressable>
         </View>
       </View>
@@ -91,7 +95,7 @@ const styles = StyleSheet.create({
   },
 
   buttonPrimary: {
-    backgroundColor: '#A4C457',
+    backgroundColor: Colors.yellow_green_400,
     padding: 15,
     borderRadius: 10,
     marginBottom: 16,
@@ -100,8 +104,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
+  buttonHoverPrimary: {
+    backgroundColor: Colors.yellow_green_500,
+  },
+
   buttonSecondary: {
-    backgroundColor: '#ECF3D4',
+    backgroundColor: Colors.yellow_green_100,
     padding: 15,
     borderRadius: 10,
     height: 56,
@@ -109,12 +117,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  buttonHover: {
-    backgroundColor: '#8FA743', // Cor mais escura ao pressionar
-  },
-
   buttonHoverSecondary: {
-    backgroundColor: '#D9E6B5', // Cor mais escura para o botão secundário
+    backgroundColor: Colors.yellow_green_200,
   },
 
   buttonTextPrimary: {
@@ -124,8 +128,12 @@ const styles = StyleSheet.create({
   },
 
   buttonTextSecondary: {
-    color: '#A4C457',
+    color: Colors.yellow_green_400,
     fontSize: 16,
     fontWeight: 'bold',
+  },
+
+  buttonTextSecondaryHover: {
+    color: Colors.yellow_green_500,
   },
 });

@@ -2,6 +2,7 @@ import React from 'react';
 import { useRouter } from 'expo-router';
 import { View, Text, Pressable, StyleSheet, Image, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import PrimaryButton from '@/components/PrimaryButton';
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -27,21 +28,12 @@ export default function RegisterScreen() {
         <View style={styles.imageContainer}>
           <Image source={require('@/assets/images/Paciente.png')} style={styles.image} />
 
-          <Pressable
-            onPress={() => console.log('Paciente')}
-            style={({ pressed }) => [styles.buttonPrimary, pressed && styles.buttonHover]}
-          >
-            <Text style={styles.buttonText}>Paciente</Text>
-          </Pressable>
+          <PrimaryButton onPress={() => console.log('Paciente')} label='Paciente' />
 
           <Image source={require('@/assets/images/Medico.png')} style={styles.image} />
 
-          <Pressable
-            onPress={() => console.log('Médico')}
-            style={({ pressed }) => [styles.buttonSecondary, pressed && styles.buttonHover]}
-          >
-            <Text style={styles.buttonText}>Médico</Text>
-          </Pressable>
+          <PrimaryButton onPress={() => console.log('Médico')} label='Médico' />
+
         </View>
       </View>
     </ImageBackground>
@@ -102,36 +94,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     marginTop: 32,
     alignItems: 'center',
-  },
-
-  buttonPrimary: {
-    backgroundColor: '#A4C457',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 16,
-    height: 48,
-    width: '100%',
-    alignItems: 'center',
-  },
-
-  buttonSecondary: {
-    backgroundColor: '#A4C457',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 16,
-    height: 48,
-    width: '100%',
-    alignItems: 'center',
-  },
-
-  buttonHover: {
-    backgroundColor: '#8FA743',
-  },
-
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 
   backButtonPressed: {

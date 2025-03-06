@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Pressable, StyleSheet, Image, ImageBackground } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
+import PrimaryButton from '@/components/PrimaryButton';
 
 export default function InitialScreen() {
   const router = useRouter();
@@ -20,13 +21,9 @@ export default function InitialScreen() {
           <Text style={styles.title}>Bem vindo ao DoaFarma!</Text>
           <Text style={styles.caption}>Aqui sua doação é mais fácil</Text>
 
-          <Pressable
-            onPress={() => router.push('./screens/RegisterScreen')}
-            style={({ pressed }) => [styles.buttonPrimary, pressed && styles.buttonHoverPrimary]}
-          >
-            <Text style={styles.buttonTextPrimary}>Registrar</Text>
-          </Pressable>
-
+          
+          <PrimaryButton onPress={() => router.push('/register')} label='Registrar'/>
+ 
           <Pressable
             onPress={() => console.log('Entrar')}
             style={({ pressed }) => [
@@ -110,11 +107,14 @@ const styles = StyleSheet.create({
 
   buttonSecondary: {
     backgroundColor: Colors.yellow_green_100,
-    padding: 15,
+    paddingHorizontal: 16,
     borderRadius: 10,
+    marginBottom: 16,
     height: 56,
     width: '100%',
     alignItems: 'center',
+    justifyContent: 'center',
+    
   },
 
   buttonHoverSecondary: {
@@ -131,6 +131,7 @@ const styles = StyleSheet.create({
     color: Colors.yellow_green_400,
     fontSize: 16,
     fontWeight: 'bold',
+    lineHeight: 56,
   },
 
   buttonTextSecondaryHover: {

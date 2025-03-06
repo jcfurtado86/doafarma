@@ -1,12 +1,12 @@
 import React from 'react';
 import { Stack } from 'expo-router';
-import InitialScreen from '@/screens/InitialScreen';
+import RegisterScreen from '@/screens/RegisterScreen';
 
 export default function Home() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <InitialScreen />
+      <RegisterScreen />
     </>
   );
 }

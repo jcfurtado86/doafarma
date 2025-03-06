@@ -7,4 +7,4 @@ parameters:
     paths:
         - app/
 
-    level: max
+    level: 6

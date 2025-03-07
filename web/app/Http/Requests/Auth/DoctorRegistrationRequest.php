@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Auth;
 
 use App\Models\Doctor;
 use App\Models\User;
@@ -10,7 +10,7 @@ use App\Rules\ValidUF;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules;
 
-class RegisterUserRequest extends FormRequest
+class DoctorRegistrationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -34,7 +34,6 @@ class RegisterUserRequest extends FormRequest
             'crm'                       => ['required', 'string', 'size:6', 'regex:/^[0-9]{6}$/', 'unique:' . Doctor::class],
             'crm_uf'                    => ['required', 'string', 'size:2', new ValidUF()],
             'password'                  => ['required', 'confirmed', Rules\Password::defaults()],
-            'user_type'                 => ['required', 'string', 'in:doctor,patient'],
             'addresses'                 => ['array', 'min:1'],
             'addresses.*.location_name' => ['required', 'string', 'max:255'],
             'addresses.*.full_address'  => ['required', 'string', 'max:255'],

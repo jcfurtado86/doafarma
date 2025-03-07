@@ -31,7 +31,6 @@ class UserFactory extends Factory
             'email'             => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'phone_number'      => fake()->phoneNumber(),
-            'user_type'         => 'user',
             'terms_accepted'    => true,
             'terms_accepted_at' => now(),
             'password'          => static::$password ??= Hash::make('password'),
@@ -51,9 +50,7 @@ class UserFactory extends Factory
 
     public function doctor(?string $crm = null, ?string $crm_uf = null): static
     {
-        return $this->state(fn (array $attributes): array => [
-            'user_type' => 'doctor',
-        ])->afterCreating(function ($user) use ($crm, $crm_uf): void {
+        return $this->afterCreating(function ($user) use ($crm, $crm_uf): void {
             $doctorAttributes = array_filter([
                 'user_id' => $user->id,
                 'crm'     => $crm,

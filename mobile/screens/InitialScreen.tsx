@@ -21,9 +21,8 @@ export default function InitialScreen() {
           <Text style={styles.title}>Bem vindo ao DoaFarma!</Text>
           <Text style={styles.caption}>Aqui sua doação é mais fácil</Text>
 
-          
-          <PrimaryButton onPress={() => router.push('/register')} label='Registrar'/>
- 
+          <PrimaryButton onPress={() => router.push('/register')} label="Registrar" />
+
           <Pressable
             onPress={() => console.log('Entrar')}
             style={({ pressed }) => [
@@ -114,7 +113,6 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    
   },
 
   buttonHoverSecondary: {

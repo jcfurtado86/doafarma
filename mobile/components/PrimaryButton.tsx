@@ -1,13 +1,13 @@
 import { Pressable, StyleSheet, Text, PressableProps } from 'react-native';
 
-interface PrimaryButtonProps extends PressableProps{
-    label: string, 
+interface PrimaryButtonProps extends PressableProps {
+  label: string;
 }
 
-export default function PrimaryButton({label, ...props}: PrimaryButtonProps) {
+export default function PrimaryButton({ label, ...props }: PrimaryButtonProps) {
   return (
     <Pressable
-        {...props}
+      {...props}
       style={({ pressed }) => [styles.buttonPrimary, pressed && styles.buttonHover]}
     >
       <Text style={styles.buttonText}>{label}</Text>

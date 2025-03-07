@@ -28,12 +28,11 @@ export default function RegisterScreen() {
         <View style={styles.imageContainer}>
           <Image source={require('@/assets/images/Paciente.png')} style={styles.image} />
 
-          <PrimaryButton onPress={() => console.log('Paciente')} label='Paciente' />
+          <PrimaryButton onPress={() => console.log('Paciente')} label="Paciente" />
 
           <Image source={require('@/assets/images/Medico.png')} style={styles.image} />
 
-          <PrimaryButton onPress={() => router.push('/DoctorForm')} label='Médico' />
-
+          <PrimaryButton onPress={() => router.push('/DoctorForm')} label="Médico" />
         </View>
       </View>
     </ImageBackground>

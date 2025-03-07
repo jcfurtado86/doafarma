@@ -10,7 +10,7 @@ use function Pest\Laravel\postJson;
 use function PHPUnit\Framework\assertTrue;
 
 it('should be able to register a doctor', function (): void {
-    postJson(route('register'), [
+    postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
         'email'                 => 'test@example.com',
         'phone_number'          => '(96) 98765-4321', // DDD + 9XXX-XXXX
@@ -27,14 +27,12 @@ it('should be able to register a doctor', function (): void {
             ],
         ],
         'terms_accepted' => true,
-        'user_type'      => 'doctor',
     ])->assertCreated();
 
     assertDatabaseHas('users', [
         'name'              => 'John Doe',
         'email'             => 'test@example.com',
         'phone_number'      => '96987654321',
-        'user_type'         => 'doctor',
         'terms_accepted'    => 1,
         'terms_accepted_at' => now(),
     ]);
@@ -60,7 +58,7 @@ it('should be able to register a doctor', function (): void {
 });
 
 it('should ensure that there is a relationship between the user and their doctor profile', function (): void {
-    postJson(route('register'), [
+    postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
         'email'                 => 'test@example.com',
         'phone_number'          => '(96) 98765-4321',
@@ -77,7 +75,6 @@ it('should ensure that there is a relationship between the user and their doctor
             ],
         ],
         'terms_accepted' => true,
-        'user_type'      => 'doctor',
     ])->assertCreated();
 
     $user   = User::whereEmail('test@example.com')->first();
@@ -91,7 +88,7 @@ it('should ensure that there is a relationship between the user and their doctor
 });
 
 it('should ensure that there is a relationship between the user and their addresses', function (): void {
-    postJson(route('register'), [
+    postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
         'email'                 => 'test@example.com',
         'phone_number'          => '(96) 98765-4321',
@@ -108,7 +105,6 @@ it('should ensure that there is a relationship between the user and their addres
             ],
         ],
         'terms_accepted' => true,
-        'user_type'      => 'doctor',
     ])->assertCreated();
 
     $user    = User::whereEmail('test@example.com')->first();
@@ -121,7 +117,7 @@ it('should ensure that there is a relationship between the user and their addres
 });
 
 it('should be able to register without a complement and with multiple addresses', function (): void {
-    postJson(route('register'), [
+    postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
         'email'                 => 'test@example.com',
         'phone_number'          => '(96) 98765-4321',
@@ -143,7 +139,6 @@ it('should be able to register without a complement and with multiple addresses'
             ],
         ],
         'terms_accepted' => true,
-        'user_type'      => 'doctor',
     ])->assertCreated();
 
     $user = User::whereEmail('test@example.com')->first();
@@ -158,7 +153,7 @@ it('should be able to register without a complement and with multiple addresses'
 });
 
 it('should validate required fields', function (): void {
-    postJson(route('register'), [])
+    postJson(route('doctor.register'), [])
         ->assertUnprocessable()
         ->assertJsonValidationErrors([
             'name',
@@ -169,10 +164,9 @@ it('should validate required fields', function (): void {
             'password',
             'addresses',
             'terms_accepted',
-            'user_type',
         ]);
 
-    postJson(route('register'), [
+    postJson(route('doctor.register'), [
         'addresses' => [
             [
                 // Empty address fields
@@ -192,7 +186,7 @@ it('should validate required fields', function (): void {
 });
 
 it('should validate email format', function (): void {
-    postJson(route('register'), [
+    postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
         'email'                 => 'invalid-email',
         'phone_number'          => '(96) 98765-4321',
@@ -209,7 +203,6 @@ it('should validate email format', function (): void {
             ],
         ],
         'terms_accepted' => true,
-        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['email']);
@@ -222,7 +215,7 @@ it('should validate unique email', function (): void {
         'email' => 'test@example.com',
     ]);
 
-    postJson(route('register'), [
+    postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
         'email'                 => 'test@example.com',
         'phone_number'          => '(96) 98765-4321',
@@ -239,7 +232,6 @@ it('should validate unique email', function (): void {
             ],
         ],
         'terms_accepted' => true,
-        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['email']);
@@ -248,7 +240,7 @@ it('should validate unique email', function (): void {
 });
 
 it('should validate phone number format', function (): void {
-    postJson(route('register'), [
+    postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
         'email'                 => 'test@example.com',
         'phone_number'          => 'invalid-phone',
@@ -265,7 +257,6 @@ it('should validate phone number format', function (): void {
             ],
         ],
         'terms_accepted' => true,
-        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['phone_number']);
@@ -274,7 +265,7 @@ it('should validate phone number format', function (): void {
 });
 
 it('should validate password confirmation', function (): void {
-    postJson(route('register'), [
+    postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
         'email'                 => 'test@example.com',
         'phone_number'          => '(96) 98765-4321',
@@ -291,7 +282,6 @@ it('should validate password confirmation', function (): void {
             ],
         ],
         'terms_accepted' => true,
-        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['password']);
@@ -300,7 +290,7 @@ it('should validate password confirmation', function (): void {
 });
 
 it('should validate addresses array format', function (): void {
-    postJson(route('register'), [
+    postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
         'email'                 => 'test@example.com',
         'phone_number'          => '(96) 98765-4321',
@@ -310,7 +300,6 @@ it('should validate addresses array format', function (): void {
         'password_confirmation' => 'password',
         'addresses'             => 'not-an-array',
         'terms_accepted'        => true,
-        'user_type'             => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['addresses']);
@@ -319,7 +308,7 @@ it('should validate addresses array format', function (): void {
 });
 
 it('should validate required address fields', function (): void {
-    postJson(route('register'), [
+    postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
         'email'                 => 'test@example.com',
         'phone_number'          => '(96) 98765-4321',
@@ -329,7 +318,6 @@ it('should validate required address fields', function (): void {
         'password_confirmation' => 'password',
         'addresses'             => [[]],
         'terms_accepted'        => true,
-        'user_type'             => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors([
@@ -342,7 +330,7 @@ it('should validate required address fields', function (): void {
 });
 
 it('should validate CEP format', function (): void {
-    postJson(route('register'), [
+    postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
         'email'                 => 'test@example.com',
         'phone_number'          => '(96) 98765-4321',
@@ -359,7 +347,6 @@ it('should validate CEP format', function (): void {
             ],
         ],
         'terms_accepted' => true,
-        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['addresses.0.cep']);
@@ -368,7 +355,7 @@ it('should validate CEP format', function (): void {
 });
 
 it('should validate CRM format and length', function (): void {
-    postJson(route('register'), [
+    postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
         'email'                 => 'test@example.com',
         'phone_number'          => '(96) 98765-4321',
@@ -385,12 +372,11 @@ it('should validate CRM format and length', function (): void {
             ],
         ],
         'terms_accepted' => true,
-        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['crm']);
 
-    postJson(route('register'), [
+    postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
         'email'                 => 'test@example.com',
         'phone_number'          => '(96) 98765-4321',
@@ -415,7 +401,7 @@ it('should validate CRM format and length', function (): void {
 });
 
 it('should validate CRM UF is valid state', function (): void {
-    postJson(route('register'), [
+    postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
         'email'                 => 'test@example.com',
         'phone_number'          => '(96) 98765-4321',
@@ -432,7 +418,6 @@ it('should validate CRM UF is valid state', function (): void {
             ],
         ],
         'terms_accepted' => true,
-        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['crm_uf']);
@@ -441,7 +426,7 @@ it('should validate CRM UF is valid state', function (): void {
 });
 
 it('should validate terms_accepted is true', function (): void {
-    postJson(route('register'), [
+    postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
         'email'                 => 'test@example.com',
         'phone_number'          => '(96) 98765-4321',
@@ -458,7 +443,6 @@ it('should validate terms_accepted is true', function (): void {
             ],
         ],
         'terms_accepted' => false,
-        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['terms_accepted']);
@@ -466,34 +450,8 @@ it('should validate terms_accepted is true', function (): void {
     assertDatabaseCount('users', 0);
 });
 
-it('should validate user_type is doctor or patient', function (): void {
-    postJson(route('register'), [
-        'name'                  => 'John Doe',
-        'email'                 => 'test@example.com',
-        'phone_number'          => '(96) 98765-4321',
-        'crm'                   => '123456',
-        'crm_uf'                => 'SP',
-        'password'              => 'password',
-        'password_confirmation' => 'password',
-        'addresses'             => [
-            [
-                'location_name' => 'Clínica X',
-                'full_address'  => 'Rua A, 123',
-                'complement'    => 'Sala 1',
-                'cep'           => '12345-678',
-            ],
-        ],
-        'terms_accepted' => true,
-        'user_type'      => 'invalid_type',
-    ])
-        ->assertUnprocessable()
-        ->assertJsonValidationErrors(['user_type']);
-
-    assertDatabaseCount('users', 0);
-});
-
 it('should validate address has valid location name length', function (): void {
-    postJson(route('register'), [
+    postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
         'email'                 => 'test@example.com',
         'phone_number'          => '(96) 98765-4321',
@@ -510,7 +468,6 @@ it('should validate address has valid location name length', function (): void {
             ],
         ],
         'terms_accepted' => true,
-        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['addresses.0.location_name']);
@@ -519,7 +476,7 @@ it('should validate address has valid location name length', function (): void {
 });
 
 it('should validate full_address is not empty', function (): void {
-    postJson(route('register'), [
+    postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
         'email'                 => 'test@example.com',
         'phone_number'          => '(96) 98765-4321',
@@ -536,7 +493,6 @@ it('should validate full_address is not empty', function (): void {
             ],
         ],
         'terms_accepted' => true,
-        'user_type'      => 'doctor',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['addresses.0.full_address']);
@@ -547,7 +503,7 @@ it('should validate full_address is not empty', function (): void {
 it('should not allow duplicate CRM numbers', function (): void {
     User::factory()->doctor(crm: '123456', crm_uf: 'SP')->create();
 
-    postJson(route('register'), [
+    postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
         'email'                 => 'test@example.com',
         'phone_number'          => '(96) 98765-4321',

@@ -32,7 +32,7 @@ export default function RegisterScreen() {
 
           <Image source={require('@/assets/images/Medico.png')} style={styles.image} />
 
-          <PrimaryButton onPress={() => console.log('Médico')} label='Médico' />
+          <PrimaryButton onPress={() => router.push('/DoctorForm')} label='Médico' />
 
         </View>
       </View>

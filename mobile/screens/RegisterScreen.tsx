@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouter } from 'expo-router';
 import { View, Text, Pressable, StyleSheet, Image, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import PrimaryButton from '@/components/PrimaryButton';
+import PrimaryButton from '../components/PrimaryButton';
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -14,7 +14,7 @@ export default function RegisterScreen() {
     >
       <Pressable
         style={({ pressed }) => [styles.backButton, pressed ? styles.backButtonPressed : null]}
-        onPress={() => router.back()}
+        onPress={() => router.push('/register/index')}
       >
         <Ionicons name="arrow-back" size={28} color="#A4C457" />
       </Pressable>
@@ -32,7 +32,7 @@ export default function RegisterScreen() {
 
           <Image source={require('@/assets/images/Medico.png')} style={styles.image} />
 
-          <PrimaryButton onPress={() => router.push('/DoctorForm')} label="Médico" />
+          <PrimaryButton onPress={() => router.push('/register/doctor')} label="Médico" />
         </View>
       </View>
     </ImageBackground>

@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
+//import { useRouter } from 'expo-router';
 
-export default function DoctorFormScreen() {
-  const router = useRouter();
+export default function DoctorRegistrationScreen() {
+  //const router = useRouter();
 
   return (
     <View style={styles.container}>

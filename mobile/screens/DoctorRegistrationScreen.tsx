@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Input } from '../components/Input';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import PrimaryButton from '../components/PrimaryButton';
 
 export default function DoctorRegistrationScreen() {
   const router = useRouter();
@@ -11,7 +12,7 @@ export default function DoctorRegistrationScreen() {
     <View style={styles.container}>
       <Pressable
         style={({ pressed }) => [styles.backButton, pressed ? styles.backButtonPressed : null]}
-        onPress={() => router.push('/register/doctor')}
+        onPress={() => router.push('/register')}
       >
         <Ionicons name="arrow-back" size={28} color="#A4C457" />
       </Pressable>
@@ -19,7 +20,12 @@ export default function DoctorRegistrationScreen() {
       <View style={styles.textContainer}>
         <Text style={styles.title}>Olá doutor!</Text>
         <Text style={styles.caption}>Preencha seus dados pessoais</Text>
+      </View>
+      <View style={styles.inputContainer}>
         <Input />
+      </View>
+      <View style={styles.buttonContainer}>
+        <PrimaryButton onPress={() => console.log('Próximo')} label="Próximo" />
       </View>
     </View>
   );
@@ -29,15 +35,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
-    paddingBottom: 80,
+    paddingBottom: 30,
     padding: 20,
     backgroundColor: '#ffffff',
   },
 
   textContainer: {
     textAlign: 'left',
-    justifyContent: 'space-between',
-    marginTop: 50,
+    //justifyContent: 'space-between',
+    marginTop: 80,
     paddingBottom: 50,
   },
 
@@ -54,6 +60,14 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
 
+  inputContainer: {
+    justifyContent: 'space-between',
+  },
+
+  buttonContainer: {
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
   backButton: {
     position: 'absolute',
     top: 20,

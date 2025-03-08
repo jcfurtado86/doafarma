@@ -12,6 +12,7 @@
     "expo-font": "^13.0.3",
     "expo-router": "^3.1.0",
     "expo-splash-screen": "^0.29.22",
-    "react": "^19.0.0"
+    "react": "^19.0.0",
+    "react-hook-form": "^7.54.2"
   }
 }

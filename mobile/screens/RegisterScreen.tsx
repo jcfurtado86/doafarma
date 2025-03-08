@@ -14,7 +14,7 @@ export default function RegisterScreen() {
     >
       <Pressable
         style={({ pressed }) => [styles.backButton, pressed ? styles.backButtonPressed : null]}
-        onPress={() => router.push('/register/index')}
+        onPress={() => router.push('/')}
       >
         <Ionicons name="arrow-back" size={28} color="#A4C457" />
       </Pressable>

@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet, Image, ImageBackground } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Colors } from '@/constants/Colors';
-import PrimaryButton from '@/components/PrimaryButton';
+import { Colors } from '../constants/Colors';
+import PrimaryButton from '../components/PrimaryButton';
 
 export default function InitialScreen() {
   const router = useRouter();
@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
+    marginTop: 50,
     paddingBottom: 80,
     padding: 20,
   },

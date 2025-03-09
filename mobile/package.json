@@ -8,6 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest --passWithNoTests",
+    "check-types": "tsc --noemit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },

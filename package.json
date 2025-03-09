@@ -1,18 +1,8 @@
 {
   "devDependencies": {
-    "@types/react": "^19.0.10",
     "husky": "^9.1.7"
   },
   "scripts": {
     "prepare": "husky"
-  },
-  "dependencies": {
-    "@expo/vector-icons": "^14.0.4",
-    "@react-navigation/native": "^7.0.14",
-    "expo-font": "^13.0.3",
-    "expo-router": "^3.1.0",
-    "expo-splash-screen": "^0.29.22",
-    "react": "^19.0.0",
-    "react-hook-form": "^7.54.2"
   }
 }

@@ -1,10 +1,21 @@
-import { TextInput } from 'react-native';
+import { TextInput, TextInputProps, View } from 'react-native';
 import { styles } from './styles';
+import { Controller, UseControllerProps } from 'react-hook-form';
 
-export function Input() {
+interface InputProps {
+  formProps: UseControllerProps;
+  inputProps: TextInputProps;
+}
+
+export function Input({ formProps, inputProps }: InputProps) {
   return (
-    <view style={styles.group}>
-      <TextInput style={styles.control} />
-    </view>
+    <Controller
+      render={() => (
+        <View style={styles.group}>
+          <TextInput style={styles.control} {...inputProps} />
+        </View>
+      )}
+      {...formProps}
+    />
   );
 }

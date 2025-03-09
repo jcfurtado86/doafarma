@@ -23,7 +23,16 @@ export default function DoctorRegistrationScreen() {
         <Text style={styles.caption}>Preencha seus dados pessoais</Text>
       </View>
       <View style={styles.inputContainer}>
-        <Input />
+        <Input
+          formProps={{
+            name: 'doctorName',
+          }}
+          inputProps={{
+            onChangeText: (text) => {
+              console.log(text);
+            },
+          }}
+        />
       </View>
       <View style={styles.buttonContainer}>
         <PrimaryButton onPress={() => console.log('Próximo')} label="Próximo" />

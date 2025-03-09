@@ -1,8 +1,9 @@
 import React from 'react';
 import { useRouter } from 'expo-router';
-import { View, Text, Pressable, StyleSheet, Image, ImageBackground } from 'react-native';
+import { View, Text, Pressable, Image, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import PrimaryButton from '@/components/PrimaryButton';
+import { styles } from './styles';
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -38,64 +39,3 @@ export default function RegisterScreen() {
     </ImageBackground>
   );
 }
-
-const styles = StyleSheet.create({
-  imageBackground: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-    position: 'absolute',
-    backgroundColor: '#ffffff',
-  },
-
-  container: {
-    flex: 1,
-    justifyContent: 'space-between',
-    marginTop: 50,
-    paddingBottom: 50,
-    padding: 20,
-  },
-
-  backButton: {
-    position: 'absolute',
-    top: 20,
-    left: 10,
-    zIndex: 10,
-    padding: 10,
-  },
-
-  textContainer: {
-    textAlign: 'left',
-    justifyContent: 'flex-start',
-  },
-
-  title: {
-    fontSize: 24,
-    fontWeight: '500',
-    marginBottom: 10,
-  },
-
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 10,
-  },
-
-  imageContainer: {
-    alignItems: 'center',
-  },
-
-  image: {
-    width: 230,
-    height: 230,
-    resizeMode: 'contain',
-    marginBottom: 16,
-    marginTop: 32,
-    alignItems: 'center',
-  },
-
-  backButtonPressed: {
-    opacity: 0.7,
-  },
-});

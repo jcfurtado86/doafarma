@@ -1,55 +1,11 @@
-import React from 'react';
-import { View, Text, Pressable, StyleSheet, Image, ImageBackground } from 'react-native';
-import { useRouter } from 'expo-router';
-import PrimaryButton from '@/components/PrimaryButton';
 import { Colors } from '@/constants/Colors';
+import { StyleSheet } from 'react-native';
 
-export default function InitialScreen() {
-  const router = useRouter();
-
-  return (
-    <ImageBackground
-      source={require('@/assets/images/img-fundo.svg')}
-      style={styles.imageBackground}
-    >
-      <View style={styles.container}>
-        <View style={styles.imageContainer}>
-          <Image source={require('@/assets/images/LogoIcon.png')} style={styles.logo} />
-        </View>
-
-        <View style={styles.textContainer}>
-          <Text style={styles.title}>Bem vindo ao DoaFarma!</Text>
-          <Text style={styles.caption}>Aqui sua doação é mais fácil</Text>
-
-          <PrimaryButton onPress={() => router.push('/register')} label="Registrar" />
-
-          <Pressable
-            onPress={() => console.log('Entrar')}
-            style={({ pressed }) => [
-              styles.buttonSecondary,
-              pressed && styles.buttonHoverSecondary,
-            ]}
-          >
-            {({ pressed }) => (
-              <Text
-                style={[styles.buttonTextSecondary, pressed && styles.buttonTextSecondaryHover]}
-              >
-                Entrar
-              </Text>
-            )}
-          </Pressable>
-        </View>
-      </View>
-    </ImageBackground>
-  );
-}
-
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   imageBackground: {
     flex: 1,
     width: '100%',
     height: '100%',
-    resizeMode: 'cover',
     position: 'absolute',
     backgroundColor: '#ffffff',
   },

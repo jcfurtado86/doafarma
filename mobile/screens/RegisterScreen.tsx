@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouter } from 'expo-router';
 import { View, Text, Pressable, StyleSheet, Image, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import PrimaryButton from '../components/PrimaryButton';
+import PrimaryButton from '@/components/PrimaryButton';
 
 export default function RegisterScreen() {
   const router = useRouter();

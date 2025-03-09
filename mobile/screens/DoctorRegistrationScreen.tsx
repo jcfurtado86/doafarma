@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { Input } from '../components/Input';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import PrimaryButton from '../components/PrimaryButton';
+import { Input } from '@/components/Input';
+import PrimaryButton from '@/components/PrimaryButton';
 
 export default function DoctorRegistrationScreen() {
   const router = useRouter();

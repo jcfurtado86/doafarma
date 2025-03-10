@@ -5,9 +5,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { Input } from '@/components/Input';
 import PrimaryButton from '@/components/PrimaryButton';
 import { styles } from './styles';
+import { useForm } from 'react-hook-form';
 
 export default function DoctorRegistrationScreen() {
   const router = useRouter();
+  const { control } = useForm();
 
   return (
     <View style={styles.container}>
@@ -26,6 +28,7 @@ export default function DoctorRegistrationScreen() {
         <Input
           formProps={{
             name: 'doctorName',
+            control: control,
           }}
           inputProps={{
             onChangeText: (text) => {

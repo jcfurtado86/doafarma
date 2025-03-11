@@ -1,9 +1,11 @@
 import React from 'react';
 import { useRouter } from 'expo-router';
-import { View, Text, Pressable, Image, ImageBackground } from 'react-native';
+import { View, Pressable, Image, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import PrimaryButton from '@/components/PrimaryButton';
 import { styles } from './styles';
+import { Title } from '@/components/Title';
+import { Caption } from '@/components/Caption';
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -22,8 +24,8 @@ export default function RegisterScreen() {
 
       <View style={styles.container}>
         <View style={styles.textContainer}>
-          <Text style={styles.title}>Crie sua Conta</Text>
-          <Text style={styles.subtitle}>Nos diga se você é um paciente ou um médico</Text>
+          <Title>Crie sua Conta</Title>
+          <Caption>Nos diga se você é um paciente ou um médico</Caption>
         </View>
 
         <View style={styles.imageContainer}>

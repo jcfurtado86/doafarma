@@ -1,4 +1,5 @@
 import { Colors } from '@/constants/Colors';
+import { fontFamily } from '@/constants/styles/font-family';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -22,11 +23,8 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  logo: {
-    width: '80%',
-    height: undefined,
-    resizeMode: 'contain',
-    marginTop: 250,
+  actionContainer: {
+    gap: 20,
   },
 
   textContainer: {
@@ -34,31 +32,16 @@ export const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
 
-  title: {
-    fontSize: 24,
-    fontWeight: '500',
-  },
-
-  caption: {
-    color: '#AFB2BF',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 20,
+  buttonContainer: {
     textAlign: 'left',
+    justifyContent: 'flex-end',
   },
 
-  buttonPrimary: {
-    backgroundColor: Colors.yellow_green_400,
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 16,
-    height: 56,
-    width: '100%',
-    alignItems: 'center',
-  },
-
-  buttonHoverPrimary: {
-    backgroundColor: Colors.yellow_green_500,
+  logo: {
+    width: '80%',
+    height: undefined,
+    resizeMode: 'contain',
+    marginTop: 250,
   },
 
   buttonSecondary: {
@@ -76,16 +59,10 @@ export const styles = StyleSheet.create({
     backgroundColor: Colors.yellow_green_200,
   },
 
-  buttonTextPrimary: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-
   buttonTextSecondary: {
     color: Colors.yellow_green_400,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: fontFamily.bold,
     lineHeight: 56,
   },
 

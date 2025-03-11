@@ -31,18 +31,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
 
-  title: {
-    fontSize: 24,
-    fontWeight: '500',
-    marginBottom: 10,
-  },
-
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 10,
-  },
-
   imageContainer: {
     alignItems: 'center',
   },

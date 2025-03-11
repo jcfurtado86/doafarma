@@ -16,19 +16,6 @@ export const styles = StyleSheet.create({
     paddingBottom: 50,
   },
 
-  title: {
-    fontSize: 24,
-    fontWeight: '500',
-  },
-
-  caption: {
-    color: '#AFB2BF',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'left',
-  },
-
   inputContainer: {
     justifyContent: 'space-between',
   },

@@ -1,11 +1,13 @@
 import React from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Input } from '@/components/Input';
 import PrimaryButton from '@/components/PrimaryButton';
 import { styles } from './styles';
 import { useForm } from 'react-hook-form';
+import { Title } from '@/components/Title';
+import { Caption } from '@/components/Caption';
 
 export default function DoctorRegistrationScreen() {
   const router = useRouter();
@@ -21,8 +23,8 @@ export default function DoctorRegistrationScreen() {
       </Pressable>
 
       <View style={styles.textContainer}>
-        <Text style={styles.title}>Olá doutor!</Text>
-        <Text style={styles.caption}>Preencha seus dados pessoais</Text>
+        <Title>Olá doutor!</Title>
+        <Caption>Preencha seus dados pessoais</Caption>
       </View>
       <View style={styles.inputContainer}>
         <Input

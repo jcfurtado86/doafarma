@@ -20,6 +20,18 @@ export const styles = StyleSheet.create({
     gap: 16,
   },
 
+  inputRow1: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between',
+  },
+
+  inputRow2: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between',
+  },
+
   buttonContainer: {
     marginTop: 'auto',
     alignItems: 'center',

@@ -36,6 +36,43 @@ export default function DoctorRegistrationScreen() {
             onChangeText: (text) => {
               console.log(text);
             },
+            placeholder: 'Nome Completo',
+          }}
+        />
+        <Input
+          formProps={{
+            name: 'doctorName',
+            control: control,
+          }}
+          inputProps={{
+            onChangeText: (text) => {
+              console.log(text);
+            },
+            placeholder: 'CRM',
+          }}
+        />
+        <Input
+          formProps={{
+            name: 'doctorName',
+            control: control,
+          }}
+          inputProps={{
+            onChangeText: (text) => {
+              console.log(text);
+            },
+            placeholder: 'Telefone',
+          }}
+        />
+        <Input
+          formProps={{
+            name: 'doctorName',
+            control: control,
+          }}
+          inputProps={{
+            onChangeText: (text) => {
+              console.log(text);
+            },
+            placeholder: 'Email',
           }}
         />
       </View>

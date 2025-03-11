@@ -38,17 +38,18 @@ export const styles = StyleSheet.create({
   },
 
   logo: {
-    width: '80%',
-    height: undefined,
+    width: 165,
+    height: 165,
+    marginTop: 120,
+    alignItems: 'center',
     resizeMode: 'contain',
-    marginTop: 250,
   },
 
   buttonSecondary: {
     backgroundColor: Colors.yellow_green_100,
-    paddingHorizontal: 16,
+    //paddingHorizontal: 16,
     borderRadius: 10,
-    marginBottom: 16,
+    marginBottom: 1,
     height: 56,
     width: '100%',
     alignItems: 'center',

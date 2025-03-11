@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-between',
+    //justifyContent: 'space-between',
     paddingBottom: 30,
     padding: 20,
     backgroundColor: '#ffffff',
@@ -11,19 +11,20 @@ export const styles = StyleSheet.create({
 
   textContainer: {
     textAlign: 'left',
-    //justifyContent: 'space-between',
     marginTop: 80,
     paddingBottom: 50,
   },
 
   inputContainer: {
     justifyContent: 'space-between',
+    gap: 16,
   },
 
   buttonContainer: {
+    marginTop: 'auto',
     alignItems: 'center',
-    justifyContent: 'flex-end',
   },
+
   backButton: {
     position: 'absolute',
     top: 20,

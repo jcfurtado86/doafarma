@@ -135,7 +135,7 @@ export default function DoctorRegistrationScreen() {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <PrimaryButton onPress={() => console.log('Próximo')} label="Próximo" />
+        <PrimaryButton onPress={() => router.push('/register/doctor-address')} label="Próximo" />
       </View>
     </View>
   );

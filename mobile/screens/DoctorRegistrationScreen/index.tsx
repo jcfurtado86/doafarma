@@ -43,7 +43,7 @@ export default function DoctorRegistrationScreen() {
         <View style={styles.inputRow1}>
           <Input
             formProps={{
-              name: 'doctorName',
+              name: 'crm',
               control: control,
             }}
             inputProps={{
@@ -56,7 +56,7 @@ export default function DoctorRegistrationScreen() {
           />
           <Input
             formProps={{
-              name: 'doctorName',
+              name: 'crm_uf',
               control: control,
             }}
             inputProps={{
@@ -71,7 +71,7 @@ export default function DoctorRegistrationScreen() {
         <View style={styles.inputRow2}>
           <Input
             formProps={{
-              name: 'doctorName',
+              name: 'ddd',
               control: control,
             }}
             inputProps={{
@@ -84,7 +84,7 @@ export default function DoctorRegistrationScreen() {
           />
           <Input
             formProps={{
-              name: 'doctorName',
+              name: 'phone_number',
               control: control,
             }}
             inputProps={{
@@ -99,7 +99,7 @@ export default function DoctorRegistrationScreen() {
 
         <Input
           formProps={{
-            name: 'doctorName',
+            name: 'email',
             control: control,
           }}
           inputProps={{
@@ -111,7 +111,7 @@ export default function DoctorRegistrationScreen() {
         />
         <Input
           formProps={{
-            name: 'doctorName',
+            name: 'password',
             control: control,
           }}
           inputProps={{
@@ -123,7 +123,7 @@ export default function DoctorRegistrationScreen() {
         />
         <Input
           formProps={{
-            name: 'doctorName',
+            name: 'password_confirmation',
             control: control,
           }}
           inputProps={{

@@ -12,7 +12,7 @@ export function Input({ formProps, inputProps }: InputProps) {
     <Controller
       render={() => (
         <View style={styles.group}>
-          <TextInput style={styles.control} {...inputProps} />
+          <TextInput style={styles.input} {...inputProps} />
         </View>
       )}
       {...formProps}

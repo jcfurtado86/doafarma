@@ -11,7 +11,7 @@ export default function InitialScreen() {
 
   return (
     <ImageBackground
-      source={require('@/assets/images/img-fundo.svg')}
+      source={require('@/assets/images/img-fundo.png')}
       style={styles.imageBackground}
       resizeMode="cover"
     >

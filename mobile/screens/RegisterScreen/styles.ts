@@ -36,11 +36,11 @@ export const styles = StyleSheet.create({
   },
 
   image: {
-    width: 230,
-    height: 230,
+    width: 220,
+    height: 220,
     resizeMode: 'contain',
     marginBottom: 16,
-    marginTop: 32,
+    marginTop: 10,
     alignItems: 'center',
   },
 

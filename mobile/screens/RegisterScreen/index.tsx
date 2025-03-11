@@ -12,7 +12,7 @@ export default function RegisterScreen() {
 
   return (
     <ImageBackground
-      source={require('@/assets/images/img-fundo2.svg')}
+      source={require('@/assets/images/img-fundo2.png')}
       style={styles.imageBackground}
     >
       <Pressable

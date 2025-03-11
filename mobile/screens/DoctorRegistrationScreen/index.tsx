@@ -39,30 +39,64 @@ export default function DoctorRegistrationScreen() {
             placeholder: 'Nome Completo',
           }}
         />
-        <Input
-          formProps={{
-            name: 'doctorName',
-            control: control,
-          }}
-          inputProps={{
-            onChangeText: (text) => {
-              console.log(text);
-            },
-            placeholder: 'CRM',
-          }}
-        />
-        <Input
-          formProps={{
-            name: 'doctorName',
-            control: control,
-          }}
-          inputProps={{
-            onChangeText: (text) => {
-              console.log(text);
-            },
-            placeholder: 'Telefone',
-          }}
-        />
+
+        <View style={styles.inputRow1}>
+          <Input
+            formProps={{
+              name: 'doctorName',
+              control: control,
+            }}
+            inputProps={{
+              onChangeText: (text) => {
+                console.log(text);
+              },
+              placeholder: 'CRM',
+            }}
+            style={{ flex: 2, marginRight: 8 }}
+          />
+          <Input
+            formProps={{
+              name: 'doctorName',
+              control: control,
+            }}
+            inputProps={{
+              onChangeText: (text) => {
+                console.log(text);
+              },
+              placeholder: 'UF',
+            }}
+            style={{ flex: 1 }}
+          />
+        </View>
+        <View style={styles.inputRow2}>
+          <Input
+            formProps={{
+              name: 'doctorName',
+              control: control,
+            }}
+            inputProps={{
+              onChangeText: (text) => {
+                console.log(text);
+              },
+              placeholder: 'DDD',
+            }}
+            style={{ flex: 1, marginRight: 8 }}
+          />
+          <Input
+            formProps={{
+              name: 'doctorName',
+              control: control,
+            }}
+            inputProps={{
+              onChangeText: (text) => {
+                console.log(text);
+              },
+              placeholder: 'Telefone',
+            }}
+            style={{ flex: 3 }}
+          />
+        </View>
+
         <Input
           formProps={{
             name: 'doctorName',
@@ -73,6 +107,30 @@ export default function DoctorRegistrationScreen() {
               console.log(text);
             },
             placeholder: 'Email',
+          }}
+        />
+        <Input
+          formProps={{
+            name: 'doctorName',
+            control: control,
+          }}
+          inputProps={{
+            onChangeText: (text) => {
+              console.log(text);
+            },
+            placeholder: 'Senha',
+          }}
+        />
+        <Input
+          formProps={{
+            name: 'doctorName',
+            control: control,
+          }}
+          inputProps={{
+            onChangeText: (text) => {
+              console.log(text);
+            },
+            placeholder: 'Confirmar Senha',
           }}
         />
       </View>

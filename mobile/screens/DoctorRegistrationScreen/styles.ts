@@ -3,7 +3,6 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //justifyContent: 'space-between',
     paddingBottom: 30,
     padding: 20,
     backgroundColor: '#ffffff',
@@ -17,7 +16,20 @@ export const styles = StyleSheet.create({
 
   inputContainer: {
     justifyContent: 'space-between',
+    width: '100%',
     gap: 16,
+  },
+
+  inputRow1: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between',
+  },
+
+  inputRow2: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between',
   },
 
   buttonContainer: {

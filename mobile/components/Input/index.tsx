@@ -13,10 +13,12 @@ const Input = forwardRef<TextInput, InputProps>(({ formProps, inputProps, style 
   const [isFocused, setIsFocused] = useState(false);
   return (
     <Controller
-      render={() => (
+      render={({ field }) => (
         <TextInput
           ref={ref}
           style={[styles.input, isFocused && styles.inputFocused, style]}
+          value={field.value}
+          onChangeText={field.onChange}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           {...inputProps}

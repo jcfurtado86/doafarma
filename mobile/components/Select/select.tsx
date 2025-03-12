@@ -15,13 +15,10 @@ interface SelectProps {
 
 const Select = forwardRef<Picker<string | number>, SelectProps>(
   ({ formProps, selectProps, children, styleView, styleSelect, nextRef }, ref) => {
-    const [selectedValue, setSelectedValue] = useState<string | number | undefined>(
-      selectProps.selectedValue || undefined
-    );
     const [isFocused, setIsFocused] = useState(false);
     return (
       <Controller
-        render={() => (
+        render={({ field }) => (
           <View
             style={[styles.selectContainer, isFocused && styles.selectContainerFocused, styleView]}
           >
@@ -31,19 +28,19 @@ const Select = forwardRef<Picker<string | number>, SelectProps>(
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
               onValueChange={(itemValue) => {
-                setSelectedValue(itemValue);
+                field.onChange(itemValue);
 
                 if (nextRef && itemValue) {
                   nextRef.current?.focus();
                 }
               }}
-              selectedValue={selectedValue}
+              selectedValue={field.value}
               {...selectProps}
             >
               <Picker.Item
                 label={selectProps.placeholder}
                 value=""
-                color={selectedValue ? undefined : '#AFB2BF'}
+                color={selectProps.selectedValue ? undefined : '#AFB2BF'}
                 enabled={!isFocused}
               />
               {children}

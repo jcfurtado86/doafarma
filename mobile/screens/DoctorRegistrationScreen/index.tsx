@@ -14,7 +14,11 @@ import { Picker } from '@react-native-picker/picker';
 
 export default function DoctorRegistrationScreen() {
   const router = useRouter();
-  const { control } = useForm();
+  const { control, handleSubmit } = useForm();
+
+  function handleNextStep(data: any) {
+    console.log(data);
+  }
 
   const crmRef = useRef<TextInput>(null);
   const crmUf = useRef<Picker<string | number>>(null);
@@ -44,9 +48,6 @@ export default function DoctorRegistrationScreen() {
             control: control,
           }}
           inputProps={{
-            onChangeText: (text) => {
-              console.log(text);
-            },
             onSubmitEditing: () => crmRef.current?.focus(),
             returnKeyType: 'next',
             placeholder: 'Nome Completo',
@@ -61,9 +62,6 @@ export default function DoctorRegistrationScreen() {
               control: control,
             }}
             inputProps={{
-              onChangeText: (text) => {
-                console.log(text);
-              },
               onSubmitEditing: () => crmUf.current?.focus(),
               returnKeyType: 'next',
               placeholder: 'CRM',
@@ -97,9 +95,6 @@ export default function DoctorRegistrationScreen() {
               control: control,
             }}
             inputProps={{
-              onChangeText: (text) => {
-                console.log(text);
-              },
               placeholder: 'DDD',
               onSubmitEditing: () => phoneRef.current?.focus(),
               returnKeyType: 'next',
@@ -113,9 +108,6 @@ export default function DoctorRegistrationScreen() {
               control: control,
             }}
             inputProps={{
-              onChangeText: (text) => {
-                console.log(text);
-              },
               placeholder: 'Telefone',
               onSubmitEditing: () => emailRef.current?.focus(),
               returnKeyType: 'next',
@@ -131,9 +123,6 @@ export default function DoctorRegistrationScreen() {
             control: control,
           }}
           inputProps={{
-            onChangeText: (text) => {
-              console.log(text);
-            },
             placeholder: 'Email',
             onSubmitEditing: () => passwordRef.current?.focus(),
             returnKeyType: 'next',
@@ -146,9 +135,6 @@ export default function DoctorRegistrationScreen() {
             control: control,
           }}
           inputProps={{
-            onChangeText: (text) => {
-              console.log(text);
-            },
             placeholder: 'Senha',
             secureTextEntry: true,
             onSubmitEditing: () => passwordConfirmationRef.current?.focus(),
@@ -162,20 +148,15 @@ export default function DoctorRegistrationScreen() {
             control: control,
           }}
           inputProps={{
-            onChangeText: (text) => {
-              console.log(text);
-            },
             placeholder: 'Confirmar Senha',
             secureTextEntry: true,
-            onSubmitEditing: () => {
-              // Handle form submission or focus next input
-            },
+            onSubmitEditing: () => handleSubmit(handleNextStep)(),
             returnKeyType: 'done',
           }}
         />
       </View>
       <View style={styles.buttonContainer}>
-        <PrimaryButton onPress={() => router.push('/register/doctoraddress')} label="Próximo" />
+        <PrimaryButton onPress={() => handleSubmit(handleNextStep)()} label="Próximo" />
       </View>
     </View>
   );

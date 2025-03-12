@@ -10,7 +10,7 @@ interface SelectProps {
   children: React.ReactNode;
   styleView?: StyleProp<ViewStyle>;
   styleSelect?: StyleProp<TextStyle>;
-  nextRef?: React.RefObject<TextInput>;
+  nextRef?: React.RefObject<TextInput | Picker<string | number>>;
 }
 
 const Select = forwardRef<Picker<string | number>, SelectProps>(

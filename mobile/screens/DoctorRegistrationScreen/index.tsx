@@ -8,6 +8,7 @@ import { styles } from './styles';
 import { useForm } from 'react-hook-form';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
+import { InputRow } from '@/components/InputRow';
 
 export default function DoctorRegistrationScreen() {
   const router = useRouter();
@@ -40,7 +41,7 @@ export default function DoctorRegistrationScreen() {
           }}
         />
 
-        <View style={styles.inputRow1}>
+        <InputRow>
           <Input
             formProps={{
               name: 'crm',
@@ -52,7 +53,7 @@ export default function DoctorRegistrationScreen() {
               },
               placeholder: 'CRM',
             }}
-            style={{ flex: 2, marginRight: 8 }}
+            style={{ flex: 2 }}
           />
           <Input
             formProps={{
@@ -67,8 +68,8 @@ export default function DoctorRegistrationScreen() {
             }}
             style={{ flex: 1 }}
           />
-        </View>
-        <View style={styles.inputRow2}>
+        </InputRow>
+        <InputRow>
           <Input
             formProps={{
               name: 'ddd',
@@ -80,7 +81,7 @@ export default function DoctorRegistrationScreen() {
               },
               placeholder: 'DDD',
             }}
-            style={{ flex: 1, marginRight: 8 }}
+            style={{ flex: 1 }}
           />
           <Input
             formProps={{
@@ -95,7 +96,7 @@ export default function DoctorRegistrationScreen() {
             }}
             style={{ flex: 3 }}
           />
-        </View>
+        </InputRow>
 
         <Input
           formProps={{

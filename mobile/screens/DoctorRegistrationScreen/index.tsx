@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Pressable } from 'react-native';
+import React, { useRef } from 'react';
+import { View, Pressable, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Input } from '@/components/Input';
@@ -14,6 +14,8 @@ import { Select, SelectItem } from '@/components/Select';
 export default function DoctorRegistrationScreen() {
   const router = useRouter();
   const { control } = useForm();
+
+  const crmRef = useRef<TextInput>(null);
 
   return (
     <View style={styles.container}>
@@ -38,12 +40,15 @@ export default function DoctorRegistrationScreen() {
             onChangeText: (text) => {
               console.log(text);
             },
+            onSubmitEditing: () => crmRef.current?.focus(),
+            returnKeyType: 'next',
             placeholder: 'Nome Completo',
           }}
         />
 
         <InputRow>
           <Input
+            ref={crmRef}
             formProps={{
               name: 'crm',
               control: control,

@@ -1,7 +1,7 @@
 import { TextInput, TextInputProps, StyleProp, TextStyle } from 'react-native';
 import { styles } from './styles';
 import { Controller, UseControllerProps } from 'react-hook-form';
-import { useState } from 'react';
+import { forwardRef, useState } from 'react';
 
 interface InputProps {
   formProps: UseControllerProps;
@@ -9,12 +9,13 @@ interface InputProps {
   style?: StyleProp<TextStyle>;
 }
 
-export function Input({ formProps, inputProps, style }: InputProps) {
+const Input = forwardRef<TextInput, InputProps>(({ formProps, inputProps, style }, ref) => {
   const [isFocused, setIsFocused] = useState(false);
   return (
     <Controller
       render={() => (
         <TextInput
+          ref={ref}
           style={[styles.input, isFocused && styles.inputFocused, style]}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
@@ -24,4 +25,8 @@ export function Input({ formProps, inputProps, style }: InputProps) {
       {...formProps}
     />
   );
-}
+});
+
+Input.displayName = 'Input';
+
+export { Input };

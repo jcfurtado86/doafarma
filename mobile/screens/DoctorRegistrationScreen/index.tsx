@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import { InputRow } from '@/components/InputRow';
+import { Select, SelectItem } from '@/components/Select';
 
 export default function DoctorRegistrationScreen() {
   const router = useRouter();
@@ -55,19 +56,22 @@ export default function DoctorRegistrationScreen() {
             }}
             style={{ flex: 2 }}
           />
-          <Input
+          <Select
             formProps={{
               name: 'crm_uf',
               control: control,
             }}
-            inputProps={{
-              onChangeText: (text) => {
-                console.log(text);
-              },
+            selectProps={{
               placeholder: 'UF',
             }}
-            style={{ flex: 1 }}
-          />
+            styleView={{ flex: 1 }}
+          >
+            <SelectItem label="AC" value="AC" />
+            <SelectItem label="AL" value="AL" />
+            <SelectItem label="AP" value="AP" />
+            <SelectItem label="AM" value="AM" />
+            <SelectItem label="BA" value="BA" />
+          </Select>
         </InputRow>
         <InputRow>
           <Input

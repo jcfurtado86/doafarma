@@ -6,10 +6,22 @@ export const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#ffffff',
   },
+
   textContainer: {
     textAlign: 'left',
     marginTop: 80,
     paddingBottom: 50,
+  },
+
+  inputContainer: {
+    justifyContent: 'space-between',
+    width: '100%',
+    gap: 16,
+  },
+
+  buttonContainer: {
+    marginTop: 'auto',
+    alignItems: 'center',
   },
   backButton: {
     position: 'absolute',

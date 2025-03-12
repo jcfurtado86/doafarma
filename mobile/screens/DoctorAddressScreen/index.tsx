@@ -22,7 +22,7 @@ export default function DoctorRegistrationScreen() {
       </Pressable>
 
       <View style={styles.textContainer}>
-        <Title>Onde podemos te encontra?!</Title>
+        <Title>Onde podemos te encontrar?</Title>
         <Caption>Você pode adicionar o endereço do seu consultório ou clínica!</Caption>
       </View>
 

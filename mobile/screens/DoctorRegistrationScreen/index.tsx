@@ -10,12 +10,19 @@ import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import { InputRow } from '@/components/InputRow';
 import { Select, SelectItem } from '@/components/Select';
+import { Picker } from '@react-native-picker/picker';
 
 export default function DoctorRegistrationScreen() {
   const router = useRouter();
   const { control } = useForm();
 
   const crmRef = useRef<TextInput>(null);
+  const crmUf = useRef<Picker<string | number>>(null);
+  const dddRef = useRef<TextInput>(null);
+  const phoneRef = useRef<TextInput>(null);
+  const emailRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
+  const passwordConfirmationRef = useRef<TextInput>(null);
 
   return (
     <View style={styles.container}>
@@ -57,11 +64,14 @@ export default function DoctorRegistrationScreen() {
               onChangeText: (text) => {
                 console.log(text);
               },
+              onSubmitEditing: () => crmUf.current?.focus(),
+              returnKeyType: 'next',
               placeholder: 'CRM',
             }}
             style={{ flex: 2 }}
           />
           <Select
+            ref={crmUf}
             formProps={{
               name: 'crm_uf',
               control: control,
@@ -70,6 +80,7 @@ export default function DoctorRegistrationScreen() {
               placeholder: 'UF',
             }}
             styleView={{ flex: 1 }}
+            nextRef={dddRef}
           >
             <SelectItem label="AC" value="AC" />
             <SelectItem label="AL" value="AL" />
@@ -80,6 +91,7 @@ export default function DoctorRegistrationScreen() {
         </InputRow>
         <InputRow>
           <Input
+            ref={dddRef}
             formProps={{
               name: 'ddd',
               control: control,
@@ -89,10 +101,13 @@ export default function DoctorRegistrationScreen() {
                 console.log(text);
               },
               placeholder: 'DDD',
+              onSubmitEditing: () => phoneRef.current?.focus(),
+              returnKeyType: 'next',
             }}
             style={{ flex: 1 }}
           />
           <Input
+            ref={phoneRef}
             formProps={{
               name: 'phone_number',
               control: control,
@@ -102,12 +117,15 @@ export default function DoctorRegistrationScreen() {
                 console.log(text);
               },
               placeholder: 'Telefone',
+              onSubmitEditing: () => emailRef.current?.focus(),
+              returnKeyType: 'next',
             }}
             style={{ flex: 3 }}
           />
         </InputRow>
 
         <Input
+          ref={emailRef}
           formProps={{
             name: 'email',
             control: control,
@@ -117,9 +135,12 @@ export default function DoctorRegistrationScreen() {
               console.log(text);
             },
             placeholder: 'Email',
+            onSubmitEditing: () => passwordRef.current?.focus(),
+            returnKeyType: 'next',
           }}
         />
         <Input
+          ref={passwordRef}
           formProps={{
             name: 'password',
             control: control,
@@ -129,9 +150,13 @@ export default function DoctorRegistrationScreen() {
               console.log(text);
             },
             placeholder: 'Senha',
+            secureTextEntry: true,
+            onSubmitEditing: () => passwordConfirmationRef.current?.focus(),
+            returnKeyType: 'next',
           }}
         />
         <Input
+          ref={passwordConfirmationRef}
           formProps={{
             name: 'password_confirmation',
             control: control,
@@ -141,6 +166,11 @@ export default function DoctorRegistrationScreen() {
               console.log(text);
             },
             placeholder: 'Confirmar Senha',
+            secureTextEntry: true,
+            onSubmitEditing: () => {
+              // Handle form submission or focus next input
+            },
+            returnKeyType: 'done',
           }}
         />
       </View>

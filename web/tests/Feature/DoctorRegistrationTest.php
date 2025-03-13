@@ -18,6 +18,7 @@ it('should be able to register a doctor', function (): void {
         'crm_uf'                => 'SP', // UF do CRM
         'password'              => 'password',
         'password_confirmation' => 'password',
+        'device_name'           => 'Test Device',
         'addresses'             => [
             [
                 'location_name' => 'Clínica X',
@@ -57,6 +58,72 @@ it('should be able to register a doctor', function (): void {
     assertDatabaseCount('addresses', 1);
 });
 
+it('should return a valid token upon successful registration', function (): void {
+    $response = postJson(route('doctor.register'), [
+        'name'                  => 'John Doe',
+        'email'                 => 'test@example.com',
+        'phone_number'          => '(96) 98765-4321',
+        'crm'                   => '123456',
+        'crm_uf'                => 'SP',
+        'password'              => 'password',
+        'password_confirmation' => 'password',
+        'device_name'           => 'Test Device',
+        'addresses'             => [
+            [
+                'location_name' => 'Clínica X',
+                'full_address'  => 'Rua A, 123, Bairro B, Cidade C, Estado D',
+                'complement'    => 'Sala 1',
+                'cep'           => '12345-678',
+            ],
+        ],
+        'terms_accepted' => true,
+    ]);
+
+    $response->assertCreated();
+    $response->assertJsonStructure(['user', 'token']);
+
+    $token = $response->json('token');
+    expect($token)->not->toBeEmpty();
+
+    // Verify the token was created in the database
+    $user = User::whereEmail('test@example.com')->first();
+    expect($user->tokens)->toHaveCount(1);
+});
+
+it('should return the correct user data upon successful registration', function (): void {
+    $response = postJson(route('doctor.register'), [
+        'name'                  => 'John Doe',
+        'email'                 => 'test@example.com',
+        'phone_number'          => '(96) 98765-4321',
+        'crm'                   => '123456',
+        'crm_uf'                => 'SP',
+        'password'              => 'password',
+        'password_confirmation' => 'password',
+        'device_name'           => 'Test Device',
+        'addresses'             => [
+            [
+                'location_name' => 'Clínica X',
+                'full_address'  => 'Rua A, 123, Bairro B, Cidade C, Estado D',
+                'complement'    => 'Sala 1',
+                'cep'           => '12345-678',
+            ],
+        ],
+        'terms_accepted' => true,
+    ]);
+
+    $response->assertCreated();
+
+    $userData = $response->json('user');
+
+    expect($userData)
+        ->toHaveKey('id')
+        ->toHaveKey('name', 'John Doe')
+        ->toHaveKey('email', 'test@example.com')
+        ->toHaveKey('phone_number', '96987654321')
+        ->toHaveKey('terms_accepted', 1)
+        ->toHaveKey('terms_accepted_at');
+});
+
 it('should ensure that there is a relationship between the user and their doctor profile', function (): void {
     postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
@@ -66,6 +133,7 @@ it('should ensure that there is a relationship between the user and their doctor
         'crm_uf'                => 'SP',
         'password'              => 'password',
         'password_confirmation' => 'password',
+        'device_name'           => 'Test Device',
         'addresses'             => [
             [
                 'location_name' => 'Clínica X',
@@ -96,6 +164,7 @@ it('should ensure that there is a relationship between the user and their addres
         'crm_uf'                => 'SP',
         'password'              => 'password',
         'password_confirmation' => 'password',
+        'device_name'           => 'Test Device',
         'addresses'             => [
             [
                 'location_name' => 'Clínica X',
@@ -125,6 +194,7 @@ it('should be able to register without a complement and with multiple addresses'
         'crm_uf'                => 'SP',
         'password'              => 'password',
         'password_confirmation' => 'password',
+        'device_name'           => 'Test Device',
         'addresses'             => [
             [
                 'location_name' => 'Clínica X',
@@ -162,6 +232,7 @@ it('should validate required fields', function (): void {
             'crm',
             'crm_uf',
             'password',
+            'device_name',
             'addresses',
             'terms_accepted',
         ]);
@@ -194,6 +265,7 @@ it('should validate email format', function (): void {
         'crm_uf'                => 'SP',
         'password'              => 'password',
         'password_confirmation' => 'password',
+        'device_name'           => 'Test Device',
         'addresses'             => [
             [
                 'location_name' => 'Clínica X',
@@ -223,6 +295,7 @@ it('should validate unique email', function (): void {
         'crm_uf'                => 'SP',
         'password'              => 'password',
         'password_confirmation' => 'password',
+        'device_name'           => 'Test Device',
         'addresses'             => [
             [
                 'location_name' => 'Clínica X',
@@ -248,6 +321,7 @@ it('should validate phone number format', function (): void {
         'crm_uf'                => 'SP',
         'password'              => 'password',
         'password_confirmation' => 'password',
+        'device_name'           => 'Test Device',
         'addresses'             => [
             [
                 'location_name' => 'Clínica X',
@@ -298,6 +372,7 @@ it('should validate addresses array format', function (): void {
         'crm_uf'                => 'SP',
         'password'              => 'password',
         'password_confirmation' => 'password',
+        'device_name'           => 'Test Device',
         'addresses'             => 'not-an-array',
         'terms_accepted'        => true,
     ])
@@ -316,6 +391,7 @@ it('should validate required address fields', function (): void {
         'crm_uf'                => 'SP',
         'password'              => 'password',
         'password_confirmation' => 'password',
+        'device_name'           => 'Test Device',
         'addresses'             => [[]],
         'terms_accepted'        => true,
     ])
@@ -338,6 +414,7 @@ it('should validate CEP format', function (): void {
         'crm_uf'                => 'SP',
         'password'              => 'password',
         'password_confirmation' => 'password',
+        'device_name'           => 'Test Device',
         'addresses'             => [
             [
                 'location_name' => 'Clínica X',
@@ -363,6 +440,7 @@ it('should validate CRM format and length', function (): void {
         'crm_uf'                => 'SP',
         'password'              => 'password',
         'password_confirmation' => 'password',
+        'device_name'           => 'Test Device',
         'addresses'             => [
             [
                 'location_name' => 'Clínica X',
@@ -384,6 +462,7 @@ it('should validate CRM format and length', function (): void {
         'crm_uf'                => 'SP',
         'password'              => 'password',
         'password_confirmation' => 'password',
+        'device_name'           => 'Test Device',
         'addresses'             => [
             [
                 'location_name' => 'Clínica X',
@@ -409,6 +488,7 @@ it('should validate CRM UF is valid state', function (): void {
         'crm_uf'                => 'XX', // Invalid state
         'password'              => 'password',
         'password_confirmation' => 'password',
+        'device_name'           => 'Test Device',
         'addresses'             => [
             [
                 'location_name' => 'Clínica X',
@@ -434,6 +514,7 @@ it('should validate terms_accepted is true', function (): void {
         'crm_uf'                => 'SP',
         'password'              => 'password',
         'password_confirmation' => 'password',
+        'device_name'           => 'Test Device',
         'addresses'             => [
             [
                 'location_name' => 'Clínica X',
@@ -459,6 +540,7 @@ it('should validate address has valid location name length', function (): void {
         'crm_uf'                => 'SP',
         'password'              => 'password',
         'password_confirmation' => 'password',
+        'device_name'           => 'Test Device',
         'addresses'             => [
             [
                 'location_name' => str_repeat('a', 256), // Too long
@@ -484,6 +566,7 @@ it('should validate full_address is not empty', function (): void {
         'crm_uf'                => 'SP',
         'password'              => 'password',
         'password_confirmation' => 'password',
+        'device_name'           => 'Test Device',
         'addresses'             => [
             [
                 'location_name' => 'Clínica X',
@@ -511,6 +594,7 @@ it('should not allow duplicate CRM numbers', function (): void {
         'crm_uf'                => 'SP',
         'password'              => 'password',
         'password_confirmation' => 'password',
+        'device_name'           => 'Test Device',
         'addresses'             => [
             [
                 'location_name' => 'Clínica X',

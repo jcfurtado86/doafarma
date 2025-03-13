@@ -7,8 +7,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\DoctorRegistrationRequest;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -35,10 +33,11 @@ class DoctorRegistrationController extends Controller
 
         $user->addresses()->createMany($request->addresses);
 
-        event(new Registered($user));
+        $token = $user->createToken($request->device_name)->plainTextToken;
 
-        Auth::login($user);
-
-        return response()->noContent(Response::HTTP_CREATED);
+        return response()->json([
+            'user'  => $user,
+            'token' => $token,
+        ], Response::HTTP_CREATED);
     }
 }

@@ -18,6 +18,8 @@ export default function DoctorRegistrationScreen() {
 
   function handleNextStep(data: any) {
     console.log(data);
+
+    router.push('/register/doctoraddress');
   }
 
   const crmRef = useRef<TextInput>(null);

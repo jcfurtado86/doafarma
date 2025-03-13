@@ -13,7 +13,12 @@ import { Select, SelectItem } from '@/components/Select';
 import { Picker } from '@react-native-picker/picker';
 export default function DoctorRegistrationScreen() {
   const router = useRouter();
-  const { control } = useForm();
+  const { control, handleSubmit } = useForm();
+
+  const handleFinishRegistration = (data: any) => {
+    console.log(data);
+    //router.push('/dashboard');
+  };
 
   const cepRef = useRef<TextInput>(null);
   const ufRef = useRef<Picker<string | number>>(null);
@@ -44,9 +49,6 @@ export default function DoctorRegistrationScreen() {
             control: control,
           }}
           inputProps={{
-            onChangeText: (text) => {
-              console.log(text);
-            },
             onSubmitEditing: () => cepRef.current?.focus(),
             returnKeyType: 'next',
             placeholder: 'Nome do consultório ou clinica',
@@ -59,9 +61,6 @@ export default function DoctorRegistrationScreen() {
             control: control,
           }}
           inputProps={{
-            onChangeText: (text) => {
-              console.log(text);
-            },
             onSubmitEditing: () => ufRef.current?.focus(),
             returnKeyType: 'next',
             placeholder: 'CEP',
@@ -110,9 +109,6 @@ export default function DoctorRegistrationScreen() {
             control: control,
           }}
           inputProps={{
-            onChangeText: (text) => {
-              console.log(text);
-            },
             onSubmitEditing: () => streetRef.current?.focus(),
             returnKeyType: 'next',
             placeholder: 'Bairro',
@@ -126,9 +122,6 @@ export default function DoctorRegistrationScreen() {
               control: control,
             }}
             inputProps={{
-              onChangeText: (text) => {
-                console.log(text);
-              },
               onSubmitEditing: () => numberRef.current?.focus(),
               returnKeyType: 'next',
               placeholder: 'Rua ou Avenida',
@@ -142,9 +135,6 @@ export default function DoctorRegistrationScreen() {
               control: control,
             }}
             inputProps={{
-              onChangeText: (text) => {
-                console.log(text);
-              },
               onSubmitEditing: () => complementRef.current?.focus(),
               returnKeyType: 'next',
               keyboardType: 'numeric',
@@ -160,19 +150,14 @@ export default function DoctorRegistrationScreen() {
             control: control,
           }}
           inputProps={{
-            onChangeText: (text) => {
-              console.log(text);
-            },
-            onSubmitEditing: () => {
-              // Handle submit or focus next input
-            },
+            onSubmitEditing: () => handleSubmit(handleFinishRegistration)(),
             returnKeyType: 'done',
             placeholder: 'Complemento',
           }}
         />
       </View>
       <View style={styles.buttonContainer}>
-        <PrimaryButton onPress={() => router.push('/register/doctoraddress')} label="Próximo" />
+        <PrimaryButton onPress={() => handleSubmit(handleFinishRegistration)()} label="Próximo" />
       </View>
     </View>
   );

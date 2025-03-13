@@ -11,14 +11,18 @@ import { Caption } from '@/components/Caption';
 import { InputRow } from '@/components/InputRow';
 import { Select, SelectItem } from '@/components/Select';
 import { Picker } from '@react-native-picker/picker';
+import {
+  DoctorRegistrationFormData,
+  useDoctorRegistrationFormStore,
+} from '@/stores/doctorRegistrationFormStore';
 
 export default function DoctorRegistrationScreen() {
   const router = useRouter();
-  const { control, handleSubmit } = useForm();
+  const { updateDoctorRegistrationFormData } = useDoctorRegistrationFormStore();
+  const { control, handleSubmit } = useForm<DoctorRegistrationFormData>();
 
-  function handleNextStep(data: any) {
-    console.log(data);
-
+  function handleNextStep(data: DoctorRegistrationFormData) {
+    updateDoctorRegistrationFormData(data);
     router.push('/register/doctoraddress');
   }
 
@@ -46,7 +50,7 @@ export default function DoctorRegistrationScreen() {
       <View style={styles.inputContainer}>
         <Input
           formProps={{
-            name: 'doctorName',
+            name: 'name',
             control: control,
           }}
           inputProps={{

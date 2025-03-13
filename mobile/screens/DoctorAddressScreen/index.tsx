@@ -11,12 +11,17 @@ import { Caption } from '@/components/Caption';
 import { InputRow } from '@/components/InputRow';
 import { Select, SelectItem } from '@/components/Select';
 import { Picker } from '@react-native-picker/picker';
+import {
+  DoctorRegistrationFormData,
+  useDoctorRegistrationFormStore,
+} from '@/stores/doctorRegistrationFormStore';
 export default function DoctorRegistrationScreen() {
   const router = useRouter();
-  const { control, handleSubmit } = useForm();
+  const { updateDoctorRegistrationFormData } = useDoctorRegistrationFormStore();
+  const { control, handleSubmit } = useForm<DoctorRegistrationFormData>();
 
-  const handleFinishRegistration = (data: any) => {
-    console.log(data);
+  const handleFinishRegistration = (data: DoctorRegistrationFormData) => {
+    updateDoctorRegistrationFormData(data);
     //router.push('/dashboard');
   };
 
@@ -45,7 +50,7 @@ export default function DoctorRegistrationScreen() {
       <View style={styles.inputContainer}>
         <Input
           formProps={{
-            name: 'Addresses',
+            name: 'addresses[0].name',
             control: control,
           }}
           inputProps={{
@@ -57,7 +62,7 @@ export default function DoctorRegistrationScreen() {
         <Input
           ref={cepRef}
           formProps={{
-            name: 'cep',
+            name: 'addresses[0].cep',
             control: control,
           }}
           inputProps={{
@@ -70,7 +75,7 @@ export default function DoctorRegistrationScreen() {
           <Select
             ref={ufRef}
             formProps={{
-              name: 'uf',
+              name: 'addresses[0].uf',
               control: control,
             }}
             selectProps={{
@@ -88,7 +93,7 @@ export default function DoctorRegistrationScreen() {
           <Select
             ref={cityRef}
             formProps={{
-              name: 'city',
+              name: 'addresses[0].city',
               control: control,
             }}
             selectProps={{
@@ -105,7 +110,7 @@ export default function DoctorRegistrationScreen() {
         <Input
           ref={neighborhoodRef}
           formProps={{
-            name: 'neighborhood',
+            name: 'addresses[0].neighborhood',
             control: control,
           }}
           inputProps={{
@@ -118,7 +123,7 @@ export default function DoctorRegistrationScreen() {
           <Input
             ref={streetRef}
             formProps={{
-              name: 'full_address',
+              name: 'addresses[0].full_address',
               control: control,
             }}
             inputProps={{
@@ -131,7 +136,7 @@ export default function DoctorRegistrationScreen() {
           <Input
             ref={numberRef}
             formProps={{
-              name: 'Number',
+              name: 'addresses[0].Number',
               control: control,
             }}
             inputProps={{
@@ -146,7 +151,7 @@ export default function DoctorRegistrationScreen() {
         <Input
           ref={complementRef}
           formProps={{
-            name: 'Complement',
+            name: 'addresses[0].Complement',
             control: control,
           }}
           inputProps={{

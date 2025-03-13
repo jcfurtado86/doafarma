@@ -17,11 +17,20 @@ import {
 } from '@/stores/doctorRegistrationFormStore';
 export default function DoctorRegistrationScreen() {
   const router = useRouter();
-  const { updateDoctorRegistrationFormData } = useDoctorRegistrationFormStore();
+  const { updateDoctorRegistrationFormData, submitDoctorRegistrationForm } =
+    useDoctorRegistrationFormStore();
   const { control, handleSubmit } = useForm<DoctorRegistrationFormData>();
 
-  const handleFinishRegistration = (data: DoctorRegistrationFormData) => {
+  const handleFinishRegistration = async (data: DoctorRegistrationFormData) => {
     updateDoctorRegistrationFormData(data);
+
+    const success = await submitDoctorRegistrationForm();
+
+    if (success) {
+      console.log('Registration successful');
+    } else {
+      console.log('Registration failed');
+    }
     //router.push('/dashboard');
   };
 

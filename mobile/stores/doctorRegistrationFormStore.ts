@@ -1,3 +1,4 @@
+import { doctorService } from '@/services/doctorService';
 import { create } from 'zustand';
 
 export interface DoctorRegistrationFormData {
@@ -26,10 +27,13 @@ export interface DoctorRegistrationFormData {
 
 interface DoctorRegistrationFormStore {
   doctorRegistrationFormData: DoctorRegistrationFormData;
+  isLoading: boolean;
+  error: string | null;
   updateDoctorRegistrationFormData: (data: Partial<DoctorRegistrationFormData>) => void;
+  submitDoctorRegistrationForm: () => Promise<boolean>;
 }
 
-export const useDoctorRegistrationFormStore = create<DoctorRegistrationFormStore>((set) => ({
+export const useDoctorRegistrationFormStore = create<DoctorRegistrationFormStore>((set, get) => ({
   doctorRegistrationFormData: {
     name: '',
     crm: '',
@@ -41,6 +45,8 @@ export const useDoctorRegistrationFormStore = create<DoctorRegistrationFormStore
     password_confirmation: '',
     addresses: [],
   },
+  isLoading: false,
+  error: null,
   updateDoctorRegistrationFormData: (data) =>
     set((state) => ({
       doctorRegistrationFormData: {
@@ -48,4 +54,18 @@ export const useDoctorRegistrationFormStore = create<DoctorRegistrationFormStore
         ...data,
       },
     })),
+  submitDoctorRegistrationForm: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      await doctorService.register(get().doctorRegistrationFormData);
+      set({ isLoading: false });
+      return true;
+    } catch (error) {
+      set({
+        isLoading: false,
+        error: error instanceof Error ? error.message : 'Erro ao cadastrar médico',
+      });
+      return false;
+    }
+  },
 }));

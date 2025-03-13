@@ -16,7 +16,7 @@ export interface DoctorRegistrationFormData {
 
   // final step
   addresses?: {
-    name?: string;
+    location_name?: string;
     cep?: string;
     uf?: string;
     city?: string;
@@ -25,6 +25,7 @@ export interface DoctorRegistrationFormData {
     number?: string;
     complement?: string;
   }[];
+  terms_accepted?: boolean;
 }
 
 interface DoctorRegistrationFormStore {
@@ -47,6 +48,7 @@ export const useDoctorRegistrationFormStore = create<DoctorRegistrationFormStore
     password_confirmation: '',
     device_name: '',
     addresses: [],
+    terms_accepted: true,
   },
   isLoading: false,
   error: null,
@@ -61,6 +63,26 @@ export const useDoctorRegistrationFormStore = create<DoctorRegistrationFormStore
     set({ isLoading: true, error: null });
     try {
       const formData = { ...get().doctorRegistrationFormData };
+
+      if (formData.ddd && formData.phone_number) {
+        formData.phone_number = `${formData.ddd}${formData.phone_number}`;
+        delete formData.ddd;
+      }
+
+      if (
+        formData.addresses &&
+        formData.addresses[0].full_address &&
+        formData.addresses[0].number &&
+        formData.addresses[0].neighborhood &&
+        formData.addresses[0].city &&
+        formData.addresses[0].uf
+      ) {
+        formData.addresses[0].full_address = `${formData.addresses[0].full_address}, ${formData.addresses[0].number} - ${formData.addresses[0].neighborhood}, ${formData.addresses[0].city} - ${formData.addresses[0].uf}`;
+        delete formData.addresses[0].number;
+        delete formData.addresses[0].neighborhood;
+        delete formData.addresses[0].city;
+        delete formData.addresses[0].uf;
+      }
 
       formData.device_name = await getDeviceName();
 

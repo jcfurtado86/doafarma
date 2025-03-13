@@ -59,7 +59,7 @@ export default function DoctorRegistrationScreen() {
       <View style={styles.inputContainer}>
         <Input
           formProps={{
-            name: 'addresses[0].name',
+            name: 'addresses[0].location_name',
             control: control,
           }}
           inputProps={{
@@ -145,7 +145,7 @@ export default function DoctorRegistrationScreen() {
           <Input
             ref={numberRef}
             formProps={{
-              name: 'addresses[0].Number',
+              name: 'addresses[0].number',
               control: control,
             }}
             inputProps={{
@@ -160,7 +160,7 @@ export default function DoctorRegistrationScreen() {
         <Input
           ref={complementRef}
           formProps={{
-            name: 'addresses[0].Complement',
+            name: 'addresses[0].complement',
             control: control,
           }}
           inputProps={{

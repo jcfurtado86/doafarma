@@ -1,5 +1,6 @@
 import { doctorService } from '@/services/doctorService';
 import { create } from 'zustand';
+import * as Device from 'expo-device';
 
 export interface DoctorRegistrationFormData {
   // first step
@@ -11,6 +12,7 @@ export interface DoctorRegistrationFormData {
   email?: string;
   password?: string;
   password_confirmation?: string;
+  device_name?: string;
 
   // final step
   addresses?: {
@@ -43,6 +45,7 @@ export const useDoctorRegistrationFormStore = create<DoctorRegistrationFormStore
     email: '',
     password: '',
     password_confirmation: '',
+    device_name: '',
     addresses: [],
   },
   isLoading: false,
@@ -57,7 +60,11 @@ export const useDoctorRegistrationFormStore = create<DoctorRegistrationFormStore
   submitDoctorRegistrationForm: async () => {
     set({ isLoading: true, error: null });
     try {
-      await doctorService.register(get().doctorRegistrationFormData);
+      const formData = { ...get().doctorRegistrationFormData };
+
+      formData.device_name = await getDeviceName();
+
+      await doctorService.register(formData);
       set({ isLoading: false });
       return true;
     } catch (error) {
@@ -69,3 +76,15 @@ export const useDoctorRegistrationFormStore = create<DoctorRegistrationFormStore
     }
   },
 }));
+
+async function getDeviceName(): Promise<string> {
+  try {
+    const deviceName =
+      Device.deviceName || `${Device.brand || ''} ${Device.modelName || ''}`.trim();
+
+    return deviceName || 'Dispositivo Desconhecido';
+  } catch (error) {
+    console.warn('Erro ao obter nome do dispositivo:', error);
+    return 'Mobile App';
+  }
+}

@@ -11,14 +11,14 @@ export const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    justifyContent: 'space-between',
-    marginTop: 50,
-    paddingBottom: 80,
-    padding: 20,
+    justifyContent: 'flex-end',
+    paddingBottom: 32,
+    paddingHorizontal: 20,
   },
 
   imageContainer: {
     alignItems: 'center',
+    marginBottom: 160,
   },
 
   actionContainer: {
@@ -33,12 +33,12 @@ export const styles = StyleSheet.create({
   buttonContainer: {
     textAlign: 'left',
     justifyContent: 'flex-end',
+    gap: 16,
   },
 
   logo: {
     width: 165,
     height: 165,
-    marginTop: 120,
     alignItems: 'center',
     resizeMode: 'contain',
   },

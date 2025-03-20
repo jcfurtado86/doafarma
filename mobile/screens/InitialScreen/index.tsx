@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text, Pressable, Image, ImageBackground } from 'react-native';
+import { View, Image, ImageBackground } from 'react-native';
 import { useRouter } from 'expo-router';
 import PrimaryButton from '@/components/PrimaryButton';
 import { styles } from './styles';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
+import SecondaryButton from '@/components/SecondaryButton';
 
 export default function InitialScreen() {
   const router = useRouter();
@@ -27,21 +28,7 @@ export default function InitialScreen() {
           </View>
           <View style={styles.buttonContainer}>
             <PrimaryButton onPress={() => router.push('/register')} label="Registrar" />
-            <Pressable
-              onPress={() => console.log('Entrar')}
-              style={({ pressed }) => [
-                styles.buttonSecondary,
-                pressed && styles.buttonHoverSecondary,
-              ]}
-            >
-              {({ pressed }) => (
-                <Text
-                  style={[styles.buttonTextSecondary, pressed && styles.buttonTextSecondaryHover]}
-                >
-                  Entrar
-                </Text>
-              )}
-            </Pressable>
+            <SecondaryButton label="Entrar" onPress={() => console.log('Entrar')} />
           </View>
         </View>
       </View>

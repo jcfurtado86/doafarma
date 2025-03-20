@@ -1,11 +1,9 @@
 import React from 'react';
-import { Stack } from 'expo-router';
-import InitialScreen from '@/screens/InitialScreen';
+import { InitialScreen } from '@/screens/InitialScreen';
 
 export default function Home() {
   return (
     <>
-      <Stack.Screen options={{ headerShown: false }} />
       <InitialScreen />
     </>
   );

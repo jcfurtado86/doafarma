@@ -3,8 +3,8 @@ import { fontFamily } from '@/constants/styles/font-family';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-  buttonPrimary: {
-    backgroundColor: Colors.yellow_green_400,
+  buttonSecondary: {
+    backgroundColor: Colors.yellow_green_100,
     paddingHorizontal: 16,
     borderRadius: 10,
     height: 56,
@@ -13,15 +13,18 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  buttonHover: {
-    backgroundColor: Colors.yellow_green_500,
+  buttonHoverSecondary: {
+    backgroundColor: Colors.yellow_green_200,
   },
 
-  buttonText: {
-    color: '#fff',
+  buttonTextSecondary: {
+    color: Colors.yellow_green_400,
     fontSize: 16,
-    fontWeight: 'bold',
     fontFamily: fontFamily.bold,
     lineHeight: 56,
+  },
+
+  buttonTextSecondaryHover: {
+    color: Colors.yellow_green_500,
   },
 });

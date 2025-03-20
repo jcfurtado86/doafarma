@@ -1,7 +1,6 @@
 import React, { useRef } from 'react';
-import { View, Pressable, TextInput } from 'react-native';
+import { View, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import { Input } from '@/components/Input';
 import PrimaryButton from '@/components/PrimaryButton';
 import { styles } from './styles';
@@ -15,7 +14,8 @@ import {
   DoctorRegistrationFormData,
   useDoctorRegistrationFormStore,
 } from '@/stores/doctorRegistrationFormStore';
-export default function DoctorRegistrationScreen() {
+import ArrowBackButton from '@/components/ArrowBackButton';
+export function DoctorAddressScreen() {
   const router = useRouter();
   const { updateDoctorRegistrationFormData, submitDoctorRegistrationForm } =
     useDoctorRegistrationFormStore();
@@ -44,12 +44,7 @@ export default function DoctorRegistrationScreen() {
 
   return (
     <View style={styles.container}>
-      <Pressable
-        style={({ pressed }) => [styles.backButton, pressed ? styles.backButtonPressed : null]}
-        onPress={() => router.push('/register/doctor')}
-      >
-        <Ionicons name="arrow-back" size={28} color="#A4C457" />
-      </Pressable>
+      <ArrowBackButton style={{ marginTop: 56 }} onPress={() => router.push('/register/doctor')} />
 
       <View style={styles.textContainer}>
         <Title>Onde podemos te encontrar?</Title>

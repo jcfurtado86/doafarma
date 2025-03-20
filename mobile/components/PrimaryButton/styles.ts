@@ -1,11 +1,12 @@
+import { Colors } from '@/constants/Colors';
+import { fontFamily } from '@/constants/styles/font-family';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   buttonPrimary: {
-    backgroundColor: '#A4C457',
+    backgroundColor: Colors.yellow_green_400,
     paddingHorizontal: 16,
     borderRadius: 10,
-    marginBottom: 16,
     height: 56,
     width: '100%',
     alignItems: 'center',
@@ -13,14 +14,14 @@ export const styles = StyleSheet.create({
   },
 
   buttonHover: {
-    backgroundColor: '#8FA743',
+    backgroundColor: Colors.yellow_green_500,
   },
 
   buttonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
-    textAlign: 'center',
+    fontFamily: fontFamily.bold,
     lineHeight: 56,
   },
 });

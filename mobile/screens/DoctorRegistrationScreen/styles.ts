@@ -24,15 +24,4 @@ export const styles = StyleSheet.create({
     marginTop: 'auto',
     alignItems: 'center',
   },
-
-  backButton: {
-    position: 'absolute',
-    top: 20,
-    left: 10,
-    zIndex: 10,
-    padding: 10,
-  },
-  backButtonPressed: {
-    opacity: 0.7,
-  },
 });

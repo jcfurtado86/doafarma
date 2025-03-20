@@ -12,18 +12,9 @@ export const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    justifyContent: 'space-between',
-    marginTop: 50,
-    paddingBottom: 50,
-    padding: 20,
-  },
-
-  backButton: {
-    position: 'absolute',
-    top: 20,
-    left: 10,
-    zIndex: 10,
-    padding: 10,
+    gap: 32,
+    marginTop: 28,
+    paddingHorizontal: 20,
   },
 
   textContainer: {
@@ -31,20 +22,20 @@ export const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
 
+  choiceContainer: {
+    alignItems: 'center',
+    gap: 32,
+  },
+
   imageContainer: {
+    width: '100%',
     alignItems: 'center',
   },
 
   image: {
-    width: 220,
-    height: 220,
+    height: 209,
     resizeMode: 'contain',
     marginBottom: 16,
-    marginTop: 10,
     alignItems: 'center',
-  },
-
-  backButtonPressed: {
-    opacity: 0.7,
   },
 });

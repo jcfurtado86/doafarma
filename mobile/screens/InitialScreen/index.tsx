@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, ImageBackground } from 'react-native';
+import { View, Image, ImageBackground, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import PrimaryButton from '@/components/PrimaryButton';
 import { styles } from './styles';
@@ -25,6 +25,7 @@ export function InitialScreen() {
           <View style={styles.textContainer}>
             <Title>Bem vindo ao DoaFarma!</Title>
             <Caption>Aqui sua doação é mais fácil</Caption>
+            <Text>API Host: {process.env.EXPO_PUBLIC_API_HOST}</Text>
           </View>
           <View style={styles.buttonContainer}>
             <PrimaryButton onPress={() => router.push('/register')} label="Registrar" />

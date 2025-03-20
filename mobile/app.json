@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "doafarma",
+    "name": "Doafarma",
     "slug": "doafarma",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -20,7 +20,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.kauemagalhaes.doafarma"
     },
     "web": {
       "bundler": "metro",
@@ -33,6 +34,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "65356ff8-69a8-4da3-a31c-801ef63120e5"
+      }
     }
   }
 }

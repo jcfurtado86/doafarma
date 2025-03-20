@@ -20,6 +20,7 @@ export const styles = StyleSheet.create({
   textContainer: {
     textAlign: 'left',
     justifyContent: 'flex-start',
+    gap: 4,
   },
 
   choiceContainer: {
@@ -32,8 +33,15 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  image: {
-    height: 209,
+  patientImage: {
+    height: 213,
+    resizeMode: 'contain',
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+
+  doctorImage: {
+    height: 204,
     resizeMode: 'contain',
     marginBottom: 16,
     alignItems: 'center',

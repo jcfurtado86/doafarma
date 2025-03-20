@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'flex-end',
-    paddingBottom: 32,
+    paddingBottom: 52,
     paddingHorizontal: 20,
   },
 

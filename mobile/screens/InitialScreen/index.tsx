@@ -7,7 +7,7 @@ import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import SecondaryButton from '@/components/SecondaryButton';
 
-export default function InitialScreen() {
+export function InitialScreen() {
   const router = useRouter();
 
   return (

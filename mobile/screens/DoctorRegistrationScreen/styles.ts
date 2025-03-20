@@ -3,15 +3,15 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 30,
-    padding: 20,
+    paddingHorizontal: 20,
     backgroundColor: '#ffffff',
   },
 
   textContainer: {
     textAlign: 'left',
-    marginTop: 80,
-    paddingBottom: 50,
+    marginTop: 28,
+    marginBottom: 24,
+    gap: 4,
   },
 
   inputContainer: {
@@ -23,5 +23,6 @@ export const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: 'auto',
     alignItems: 'center',
+    marginBottom: 52,
   },
 });

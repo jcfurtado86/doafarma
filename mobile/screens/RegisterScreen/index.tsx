@@ -7,7 +7,7 @@ import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import ArrowBackButton from '@/components/ArrowBackButton';
 
-export default function RegisterScreen() {
+export function RegisterScreen() {
   const router = useRouter();
 
   return (
@@ -15,7 +15,7 @@ export default function RegisterScreen() {
       source={require('@/assets/images/img-fundo2.png')}
       style={styles.imageBackground}
     >
-      <ArrowBackButton style={{ marginTop: 28, marginLeft: 20 }} onPress={() => router.push('/')} />
+      <ArrowBackButton style={{ marginTop: 56, marginLeft: 20 }} onPress={() => router.push('/')} />
       <View style={styles.container}>
         <View style={styles.textContainer}>
           <Title>Crie sua Conta</Title>
@@ -24,12 +24,12 @@ export default function RegisterScreen() {
 
         <View style={styles.choiceContainer}>
           <View style={styles.imageContainer}>
-            <Image source={require('@/assets/images/Paciente.png')} style={styles.image} />
+            <Image source={require('@/assets/images/Paciente.png')} style={styles.patientImage} />
             <PrimaryButton onPress={() => console.log('Paciente')} label="Paciente" />
           </View>
 
           <View style={styles.imageContainer}>
-            <Image source={require('@/assets/images/Medico.png')} style={styles.image} />
+            <Image source={require('@/assets/images/Medico.png')} style={styles.doctorImage} />
             <PrimaryButton onPress={() => router.push('/register/doctor')} label="Médico" />
           </View>
         </View>

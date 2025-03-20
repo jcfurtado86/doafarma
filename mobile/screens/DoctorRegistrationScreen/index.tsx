@@ -16,7 +16,7 @@ import {
 } from '@/stores/doctorRegistrationFormStore';
 import ArrowBackButton from '@/components/ArrowBackButton';
 
-export default function DoctorRegistrationScreen() {
+export function DoctorRegistrationScreen() {
   const router = useRouter();
   const { updateDoctorRegistrationFormData } = useDoctorRegistrationFormStore();
   const { control, handleSubmit } = useForm<DoctorRegistrationFormData>();
@@ -36,10 +36,7 @@ export default function DoctorRegistrationScreen() {
 
   return (
     <View style={styles.container}>
-      <ArrowBackButton
-        style={{ marginTop: 28, marginLeft: 20 }}
-        onPress={() => router.push('/register')}
-      />
+      <ArrowBackButton style={{ marginTop: 56 }} onPress={() => router.push('/register')} />
 
       <View style={styles.textContainer}>
         <Title>Olá doutor!</Title>

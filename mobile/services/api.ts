@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
 
-const HOST_IP = process.env.EXPO_PUBLIC_HOST_IP || '192.168.0.1';
+const HOST_IP = process.env.EXPO_PUBLIC_HOST_IP || '192.168.0.1'; // Substitua pelo IP correto do seu servidor
 
 const getBaseUrl = () => {
   const baseUrl =

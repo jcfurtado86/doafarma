@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
-import Constants from 'expo-constants';
 
-const HOST_IP = Constants.expoConfig?.extra?.hostIp || '192.168.1.71'; // Fallback para desenvolvimento
+const HOST_IP = process.env.EXPO_PUBLIC_HOST_IP || '192.168.0.1';
 
 const getBaseUrl = () => {
   const baseUrl =

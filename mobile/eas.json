@@ -9,7 +9,7 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_HOST_IP": "192.168.1.71"
+        "EXPO_PUBLIC_API_HOST": "192.168.1.71"
       }
     },
     "preview": {
@@ -19,7 +19,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_HOST_IP": "192.168.1.71"
+        "EXPO_PUBLIC_API_HOST": "192.168.1.71"
       }
     },
     "production": {
@@ -29,7 +29,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_HOST_IP": "https://doafarma-api.onrender.com"
+        "EXPO_PUBLIC_API_HOST": "https://doafarma-api.onrender.com"
       }
     },
     "store": {

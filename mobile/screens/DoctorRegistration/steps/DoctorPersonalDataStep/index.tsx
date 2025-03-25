@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
 import { View, TextInput } from 'react-native';
-import { useRouter } from 'expo-router';
 import { Input } from '@/components/Input';
 import PrimaryButton from '@/components/PrimaryButton';
 import { styles } from './styles';
@@ -10,20 +9,17 @@ import { Caption } from '@/components/Caption';
 import { InputRow } from '@/components/InputRow';
 import { Select, SelectItem } from '@/components/Select';
 import { Picker } from '@react-native-picker/picker';
-import {
-  DoctorRegistrationFormData,
-  useDoctorRegistrationFormStore,
-} from '@/stores/doctorRegistrationFormStore';
-import ArrowBackButton from '@/components/ArrowBackButton';
+import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
 
-export function DoctorRegistrationScreen() {
-  const router = useRouter();
-  const { updateDoctorRegistrationFormData } = useDoctorRegistrationFormStore();
+interface DoctorPersonalDataStepProps {
+  onSubmit: (data: DoctorRegistrationFormData) => void;
+}
+
+export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps) {
   const { control, handleSubmit } = useForm<DoctorRegistrationFormData>();
 
   function handleNextStep(data: DoctorRegistrationFormData) {
-    updateDoctorRegistrationFormData(data);
-    router.push('/register/doctoraddress');
+    onSubmit(data);
   }
 
   const crmRef = useRef<TextInput>(null);
@@ -35,9 +31,7 @@ export function DoctorRegistrationScreen() {
   const passwordConfirmationRef = useRef<TextInput>(null);
 
   return (
-    <View style={styles.container}>
-      <ArrowBackButton style={{ marginTop: 56 }} onPress={() => router.push('/register')} />
-
+    <>
       <View style={styles.textContainer}>
         <Title>Olá doutor!</Title>
         <Caption>Preencha seus dados pessoais</Caption>
@@ -159,6 +153,6 @@ export function DoctorRegistrationScreen() {
       <View style={styles.buttonContainer}>
         <PrimaryButton onPress={() => handleSubmit(handleNextStep)()} label="Próximo" />
       </View>
-    </View>
+    </>
   );
 }

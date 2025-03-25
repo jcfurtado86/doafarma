@@ -30,7 +30,7 @@ export function RegisterScreen() {
 
           <View style={styles.imageContainer}>
             <Image source={require('@/assets/images/Medico.png')} style={styles.doctorImage} />
-            <PrimaryButton onPress={() => router.push('/register/doctor')} label="Médico" />
+            <PrimaryButton onPress={() => router.push('/register/doctor?step=1')} label="Médico" />
           </View>
         </View>
       </View>

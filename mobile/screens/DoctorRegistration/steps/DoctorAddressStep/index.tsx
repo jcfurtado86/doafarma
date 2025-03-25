@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
 import { View, TextInput } from 'react-native';
-import { useRouter } from 'expo-router';
 import { Input } from '@/components/Input';
 import PrimaryButton from '@/components/PrimaryButton';
 import { styles } from './styles';
@@ -10,29 +9,18 @@ import { Caption } from '@/components/Caption';
 import { InputRow } from '@/components/InputRow';
 import { Select, SelectItem } from '@/components/Select';
 import { Picker } from '@react-native-picker/picker';
-import {
-  DoctorRegistrationFormData,
-  useDoctorRegistrationFormStore,
-} from '@/stores/doctorRegistrationFormStore';
-import ArrowBackButton from '@/components/ArrowBackButton';
-export function DoctorAddressScreen() {
-  const router = useRouter();
-  const { updateDoctorRegistrationFormData, submitDoctorRegistrationForm } =
-    useDoctorRegistrationFormStore();
+import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
+
+interface DoctorAddressStepProps {
+  onSubmit: (data: DoctorRegistrationFormData) => Promise<void>;
+}
+
+export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
   const { control, handleSubmit } = useForm<DoctorRegistrationFormData>();
 
-  const handleFinishRegistration = async (data: DoctorRegistrationFormData) => {
-    updateDoctorRegistrationFormData(data);
-
-    const success = await submitDoctorRegistrationForm();
-
-    if (success) {
-      console.log('Registration successful');
-    } else {
-      console.log('Registration failed');
-    }
-    //router.push('/dashboard');
-  };
+  async function handleFinishRegistration(data: DoctorRegistrationFormData) {
+    await onSubmit(data);
+  }
 
   const cepRef = useRef<TextInput>(null);
   const ufRef = useRef<Picker<string | number>>(null);
@@ -43,9 +31,7 @@ export function DoctorAddressScreen() {
   const complementRef = useRef<TextInput>(null);
 
   return (
-    <View style={styles.container}>
-      <ArrowBackButton style={{ marginTop: 56 }} onPress={() => router.push('/register/doctor')} />
-
+    <>
       <View style={styles.textContainer}>
         <Title>Onde podemos te encontrar?</Title>
         <Caption>Você pode adicionar o endereço do seu consultório ou clínica!</Caption>
@@ -168,6 +154,6 @@ export function DoctorAddressScreen() {
       <View style={styles.buttonContainer}>
         <PrimaryButton onPress={() => handleSubmit(handleFinishRegistration)()} label="Próximo" />
       </View>
-    </View>
+    </>
   );
 }

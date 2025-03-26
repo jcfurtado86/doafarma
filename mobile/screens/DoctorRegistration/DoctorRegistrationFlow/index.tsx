@@ -18,7 +18,7 @@ export function DoctorRegistrationFlow({ currentStep }: DoctorRegistrationFlowPr
   const { updateDoctorRegistrationFormData, submitDoctorRegistrationForm } =
     useDoctorRegistrationFormStore();
 
-  const handleNextStep = (data: DoctorRegistrationFormData) => {
+  const handleNextStep = (data: Partial<DoctorRegistrationFormData>) => {
     updateDoctorRegistrationFormData(data);
     router.push(`/register/doctor?step=${currentStep + 1}`);
   };
@@ -31,7 +31,7 @@ export function DoctorRegistrationFlow({ currentStep }: DoctorRegistrationFlowPr
     }
   };
 
-  const handleFinishRegistration = async (data: DoctorRegistrationFormData) => {
+  const handleFinishRegistration = async (data: Partial<DoctorRegistrationFormData>) => {
     updateDoctorRegistrationFormData(data);
     const success = await submitDoctorRegistrationForm();
 

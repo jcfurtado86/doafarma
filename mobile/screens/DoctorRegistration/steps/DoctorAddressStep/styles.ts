@@ -11,7 +11,6 @@ export const styles = StyleSheet.create({
   inputContainer: {
     justifyContent: 'space-between',
     width: '100%',
-    gap: 16,
   },
 
   buttonContainer: {

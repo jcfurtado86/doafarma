@@ -10,15 +10,58 @@ import { InputRow } from '@/components/InputRow';
 import { Select, SelectItem } from '@/components/Select';
 import { Picker } from '@react-native-picker/picker';
 import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 interface DoctorAddressStepProps {
-  onSubmit: (data: DoctorRegistrationFormData) => Promise<void>;
+  onSubmit: (data: Partial<DoctorRegistrationFormData>) => Promise<void>;
 }
 
-export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
-  const { control, handleSubmit } = useForm<DoctorRegistrationFormData>();
+const doctorAddressSchema = z.object({
+  addresses: z.array(
+    z.object({
+      location_name: z
+        .string({ required_error: 'Nome do consultório é obrigatório' })
+        .max(255, 'Nome do consultório não pode exceder 255 caracteres'),
+      cep: z
+        .string({ required_error: 'CEP é obrigatório' })
+        .length(8, 'CRM deve ter exatamente 8 dígitos'),
+      uf: z
+        .string({ required_error: 'UF é obrigatório' })
+        .max(255, 'UF não pode exceder 255 caracteres'),
+      city: z
+        .string({ required_error: 'Cidade é obrigatória' })
+        .max(255, 'Cidade não pode exceder 255 caracteres'),
+      neighborhood: z
+        .string({ required_error: 'Bairro é obrigatório' })
+        .max(255, 'Bairro não pode exceder 255 caracteres'),
+      full_address: z
+        .string({ required_error: 'Rua ou Avenida é obrigatória' })
+        .max(255, 'Rua ou Avenida não pode exceder 255 caracteres'),
+      number: z
+        .string({ required_error: 'Número é obrigatório' })
+        .max(255, 'Número não pode exceder 255 caracteres'),
+      complement: z
+        .string()
+        .optional()
+        .transform((val) => (val === '' ? undefined : val))
+        .pipe(z.string().max(255, 'Complemento não pode exceder 255 caracteres').optional()),
+    })
+  ),
+});
 
-  async function handleFinishRegistration(data: DoctorRegistrationFormData) {
+type DoctorAddressFormData = z.infer<typeof doctorAddressSchema>;
+
+export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<DoctorAddressFormData>({
+    resolver: zodResolver(doctorAddressSchema),
+  });
+
+  async function handleFinishRegistration(data: DoctorAddressFormData) {
     await onSubmit(data);
   }
 
@@ -48,6 +91,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             returnKeyType: 'next',
             placeholder: 'Nome do consultório ou clinica',
           }}
+          error={errors.addresses?.[0]?.location_name?.message}
         />
         <Input
           ref={cepRef}
@@ -60,6 +104,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             returnKeyType: 'next',
             placeholder: 'CEP',
           }}
+          error={errors.addresses?.[0]?.cep?.message}
         />
         <InputRow>
           <Select
@@ -71,7 +116,8 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             selectProps={{
               placeholder: 'Estado',
             }}
-            styleView={{ flex: 1 }}
+            error={errors.addresses?.[0]?.uf?.message}
+            containerStyle={{ flex: 1 }}
             nextRef={cityRef}
           >
             <SelectItem label="AC" value="AC" />
@@ -89,7 +135,8 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             selectProps={{
               placeholder: 'Cidade',
             }}
-            styleView={{ flex: 1 }}
+            error={errors.addresses?.[0]?.city?.message}
+            containerStyle={{ flex: 1 }}
             nextRef={neighborhoodRef}
           >
             <SelectItem label="Rio Branco" value="Rio Branco" />
@@ -108,6 +155,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             returnKeyType: 'next',
             placeholder: 'Bairro',
           }}
+          error={errors.addresses?.[0]?.neighborhood?.message}
         />
         <InputRow>
           <Input
@@ -121,7 +169,8 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
               returnKeyType: 'next',
               placeholder: 'Rua ou Avenida',
             }}
-            style={{ flex: 3 }}
+            error={errors.addresses?.[0]?.full_address?.message}
+            containerStyle={{ flex: 3 }}
           />
           <Input
             ref={numberRef}
@@ -135,7 +184,8 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
               keyboardType: 'numeric',
               placeholder: 'N°000',
             }}
-            style={{ flex: 1 }}
+            error={errors.addresses?.[0]?.number?.message}
+            containerStyle={{ flex: 1 }}
           />
         </InputRow>
         <Input
@@ -149,6 +199,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             returnKeyType: 'done',
             placeholder: 'Complemento',
           }}
+          error={errors.addresses?.[0]?.complement?.message}
         />
       </View>
       <View style={styles.buttonContainer}>

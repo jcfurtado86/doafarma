@@ -10,15 +10,58 @@ import { InputRow } from '@/components/InputRow';
 import { Select, SelectItem } from '@/components/Select';
 import { Picker } from '@react-native-picker/picker';
 import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
 interface DoctorPersonalDataStepProps {
-  onSubmit: (data: DoctorRegistrationFormData) => void;
+  onSubmit: (data: Partial<DoctorRegistrationFormData>) => void;
 }
 
-export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps) {
-  const { control, handleSubmit } = useForm<DoctorRegistrationFormData>();
+const doctorPersonalDataSchema = z
+  .object({
+    name: z
+      .string({ required_error: 'Nome é obrigatório' })
+      .max(255, 'Nome não pode ter mais de 255 caracteres'),
+    crm: z
+      .string({ required_error: 'CRM é obrigatório' })
+      .length(6, 'CRM deve ter exatamente 6 dígitos')
+      .regex(/^[0-9]{6}$/, 'CRM deve conter apenas 6 dígitos numéricos'),
+    crm_uf: z
+      .string({ required_error: 'UF é obrigatório' })
+      .length(2, 'UF deve ter exatamente 2 caracteres'),
+    ddd: z.string().nonempty('DDD é obrigatório').max(3, 'DDD não pode ter mais de 3 caracteres'),
+    phone_number: z
+      .string({ required_error: 'Telefone é obrigatório' })
+      .max(9, 'Telefone não pode ter mais de 9 caracteres'),
+    email: z
+      .string({ required_error: 'Email é obrigatório' })
+      .email('Email inválido')
+      .max(255, 'Email não pode ter mais de 255 caracteres'),
+    password: z
+      .string({ required_error: 'Senha é obrigatória' })
+      .min(8, 'Senha deve ter pelo menos 8 caracteres')
+      .max(255, 'Senha não pode ter mais de 255 caracteres'),
+    password_confirmation: z
+      .string({ required_error: 'Confirmação de senha é obrigatória' })
+      .max(255, 'Confirmação de senha não pode ter mais de 255 caracteres'),
+  })
+  .refine((data) => data.password === data.password_confirmation, {
+    message: 'As senhas não coincidem',
+    path: ['password_confirmation'],
+  });
 
-  function handleNextStep(data: DoctorRegistrationFormData) {
+type DoctorPersonalFormData = z.infer<typeof doctorPersonalDataSchema>;
+
+export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps) {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<DoctorPersonalFormData>({
+    resolver: zodResolver(doctorPersonalDataSchema),
+  });
+
+  function handleNextStep(data: DoctorPersonalFormData) {
     onSubmit(data);
   }
 
@@ -47,6 +90,7 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
             returnKeyType: 'next',
             placeholder: 'Nome Completo',
           }}
+          error={errors.name?.message}
         />
 
         <InputRow>
@@ -61,7 +105,8 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
               returnKeyType: 'next',
               placeholder: 'CRM',
             }}
-            style={{ flex: 2 }}
+            error={errors.crm?.message}
+            containerStyle={{ flex: 2 }}
           />
           <Select
             ref={crmUf}
@@ -72,7 +117,8 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
             selectProps={{
               placeholder: 'UF',
             }}
-            styleView={{ flex: 1 }}
+            error={errors.crm_uf?.message}
+            containerStyle={{ flex: 1 }}
             nextRef={dddRef}
           >
             <SelectItem label="AC" value="AC" />
@@ -93,8 +139,10 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
               placeholder: 'DDD',
               onSubmitEditing: () => phoneRef.current?.focus(),
               returnKeyType: 'next',
+              keyboardType: 'numeric',
             }}
-            style={{ flex: 1 }}
+            error={errors.ddd?.message}
+            containerStyle={{ flex: 1 }}
           />
           <Input
             ref={phoneRef}
@@ -107,7 +155,8 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
               onSubmitEditing: () => emailRef.current?.focus(),
               returnKeyType: 'next',
             }}
-            style={{ flex: 3 }}
+            error={errors.phone_number?.message}
+            containerStyle={{ flex: 3 }}
           />
         </InputRow>
 
@@ -122,6 +171,7 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
             onSubmitEditing: () => passwordRef.current?.focus(),
             returnKeyType: 'next',
           }}
+          error={errors.email?.message}
         />
         <Input
           ref={passwordRef}
@@ -135,6 +185,7 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
             onSubmitEditing: () => passwordConfirmationRef.current?.focus(),
             returnKeyType: 'next',
           }}
+          error={errors.password?.message}
         />
         <Input
           ref={passwordConfirmationRef}
@@ -148,6 +199,7 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
             onSubmitEditing: () => handleSubmit(handleNextStep)(),
             returnKeyType: 'done',
           }}
+          error={errors.password_confirmation?.message}
         />
       </View>
       <View style={styles.buttonContainer}>

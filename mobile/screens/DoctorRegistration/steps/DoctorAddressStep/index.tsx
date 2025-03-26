@@ -10,15 +10,40 @@ import { InputRow } from '@/components/InputRow';
 import { Select, SelectItem } from '@/components/Select';
 import { Picker } from '@react-native-picker/picker';
 import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 interface DoctorAddressStepProps {
-  onSubmit: (data: DoctorRegistrationFormData) => Promise<void>;
+  onSubmit: (data: Partial<DoctorRegistrationFormData>) => Promise<void>;
 }
 
-export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
-  const { control, handleSubmit } = useForm<DoctorRegistrationFormData>();
+const doctorAddressSchema = z.object({
+  addresses: z.array(
+    z.object({
+      location_name: z.string().min(1, 'Nome do consultório é obrigatório'),
+      cep: z.string().min(1, 'CEP é obrigatório'),
+      uf: z.string().min(1, 'UF é obrigatório'),
+      city: z.string().min(1, 'Cidade é obrigatória'),
+      neighborhood: z.string().min(1, 'Bairro é obrigatório'),
+      full_address: z.string().min(1, 'Rua ou Avenida é obrigatória'),
+      number: z.string().min(1, 'Número é obrigatório'),
+      complement: z.string().optional(),
+    })
+  ),
+});
 
-  async function handleFinishRegistration(data: DoctorRegistrationFormData) {
+type DoctorAddressFormData = z.infer<typeof doctorAddressSchema>;
+
+export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<DoctorAddressFormData>({
+    resolver: zodResolver(doctorAddressSchema),
+  });
+
+  async function handleFinishRegistration(data: DoctorAddressFormData) {
     await onSubmit(data);
   }
 

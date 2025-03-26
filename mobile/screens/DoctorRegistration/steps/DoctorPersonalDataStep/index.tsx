@@ -10,15 +10,41 @@ import { InputRow } from '@/components/InputRow';
 import { Select, SelectItem } from '@/components/Select';
 import { Picker } from '@react-native-picker/picker';
 import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
 interface DoctorPersonalDataStepProps {
-  onSubmit: (data: DoctorRegistrationFormData) => void;
+  onSubmit: (data: Partial<DoctorRegistrationFormData>) => void;
 }
 
-export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps) {
-  const { control, handleSubmit } = useForm<DoctorRegistrationFormData>();
+const doctorPersonalDataSchema = z
+  .object({
+    name: z.string().min(1, 'Nome é obrigatório'),
+    crm: z.string().min(1, 'CRM é obrigatório'),
+    crm_uf: z.string().min(1, 'UF é obrigatório'),
+    ddd: z.string().min(1, 'DDD é obrigatório'),
+    phone_number: z.string().min(1, 'Telefone é obrigatório'),
+    email: z.string().email('Email inválido').min(1, 'Email é obrigatório'),
+    password: z.string().min(6, 'Senha deve ter pelo menos 6 caracteres'),
+    password_confirmation: z.string().min(1, 'Confirmação de senha é obrigatória'),
+  })
+  .refine((data) => data.password === data.password_confirmation, {
+    message: 'As senhas não coincidem',
+    path: ['password_confirmation'],
+  });
 
-  function handleNextStep(data: DoctorRegistrationFormData) {
+type DoctorPersonalFormData = z.infer<typeof doctorPersonalDataSchema>;
+
+export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps) {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<DoctorPersonalFormData>({
+    resolver: zodResolver(doctorPersonalDataSchema),
+  });
+
+  function handleNextStep(data: DoctorPersonalFormData) {
     onSubmit(data);
   }
 

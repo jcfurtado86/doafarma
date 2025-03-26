@@ -99,6 +99,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
               placeholder: 'Estado',
             }}
             error={errors.addresses?.[0]?.uf?.message}
+            containerStyle={{ flex: 1 }}
             nextRef={cityRef}
           >
             <SelectItem label="AC" value="AC" />
@@ -117,6 +118,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
               placeholder: 'Cidade',
             }}
             error={errors.addresses?.[0]?.city?.message}
+            containerStyle={{ flex: 1 }}
             nextRef={neighborhoodRef}
           >
             <SelectItem label="Rio Branco" value="Rio Branco" />
@@ -150,6 +152,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
               placeholder: 'Rua ou Avenida',
             }}
             error={errors.addresses?.[0]?.full_address?.message}
+            containerStyle={{ flex: 3 }}
           />
           <Input
             ref={numberRef}
@@ -164,6 +167,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
               placeholder: 'N°000',
             }}
             error={errors.addresses?.[0]?.number?.message}
+            containerStyle={{ flex: 1 }}
           />
         </InputRow>
         <Input

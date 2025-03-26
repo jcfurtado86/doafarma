@@ -89,6 +89,7 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
               placeholder: 'CRM',
             }}
             error={errors.crm?.message}
+            containerStyle={{ flex: 2 }}
           />
           <Select
             ref={crmUf}
@@ -100,6 +101,7 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
               placeholder: 'UF',
             }}
             error={errors.crm_uf?.message}
+            containerStyle={{ flex: 1 }}
             nextRef={dddRef}
           >
             <SelectItem label="AC" value="AC" />
@@ -123,6 +125,7 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
               keyboardType: 'numeric',
             }}
             error={errors.ddd?.message}
+            containerStyle={{ flex: 1 }}
           />
           <Input
             ref={phoneRef}
@@ -136,6 +139,7 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
               returnKeyType: 'next',
             }}
             error={errors.phone_number?.message}
+            containerStyle={{ flex: 3 }}
           />
         </InputRow>
 

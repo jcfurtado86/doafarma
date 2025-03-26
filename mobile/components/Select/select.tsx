@@ -8,19 +8,38 @@ interface SelectProps<T extends FieldValues = FieldValues> {
   formProps: UseControllerProps<T>;
   selectProps: PickerProps;
   children: React.ReactNode;
-  styleView?: StyleProp<ViewStyle>;
-  styleSelect?: StyleProp<TextStyle>;
+  containerStyle?: StyleProp<ViewStyle>;
+  selectViewStyle?: StyleProp<ViewStyle>;
+  selectStyle?: StyleProp<TextStyle>;
   nextRef?: React.RefObject<TextInput | Picker<string | number>>;
   error?: string;
 }
 
 const Select = forwardRef<Picker<string | number>, SelectProps<any>>(
-  ({ formProps, selectProps, children, styleView, styleSelect, nextRef, error }, ref) => {
+  (
+    {
+      formProps,
+      selectProps,
+      children,
+      containerStyle,
+      selectViewStyle,
+      selectStyle,
+      nextRef,
+      error,
+    },
+    ref
+  ) => {
     const [isFocused, setIsFocused] = useState(false);
     const hasError = !!error;
 
     return (
-      <View style={[styles.container, hasError ? { marginBottom: 8 } : { marginBottom: 16 }]}>
+      <View
+        style={[
+          styles.container,
+          hasError ? { marginBottom: 8 } : { marginBottom: 16 },
+          containerStyle,
+        ]}
+      >
         <Controller
           render={({ field }) => (
             <View
@@ -28,12 +47,12 @@ const Select = forwardRef<Picker<string | number>, SelectProps<any>>(
                 styles.selectContainer,
                 isFocused && styles.selectContainerFocused,
                 hasError && styles.selectContainerError,
-                styleView,
+                selectViewStyle,
               ]}
             >
               <Picker
                 ref={ref}
-                style={[styleSelect]}
+                style={[selectStyle]}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 onValueChange={(itemValue) => {

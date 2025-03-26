@@ -20,14 +20,32 @@ interface DoctorAddressStepProps {
 const doctorAddressSchema = z.object({
   addresses: z.array(
     z.object({
-      location_name: z.string().min(1, 'Nome do consultório é obrigatório'),
-      cep: z.string().min(1, 'CEP é obrigatório'),
-      uf: z.string().min(1, 'UF é obrigatório'),
-      city: z.string().min(1, 'Cidade é obrigatória'),
-      neighborhood: z.string().min(1, 'Bairro é obrigatório'),
-      full_address: z.string().min(1, 'Rua ou Avenida é obrigatória'),
-      number: z.string().min(1, 'Número é obrigatório'),
-      complement: z.string().optional(),
+      location_name: z
+        .string({ required_error: 'Nome do consultório é obrigatório' })
+        .max(255, 'Nome do consultório não pode exceder 255 caracteres'),
+      cep: z
+        .string({ required_error: 'CEP é obrigatório' })
+        .length(8, 'CRM deve ter exatamente 8 dígitos'),
+      uf: z
+        .string({ required_error: 'UF é obrigatório' })
+        .max(255, 'UF não pode exceder 255 caracteres'),
+      city: z
+        .string({ required_error: 'Cidade é obrigatória' })
+        .max(255, 'Cidade não pode exceder 255 caracteres'),
+      neighborhood: z
+        .string({ required_error: 'Bairro é obrigatório' })
+        .max(255, 'Bairro não pode exceder 255 caracteres'),
+      full_address: z
+        .string({ required_error: 'Rua ou Avenida é obrigatória' })
+        .max(255, 'Rua ou Avenida não pode exceder 255 caracteres'),
+      number: z
+        .string({ required_error: 'Número é obrigatório' })
+        .max(255, 'Número não pode exceder 255 caracteres'),
+      complement: z
+        .string()
+        .optional()
+        .transform((val) => (val === '' ? undefined : val))
+        .pipe(z.string().max(255, 'Complemento não pode exceder 255 caracteres').optional()),
     })
   ),
 });

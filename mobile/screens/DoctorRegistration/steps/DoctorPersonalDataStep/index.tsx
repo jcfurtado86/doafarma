@@ -19,14 +19,31 @@ interface DoctorPersonalDataStepProps {
 
 const doctorPersonalDataSchema = z
   .object({
-    name: z.string().min(1, 'Nome é obrigatório'),
-    crm: z.string().min(1, 'CRM é obrigatório'),
-    crm_uf: z.string().min(1, 'UF é obrigatório'),
-    ddd: z.string().min(1, 'DDD é obrigatório'),
-    phone_number: z.string().min(1, 'Telefone é obrigatório'),
-    email: z.string().email('Email inválido').min(1, 'Email é obrigatório'),
-    password: z.string().min(6, 'Senha deve ter pelo menos 6 caracteres'),
-    password_confirmation: z.string().min(1, 'Confirmação de senha é obrigatória'),
+    name: z
+      .string({ required_error: 'Nome é obrigatório' })
+      .max(255, 'Nome não pode ter mais de 255 caracteres'),
+    crm: z
+      .string({ required_error: 'CRM é obrigatório' })
+      .length(6, 'CRM deve ter exatamente 6 dígitos')
+      .regex(/^[0-9]{6}$/, 'CRM deve conter apenas 6 dígitos numéricos'),
+    crm_uf: z
+      .string({ required_error: 'UF é obrigatório' })
+      .length(2, 'UF deve ter exatamente 2 caracteres'),
+    ddd: z.string().nonempty('DDD é obrigatório').max(3, 'DDD não pode ter mais de 3 caracteres'),
+    phone_number: z
+      .string({ required_error: 'Telefone é obrigatório' })
+      .max(9, 'Telefone não pode ter mais de 9 caracteres'),
+    email: z
+      .string({ required_error: 'Email é obrigatório' })
+      .email('Email inválido')
+      .max(255, 'Email não pode ter mais de 255 caracteres'),
+    password: z
+      .string({ required_error: 'Senha é obrigatória' })
+      .min(8, 'Senha deve ter pelo menos 8 caracteres')
+      .max(255, 'Senha não pode ter mais de 255 caracteres'),
+    password_confirmation: z
+      .string({ required_error: 'Confirmação de senha é obrigatória' })
+      .max(255, 'Confirmação de senha não pode ter mais de 255 caracteres'),
   })
   .refine((data) => data.password === data.password_confirmation, {
     message: 'As senhas não coincidem',

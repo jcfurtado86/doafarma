@@ -73,6 +73,7 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
             returnKeyType: 'next',
             placeholder: 'Nome Completo',
           }}
+          error={errors.name?.message}
         />
 
         <InputRow>
@@ -87,7 +88,7 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
               returnKeyType: 'next',
               placeholder: 'CRM',
             }}
-            style={{ flex: 2 }}
+            error={errors.crm?.message}
           />
           <Select
             ref={crmUf}
@@ -98,7 +99,7 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
             selectProps={{
               placeholder: 'UF',
             }}
-            styleView={{ flex: 1 }}
+            error={errors.crm_uf?.message}
             nextRef={dddRef}
           >
             <SelectItem label="AC" value="AC" />
@@ -119,8 +120,9 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
               placeholder: 'DDD',
               onSubmitEditing: () => phoneRef.current?.focus(),
               returnKeyType: 'next',
+              keyboardType: 'numeric',
             }}
-            style={{ flex: 1 }}
+            error={errors.ddd?.message}
           />
           <Input
             ref={phoneRef}
@@ -133,7 +135,7 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
               onSubmitEditing: () => emailRef.current?.focus(),
               returnKeyType: 'next',
             }}
-            style={{ flex: 3 }}
+            error={errors.phone_number?.message}
           />
         </InputRow>
 
@@ -148,6 +150,7 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
             onSubmitEditing: () => passwordRef.current?.focus(),
             returnKeyType: 'next',
           }}
+          error={errors.email?.message}
         />
         <Input
           ref={passwordRef}
@@ -161,6 +164,7 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
             onSubmitEditing: () => passwordConfirmationRef.current?.focus(),
             returnKeyType: 'next',
           }}
+          error={errors.password?.message}
         />
         <Input
           ref={passwordConfirmationRef}
@@ -174,6 +178,7 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
             onSubmitEditing: () => handleSubmit(handleNextStep)(),
             returnKeyType: 'done',
           }}
+          error={errors.password_confirmation?.message}
         />
       </View>
       <View style={styles.buttonContainer}>

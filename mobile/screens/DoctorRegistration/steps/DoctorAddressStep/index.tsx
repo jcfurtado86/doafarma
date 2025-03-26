@@ -73,6 +73,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             returnKeyType: 'next',
             placeholder: 'Nome do consultório ou clinica',
           }}
+          error={errors.addresses?.[0]?.location_name?.message}
         />
         <Input
           ref={cepRef}
@@ -85,6 +86,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             returnKeyType: 'next',
             placeholder: 'CEP',
           }}
+          error={errors.addresses?.[0]?.cep?.message}
         />
         <InputRow>
           <Select
@@ -96,7 +98,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             selectProps={{
               placeholder: 'Estado',
             }}
-            styleView={{ flex: 1 }}
+            error={errors.addresses?.[0]?.uf?.message}
             nextRef={cityRef}
           >
             <SelectItem label="AC" value="AC" />
@@ -114,7 +116,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             selectProps={{
               placeholder: 'Cidade',
             }}
-            styleView={{ flex: 1 }}
+            error={errors.addresses?.[0]?.city?.message}
             nextRef={neighborhoodRef}
           >
             <SelectItem label="Rio Branco" value="Rio Branco" />
@@ -133,6 +135,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             returnKeyType: 'next',
             placeholder: 'Bairro',
           }}
+          error={errors.addresses?.[0]?.neighborhood?.message}
         />
         <InputRow>
           <Input
@@ -146,7 +149,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
               returnKeyType: 'next',
               placeholder: 'Rua ou Avenida',
             }}
-            style={{ flex: 3 }}
+            error={errors.addresses?.[0]?.full_address?.message}
           />
           <Input
             ref={numberRef}
@@ -160,7 +163,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
               keyboardType: 'numeric',
               placeholder: 'N°000',
             }}
-            style={{ flex: 1 }}
+            error={errors.addresses?.[0]?.number?.message}
           />
         </InputRow>
         <Input
@@ -174,6 +177,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             returnKeyType: 'done',
             placeholder: 'Complemento',
           }}
+          error={errors.addresses?.[0]?.complement?.message}
         />
       </View>
       <View style={styles.buttonContainer}>

@@ -4,10 +4,11 @@ import {
   useDoctorRegistrationFormStore,
 } from '@/stores/doctorRegistrationFormStore';
 import { useRouter } from 'expo-router';
-import { View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 import { DoctorPersonalDataStep } from '../steps/DoctorPersonalDataStep';
 import { DoctorAddressStep } from '../steps/DoctorAddressStep';
 import { styles } from './styles';
+import { Colors } from '@/constants/Colors';
 
 interface DoctorRegistrationFlowProps {
   currentStep: number;
@@ -15,7 +16,7 @@ interface DoctorRegistrationFlowProps {
 
 export function DoctorRegistrationFlow({ currentStep }: DoctorRegistrationFlowProps) {
   const router = useRouter();
-  const { updateDoctorRegistrationFormData, submitDoctorRegistrationForm } =
+  const { updateDoctorRegistrationFormData, submitDoctorRegistrationForm, isLoading, error } =
     useDoctorRegistrationFormStore();
 
   const handleNextStep = (data: Partial<DoctorRegistrationFormData>) => {
@@ -36,7 +37,7 @@ export function DoctorRegistrationFlow({ currentStep }: DoctorRegistrationFlowPr
     const success = await submitDoctorRegistrationForm();
 
     if (success) {
-      router.push('/dashboard');
+      router.replace('/(auth)/dashboard');
     }
   };
 
@@ -54,7 +55,21 @@ export function DoctorRegistrationFlow({ currentStep }: DoctorRegistrationFlowPr
   return (
     <View style={styles.container}>
       <ArrowBackButton style={{ marginTop: 56 }} onPress={handlePreviousStep} />
-      {renderStep()}
+
+      {error && (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      )}
+
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={Colors.yellow_green_400} />
+          <Text style={styles.loadingText}>Registrando médico...</Text>
+        </View>
+      ) : (
+        renderStep()
+      )}
     </View>
   );
 }

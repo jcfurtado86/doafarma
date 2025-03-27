@@ -1,6 +1,7 @@
 import { doctorService } from '@/services/doctorService';
 import { create } from 'zustand';
 import * as Device from 'expo-device';
+import { useAuthStore } from './authStore';
 
 export interface DoctorRegistrationFormData {
   // first step
@@ -86,7 +87,12 @@ export const useDoctorRegistrationFormStore = create<DoctorRegistrationFormStore
 
       formData.device_name = await getDeviceName();
 
-      await doctorService.register(formData);
+      const responseData = await doctorService.register(formData);
+
+      const { user, token } = responseData;
+
+      await useAuthStore.getState().saveSession(user, token);
+
       set({ isLoading: false });
       return true;
     } catch (error) {

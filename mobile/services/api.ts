@@ -1,5 +1,5 @@
 import { useAuthStore } from '@/stores/authStore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
 import { router } from 'expo-router';
 import { Platform } from 'react-native';
@@ -24,7 +24,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   async (config) => {
-    const token = await AsyncStorage.getItem('auth_token');
+    const token = await SecureStore.getItemAsync('auth_token');
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

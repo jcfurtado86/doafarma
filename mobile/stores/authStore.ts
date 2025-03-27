@@ -1,4 +1,5 @@
 import api from '@/services/api';
+import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 
@@ -29,7 +30,7 @@ export const useAuthStore = create<AuthStoreState>((set) => ({
 
   saveSession: async (user, token) => {
     try {
-      await AsyncStorage.setItem('auth_token', token);
+      await SecureStore.setItemAsync('auth_token', token);
       await AsyncStorage.setItem('user', JSON.stringify(user));
 
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -43,7 +44,7 @@ export const useAuthStore = create<AuthStoreState>((set) => ({
 
   logout: async () => {
     try {
-      await AsyncStorage.removeItem('auth_token');
+      await SecureStore.deleteItemAsync('auth_token');
       await AsyncStorage.removeItem('user');
 
       delete api.defaults.headers.common['Authorization'];
@@ -59,7 +60,7 @@ export const useAuthStore = create<AuthStoreState>((set) => ({
     try {
       set({ isLoading: true });
 
-      const token = await AsyncStorage.getItem('auth_token');
+      const token = await SecureStore.getItemAsync('auth_token');
       if (!token) {
         set({ isLoading: false });
         return false;

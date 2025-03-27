@@ -41,7 +41,8 @@
     "react-native-web": "~0.19.13",
     "zod": "^3.24.2",
     "zustand": "^5.0.3",
-    "@react-native-async-storage/async-storage": "1.23.1"
+    "@react-native-async-storage/async-storage": "1.23.1",
+    "expo-secure-store": "~14.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

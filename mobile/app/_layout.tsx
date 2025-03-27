@@ -10,6 +10,7 @@ import {
   useFonts,
 } from '@expo-google-fonts/roboto';
 import { StatusBar } from 'expo-status-bar';
+import { useAuthStore } from '@/stores/authStore';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -31,15 +32,21 @@ export default function RootLayout() {
     Roboto_700Bold,
   });
 
+  const checkAuth = useAuthStore((state) => state.checkAuth);
+
   useEffect(() => {
     if (error) throw error;
   }, [error]);
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    async function prepare() {
+      if (loaded) {
+        await checkAuth();
+        await SplashScreen.hideAsync();
+      }
     }
-  }, [loaded]);
+    prepare();
+  }, [loaded, checkAuth]);
 
   if (!loaded) {
     return null;

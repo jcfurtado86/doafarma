@@ -86,9 +86,9 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
             control: control,
           }}
           inputProps={{
-            onSubmitEditing: () => crmRef.current?.focus(),
             returnKeyType: 'next',
             placeholder: 'Nome Completo',
+            onSubmitEditing: () => crmRef.current?.focus(),
           }}
           error={errors.name?.message}
         />
@@ -101,9 +101,10 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
               control: control,
             }}
             inputProps={{
-              onSubmitEditing: () => crmUf.current?.focus(),
               returnKeyType: 'next',
               placeholder: 'CRM',
+              keyboardType: 'numeric',
+              onSubmitEditing: () => crmUf.current?.focus(),
             }}
             error={errors.crm?.message}
             containerStyle={{ flex: 2 }}
@@ -136,10 +137,10 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
               control: control,
             }}
             inputProps={{
-              placeholder: 'DDD',
-              onSubmitEditing: () => phoneRef.current?.focus(),
               returnKeyType: 'next',
+              placeholder: 'DDD',
               keyboardType: 'numeric',
+              onSubmitEditing: () => phoneRef.current?.focus(),
             }}
             error={errors.ddd?.message}
             containerStyle={{ flex: 1 }}
@@ -152,8 +153,9 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
             }}
             inputProps={{
               placeholder: 'Telefone',
-              onSubmitEditing: () => emailRef.current?.focus(),
               returnKeyType: 'next',
+              keyboardType: 'numeric',
+              onSubmitEditing: () => emailRef.current?.focus(),
             }}
             error={errors.phone_number?.message}
             containerStyle={{ flex: 3 }}
@@ -168,8 +170,8 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
           }}
           inputProps={{
             placeholder: 'Email',
-            onSubmitEditing: () => passwordRef.current?.focus(),
             returnKeyType: 'next',
+            onSubmitEditing: () => passwordRef.current?.focus(),
           }}
           error={errors.email?.message}
         />
@@ -182,8 +184,8 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
           inputProps={{
             placeholder: 'Senha',
             secureTextEntry: true,
-            onSubmitEditing: () => passwordConfirmationRef.current?.focus(),
             returnKeyType: 'next',
+            onSubmitEditing: () => passwordConfirmationRef.current?.focus(),
           }}
           error={errors.password?.message}
         />
@@ -196,8 +198,8 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
           inputProps={{
             placeholder: 'Confirmar Senha',
             secureTextEntry: true,
-            onSubmitEditing: () => handleSubmit(handleNextStep)(),
             returnKeyType: 'done',
+            onSubmitEditing: () => handleSubmit(handleNextStep)(),
           }}
           error={errors.password_confirmation?.message}
         />

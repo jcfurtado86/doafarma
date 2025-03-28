@@ -87,9 +87,9 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             control: control,
           }}
           inputProps={{
-            onSubmitEditing: () => cepRef.current?.focus(),
             returnKeyType: 'next',
             placeholder: 'Nome do consultório ou clinica',
+            onSubmitEditing: () => cepRef.current?.focus(),
           }}
           error={errors.addresses?.[0]?.location_name?.message}
         />
@@ -100,9 +100,10 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             control: control,
           }}
           inputProps={{
-            onSubmitEditing: () => ufRef.current?.focus(),
             returnKeyType: 'next',
             placeholder: 'CEP',
+            keyboardType: 'numeric',
+            onSubmitEditing: () => ufRef.current?.focus(),
           }}
           error={errors.addresses?.[0]?.cep?.message}
         />
@@ -151,9 +152,9 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             control: control,
           }}
           inputProps={{
-            onSubmitEditing: () => streetRef.current?.focus(),
             returnKeyType: 'next',
             placeholder: 'Bairro',
+            onSubmitEditing: () => streetRef.current?.focus(),
           }}
           error={errors.addresses?.[0]?.neighborhood?.message}
         />
@@ -165,9 +166,9 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
               control: control,
             }}
             inputProps={{
-              onSubmitEditing: () => numberRef.current?.focus(),
               returnKeyType: 'next',
               placeholder: 'Rua ou Avenida',
+              onSubmitEditing: () => numberRef.current?.focus(),
             }}
             error={errors.addresses?.[0]?.full_address?.message}
             containerStyle={{ flex: 3 }}
@@ -179,10 +180,10 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
               control: control,
             }}
             inputProps={{
-              onSubmitEditing: () => complementRef.current?.focus(),
               returnKeyType: 'next',
               keyboardType: 'numeric',
               placeholder: 'N°000',
+              onSubmitEditing: () => complementRef.current?.focus(),
             }}
             error={errors.addresses?.[0]?.number?.message}
             containerStyle={{ flex: 1 }}
@@ -195,9 +196,9 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             control: control,
           }}
           inputProps={{
-            onSubmitEditing: () => handleSubmit(handleFinishRegistration)(),
             returnKeyType: 'done',
             placeholder: 'Complemento',
+            onSubmitEditing: () => handleSubmit(handleFinishRegistration)(),
           }}
           error={errors.addresses?.[0]?.complement?.message}
         />

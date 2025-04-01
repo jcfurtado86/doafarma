@@ -3,6 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
 import { router } from 'expo-router';
 import { Platform } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 const API_HOST = process.env.EXPO_PUBLIC_API_HOST || '192.168.0.1'; // Substitua pelo IP correto do seu servidor
 
@@ -38,14 +39,26 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    // 401 Unauthorized error handling
-    if (error.response?.status === 401) {
+    // 403 Forbidden
+    if (error.response?.status === 403) {
       await useAuthStore.getState().logout();
 
       if (router) {
         router.replace('/');
       }
     }
+
+    // 500 Internal Server Error
+    if (error.response?.status === 500) {
+      Toast.show({
+        type: 'error',
+        text1: 'Erro no servidor',
+        text2: 'Estamos com problemas técnicos. Tente novamente mais tarde.',
+        visibilityTime: 4000,
+        autoHide: true,
+      });
+    }
+
     return Promise.reject(error);
   }
 );

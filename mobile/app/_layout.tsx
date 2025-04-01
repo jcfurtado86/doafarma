@@ -11,6 +11,7 @@ import {
 } from '@expo-google-fonts/roboto';
 import { StatusBar } from 'expo-status-bar';
 import { useAuthStore } from '@/stores/authStore';
+import Toast from 'react-native-toast-message';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -66,6 +67,7 @@ function RootLayoutNav() {
         }}
       />
       <StatusBar style="auto" />
+      <Toast />
     </>
   );
 }

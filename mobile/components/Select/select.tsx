@@ -11,7 +11,7 @@ interface SelectProps<T extends FieldValues = FieldValues> {
   containerStyle?: StyleProp<ViewStyle>;
   selectViewStyle?: StyleProp<ViewStyle>;
   selectStyle?: StyleProp<TextStyle>;
-  nextRef?: React.RefObject<TextInput | Picker<string | number>>;
+  nextRef?: React.RefObject<TextInput | Picker<string | number> | null>;
   error?: string;
 }
 

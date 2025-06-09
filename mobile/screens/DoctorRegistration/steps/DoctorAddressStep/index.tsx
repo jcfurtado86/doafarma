@@ -3,7 +3,7 @@ import { View, TextInput } from 'react-native';
 import { Input } from '@/components/Input';
 import PrimaryButton from '@/components/PrimaryButton';
 import { styles } from './styles';
-import { useForm } from 'react-hook-form';
+import { UseFormSetError } from 'react-hook-form';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import { InputRow } from '@/components/InputRow';
@@ -11,10 +11,13 @@ import { Select, SelectItem } from '@/components/Select';
 import { Picker } from '@react-native-picker/picker';
 import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useFeatureForm } from '@/hooks/useFeatureForm';
 
 interface DoctorAddressStepProps {
-  onSubmit: (data: Partial<DoctorRegistrationFormData>) => Promise<void>;
+  onSubmit: (
+    data: Partial<DoctorRegistrationFormData>,
+    setError: UseFormSetError<any>
+  ) => Promise<void>;
 }
 
 const doctorAddressSchema = z.object({
@@ -57,12 +60,13 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<DoctorAddressFormData>({
-    resolver: zodResolver(doctorAddressSchema),
+    setError,
+  } = useFeatureForm<DoctorAddressFormData>({
+    schema: doctorAddressSchema,
   });
 
   async function handleFinishRegistration(data: DoctorAddressFormData) {
-    await onSubmit(data);
+    await onSubmit(data, setError);
   }
 
   const cepRef = useRef<TextInput>(null);
@@ -85,6 +89,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
           formProps={{
             name: 'addresses[0].location_name',
             control: control,
+            defaultValue: 'Consultório',
           }}
           inputProps={{
             returnKeyType: 'next',
@@ -98,6 +103,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
           formProps={{
             name: 'addresses[0].cep',
             control: control,
+            defaultValue: '12345678',
           }}
           inputProps={{
             returnKeyType: 'next',
@@ -113,6 +119,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             formProps={{
               name: 'addresses[0].uf',
               control: control,
+              defaultValue: 'AC',
             }}
             selectProps={{
               placeholder: 'Estado',
@@ -132,6 +139,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             formProps={{
               name: 'addresses[0].city',
               control: control,
+              defaultValue: 'Rio Branco',
             }}
             selectProps={{
               placeholder: 'Cidade',
@@ -150,6 +158,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
           formProps={{
             name: 'addresses[0].neighborhood',
             control: control,
+            defaultValue: 'Centro',
           }}
           inputProps={{
             returnKeyType: 'next',
@@ -164,6 +173,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             formProps={{
               name: 'addresses[0].full_address',
               control: control,
+              defaultValue: 'Rua das Flores',
             }}
             inputProps={{
               returnKeyType: 'next',
@@ -178,6 +188,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             formProps={{
               name: 'addresses[0].number',
               control: control,
+              defaultValue: '123',
             }}
             inputProps={{
               returnKeyType: 'next',

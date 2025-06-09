@@ -1,0 +1,2 @@
+export const ENABLE_FRONTEND_VALIDATION =
+  process.env.EXPO_PUBLIC_ENABLE_FRONTEND_VALIDATION === 'true';

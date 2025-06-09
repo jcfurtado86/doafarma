@@ -3,18 +3,18 @@ import { View, TextInput } from 'react-native';
 import { Input } from '@/components/Input';
 import PrimaryButton from '@/components/PrimaryButton';
 import { styles } from './styles';
-import { useForm } from 'react-hook-form';
+import { UseFormSetError } from 'react-hook-form';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import { InputRow } from '@/components/InputRow';
 import { Select, SelectItem } from '@/components/Select';
 import { Picker } from '@react-native-picker/picker';
 import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useFeatureForm } from '@/hooks/useFeatureForm';
 
 interface DoctorPersonalDataStepProps {
-  onSubmit: (data: Partial<DoctorRegistrationFormData>) => void;
+  onSubmit: (data: Partial<DoctorRegistrationFormData>, setError: UseFormSetError<any>) => void;
 }
 
 const doctorPersonalDataSchema = z
@@ -22,12 +22,10 @@ const doctorPersonalDataSchema = z
     name: z
       .string({ required_error: 'Nome é obrigatório' })
       .max(255, 'Nome não pode ter mais de 255 caracteres'),
-    crm: z
-      .string({ required_error: 'CRM é obrigatório' })
+    crm: z.string({ required_error: 'CRM é obrigatório' })
       .length(6, 'CRM deve ter exatamente 6 dígitos')
       .regex(/^[0-9]{6}$/, 'CRM deve conter apenas 6 dígitos numéricos'),
-    crm_uf: z
-      .string({ required_error: 'UF é obrigatório' })
+    crm_uf: z.string({ required_error: 'UF é obrigatório' })
       .length(2, 'UF deve ter exatamente 2 caracteres'),
     ddd: z.string().nonempty('DDD é obrigatório').max(3, 'DDD não pode ter mais de 3 caracteres'),
     phone_number: z
@@ -57,12 +55,13 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<DoctorPersonalFormData>({
-    resolver: zodResolver(doctorPersonalDataSchema),
+    setError,
+  } = useFeatureForm<DoctorPersonalFormData>({
+    schema: doctorPersonalDataSchema,
   });
 
   function handleNextStep(data: DoctorPersonalFormData) {
-    onSubmit(data);
+    onSubmit(data, setError);
   }
 
   const crmRef = useRef<TextInput>(null);

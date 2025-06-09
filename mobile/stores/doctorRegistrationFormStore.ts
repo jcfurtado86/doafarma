@@ -33,8 +33,10 @@ interface DoctorRegistrationFormStore {
   doctorRegistrationFormData: DoctorRegistrationFormData;
   isLoading: boolean;
   error: string | null;
+  validationErrors: Record<string, string[]> | null;
   updateDoctorRegistrationFormData: (data: Partial<DoctorRegistrationFormData>) => void;
   submitDoctorRegistrationForm: () => Promise<boolean>;
+  clearValidationErrors: () => void;
 }
 
 export const useDoctorRegistrationFormStore = create<DoctorRegistrationFormStore>((set, get) => ({
@@ -53,6 +55,8 @@ export const useDoctorRegistrationFormStore = create<DoctorRegistrationFormStore
   },
   isLoading: false,
   error: null,
+  validationErrors: null,
+  clearValidationErrors: () => set({ validationErrors: null }),
   updateDoctorRegistrationFormData: (data) =>
     set((state) => ({
       doctorRegistrationFormData: {
@@ -61,7 +65,7 @@ export const useDoctorRegistrationFormStore = create<DoctorRegistrationFormStore
       },
     })),
   submitDoctorRegistrationForm: async () => {
-    set({ isLoading: true, error: null });
+    set({ isLoading: true, error: null, validationErrors: null });
     try {
       const formData = { ...get().doctorRegistrationFormData };
 
@@ -95,11 +99,20 @@ export const useDoctorRegistrationFormStore = create<DoctorRegistrationFormStore
 
       set({ isLoading: false });
       return true;
-    } catch (error) {
-      set({
-        isLoading: false,
-        error: error instanceof Error ? error.message : 'Erro ao cadastrar médico',
-      });
+    } catch (error: any) {
+      if (error.isValidationError) {
+        set({
+          isLoading: false,
+          validationErrors: error.validationErrors,
+          error: error.message,
+        });
+      } else {
+        set({
+          isLoading: false,
+          error: error instanceof Error ? error.message : 'Erro ao cadastrar médico',
+        });
+      }
+
       return false;
     }
   },

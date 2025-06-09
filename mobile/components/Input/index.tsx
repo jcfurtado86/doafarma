@@ -46,6 +46,7 @@ const Input = forwardRef<TextInput, InputProps<any>>(
               onChangeText={field.onChange}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
+              placeholderTextColor={inputProps.placeholderTextColor ?? '#AFB2BF'}
               {...inputProps}
             />
           )}

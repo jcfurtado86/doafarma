@@ -1,12 +1,17 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/components/useColorScheme';
+import {
+  Roboto_400Regular,
+  Roboto_500Medium,
+  Roboto_700Bold,
+  useFonts,
+} from '@expo-google-fonts/roboto';
+import { StatusBar } from 'expo-status-bar';
+import { useAuthStore } from '@/stores/authStore';
+import Toast from 'react-native-toast-message';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -23,20 +28,26 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    ...FontAwesome.font,
+    Roboto_500Medium,
+    Roboto_400Regular,
+    Roboto_700Bold,
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
+  const checkAuth = useAuthStore((state) => state.checkAuth);
+
   useEffect(() => {
     if (error) throw error;
   }, [error]);
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    async function prepare() {
+      if (loaded) {
+        await checkAuth();
+        await SplashScreen.hideAsync();
+      }
     }
-  }, [loaded]);
+    prepare();
+  }, [loaded, checkAuth]);
 
   if (!loaded) {
     return null;
@@ -46,11 +57,17 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack screenOptions={{ headerShown: false, headerTitle: '' }} />
-    </ThemeProvider>
+    <>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          animation: 'ios_from_right',
+          navigationBarHidden: true,
+        }}
+      />
+      <StatusBar style="auto" />
+      <Toast />
+    </>
   );
 }

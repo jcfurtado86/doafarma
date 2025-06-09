@@ -1,0 +1,46 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "environment" : "development",
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_HOST": "192.168.1.71"
+      }
+    },
+    "preview": {
+      "environment" : "preview",
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_HOST": "192.168.1.71"
+      }
+    },
+    "production": {
+      "environment" : "production",
+      "autoIncrement": true,
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_HOST": "https://doafarma-api.onrender.com"
+      }
+    },
+    "store": {
+      "environment": "production",
+      "autoIncrement": true,
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_HOST": "https://doafarma-api.onrender.com"
+      }
+    }
+  }
+}

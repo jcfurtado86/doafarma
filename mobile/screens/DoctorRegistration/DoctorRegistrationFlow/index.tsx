@@ -4,10 +4,12 @@ import {
   useDoctorRegistrationFormStore,
 } from '@/stores/doctorRegistrationFormStore';
 import { useRouter } from 'expo-router';
-import { View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 import { DoctorPersonalDataStep } from '../steps/DoctorPersonalDataStep';
 import { DoctorAddressStep } from '../steps/DoctorAddressStep';
 import { styles } from './styles';
+import { Colors } from '@/constants/Colors';
+import { UseFormSetError } from 'react-hook-form';
 
 interface DoctorRegistrationFlowProps {
   currentStep: number;
@@ -15,8 +17,13 @@ interface DoctorRegistrationFlowProps {
 
 export function DoctorRegistrationFlow({ currentStep }: DoctorRegistrationFlowProps) {
   const router = useRouter();
-  const { updateDoctorRegistrationFormData, submitDoctorRegistrationForm } =
-    useDoctorRegistrationFormStore();
+  const {
+    updateDoctorRegistrationFormData,
+    submitDoctorRegistrationForm,
+    isLoading,
+    error,
+    validationErrors,
+  } = useDoctorRegistrationFormStore();
 
   const handleNextStep = (data: Partial<DoctorRegistrationFormData>) => {
     updateDoctorRegistrationFormData(data);
@@ -31,12 +38,21 @@ export function DoctorRegistrationFlow({ currentStep }: DoctorRegistrationFlowPr
     }
   };
 
-  const handleFinishRegistration = async (data: Partial<DoctorRegistrationFormData>) => {
+  const handleFinishRegistration = async (
+    data: Partial<DoctorRegistrationFormData>,
+    setError?: UseFormSetError<any>
+  ) => {
     updateDoctorRegistrationFormData(data);
     const success = await submitDoctorRegistrationForm();
 
+    if (!success && setError && validationErrors && error) {
+      console.log('Erro ao registrar médico:', error);
+      console.error('Erro de validação:', validationErrors);
+      setError(Object.keys(validationErrors)[0], { message: error }, { shouldFocus: true });
+    }
+
     if (success) {
-      router.push('/dashboard');
+      router.replace('/(auth)/dashboard');
     }
   };
 
@@ -54,7 +70,21 @@ export function DoctorRegistrationFlow({ currentStep }: DoctorRegistrationFlowPr
   return (
     <View style={styles.container}>
       <ArrowBackButton style={{ marginTop: 56 }} onPress={handlePreviousStep} />
-      {renderStep()}
+
+      {error && (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      )}
+
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={Colors.yellow_green_400} />
+          <Text style={styles.loadingText}>Registrando médico...</Text>
+        </View>
+      ) : (
+        renderStep()
+      )}
     </View>
   );
 }

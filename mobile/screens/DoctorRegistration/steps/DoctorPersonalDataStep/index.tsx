@@ -3,18 +3,18 @@ import { View, TextInput } from 'react-native';
 import { Input } from '@/components/Input';
 import PrimaryButton from '@/components/PrimaryButton';
 import { styles } from './styles';
-import { useForm } from 'react-hook-form';
+import { UseFormSetError } from 'react-hook-form';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import { InputRow } from '@/components/InputRow';
 import { Select, SelectItem } from '@/components/Select';
 import { Picker } from '@react-native-picker/picker';
 import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useFeatureForm } from '@/hooks/useFeatureForm';
 
 interface DoctorPersonalDataStepProps {
-  onSubmit: (data: Partial<DoctorRegistrationFormData>) => void;
+  onSubmit: (data: Partial<DoctorRegistrationFormData>, setError: UseFormSetError<any>) => void;
 }
 
 const doctorPersonalDataSchema = z
@@ -22,12 +22,10 @@ const doctorPersonalDataSchema = z
     name: z
       .string({ required_error: 'Nome é obrigatório' })
       .max(255, 'Nome não pode ter mais de 255 caracteres'),
-    crm: z
-      .string({ required_error: 'CRM é obrigatório' })
+    crm: z.string({ required_error: 'CRM é obrigatório' })
       .length(6, 'CRM deve ter exatamente 6 dígitos')
       .regex(/^[0-9]{6}$/, 'CRM deve conter apenas 6 dígitos numéricos'),
-    crm_uf: z
-      .string({ required_error: 'UF é obrigatório' })
+    crm_uf: z.string({ required_error: 'UF é obrigatório' })
       .length(2, 'UF deve ter exatamente 2 caracteres'),
     ddd: z.string().nonempty('DDD é obrigatório').max(3, 'DDD não pode ter mais de 3 caracteres'),
     phone_number: z
@@ -57,12 +55,13 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<DoctorPersonalFormData>({
-    resolver: zodResolver(doctorPersonalDataSchema),
+    setError,
+  } = useFeatureForm<DoctorPersonalFormData>({
+    schema: doctorPersonalDataSchema,
   });
 
   function handleNextStep(data: DoctorPersonalFormData) {
-    onSubmit(data);
+    onSubmit(data, setError);
   }
 
   const crmRef = useRef<TextInput>(null);
@@ -86,9 +85,9 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
             control: control,
           }}
           inputProps={{
-            onSubmitEditing: () => crmRef.current?.focus(),
             returnKeyType: 'next',
             placeholder: 'Nome Completo',
+            onSubmitEditing: () => crmRef.current?.focus(),
           }}
           error={errors.name?.message}
         />
@@ -101,9 +100,10 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
               control: control,
             }}
             inputProps={{
-              onSubmitEditing: () => crmUf.current?.focus(),
               returnKeyType: 'next',
               placeholder: 'CRM',
+              keyboardType: 'numeric',
+              onSubmitEditing: () => crmUf.current?.focus(),
             }}
             error={errors.crm?.message}
             containerStyle={{ flex: 2 }}
@@ -136,10 +136,10 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
               control: control,
             }}
             inputProps={{
-              placeholder: 'DDD',
-              onSubmitEditing: () => phoneRef.current?.focus(),
               returnKeyType: 'next',
+              placeholder: 'DDD',
               keyboardType: 'numeric',
+              onSubmitEditing: () => phoneRef.current?.focus(),
             }}
             error={errors.ddd?.message}
             containerStyle={{ flex: 1 }}
@@ -152,8 +152,9 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
             }}
             inputProps={{
               placeholder: 'Telefone',
-              onSubmitEditing: () => emailRef.current?.focus(),
               returnKeyType: 'next',
+              keyboardType: 'numeric',
+              onSubmitEditing: () => emailRef.current?.focus(),
             }}
             error={errors.phone_number?.message}
             containerStyle={{ flex: 3 }}
@@ -168,8 +169,8 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
           }}
           inputProps={{
             placeholder: 'Email',
-            onSubmitEditing: () => passwordRef.current?.focus(),
             returnKeyType: 'next',
+            onSubmitEditing: () => passwordRef.current?.focus(),
           }}
           error={errors.email?.message}
         />
@@ -182,8 +183,8 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
           inputProps={{
             placeholder: 'Senha',
             secureTextEntry: true,
-            onSubmitEditing: () => passwordConfirmationRef.current?.focus(),
             returnKeyType: 'next',
+            onSubmitEditing: () => passwordConfirmationRef.current?.focus(),
           }}
           error={errors.password?.message}
         />
@@ -196,8 +197,8 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
           inputProps={{
             placeholder: 'Confirmar Senha',
             secureTextEntry: true,
-            onSubmitEditing: () => handleSubmit(handleNextStep)(),
             returnKeyType: 'done',
+            onSubmitEditing: () => handleSubmit(handleNextStep)(),
           }}
           error={errors.password_confirmation?.message}
         />

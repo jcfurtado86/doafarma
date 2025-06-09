@@ -2,7 +2,19 @@ import { styles } from './styles';
 import { Controller, FieldValues, UseControllerProps } from 'react-hook-form';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { Picker, PickerProps } from '@react-native-picker/picker';
-import { FlatList, Modal, Platform, Pressable, StyleProp, Text, TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
+import {
+  FlatList,
+  Modal,
+  Platform,
+  Pressable,
+  StyleProp,
+  Text,
+  TextInput,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native';
 import { Colors } from '@/constants/Colors';
 
 interface SelectProps<T extends FieldValues = FieldValues> {

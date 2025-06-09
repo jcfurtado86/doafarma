@@ -3,7 +3,6 @@ import { View, TextInput } from 'react-native';
 import { Input } from '@/components/Input';
 import PrimaryButton from '@/components/PrimaryButton';
 import { styles } from './styles';
-import { useForm } from 'react-hook-form';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import { InputRow } from '@/components/InputRow';
@@ -11,7 +10,7 @@ import { Select, SelectItem } from '@/components/Select';
 import { Picker } from '@react-native-picker/picker';
 import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useFeatureForm } from '@/hooks/useFeatureForm';
 
 interface DoctorAddressStepProps {
   onSubmit: (data: Partial<DoctorRegistrationFormData>) => Promise<void>;
@@ -57,8 +56,8 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<DoctorAddressFormData>({
-    resolver: zodResolver(doctorAddressSchema),
+  } = useFeatureForm<DoctorAddressFormData>({
+    schema: doctorAddressSchema,
   });
 
   async function handleFinishRegistration(data: DoctorAddressFormData) {

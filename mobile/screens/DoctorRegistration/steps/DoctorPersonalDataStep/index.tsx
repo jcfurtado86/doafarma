@@ -3,15 +3,14 @@ import { View, TextInput } from 'react-native';
 import { Input } from '@/components/Input';
 import PrimaryButton from '@/components/PrimaryButton';
 import { styles } from './styles';
-import { useForm } from 'react-hook-form';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import { InputRow } from '@/components/InputRow';
 import { Select, SelectItem } from '@/components/Select';
 import { Picker } from '@react-native-picker/picker';
 import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useFeatureForm } from '@/hooks/useFeatureForm';
 
 interface DoctorPersonalDataStepProps {
   onSubmit: (data: Partial<DoctorRegistrationFormData>) => void;
@@ -57,8 +56,8 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<DoctorPersonalFormData>({
-    resolver: zodResolver(doctorPersonalDataSchema),
+  } = useFeatureForm<DoctorPersonalFormData>({
+    schema: doctorPersonalDataSchema,
   });
 
   function handleNextStep(data: DoctorPersonalFormData) {

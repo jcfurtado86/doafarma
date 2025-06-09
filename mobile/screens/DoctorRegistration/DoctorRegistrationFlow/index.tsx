@@ -9,6 +9,7 @@ import { DoctorPersonalDataStep } from '../steps/DoctorPersonalDataStep';
 import { DoctorAddressStep } from '../steps/DoctorAddressStep';
 import { styles } from './styles';
 import { Colors } from '@/constants/Colors';
+import { UseFormSetError } from 'react-hook-form';
 
 interface DoctorRegistrationFlowProps {
   currentStep: number;
@@ -16,8 +17,13 @@ interface DoctorRegistrationFlowProps {
 
 export function DoctorRegistrationFlow({ currentStep }: DoctorRegistrationFlowProps) {
   const router = useRouter();
-  const { updateDoctorRegistrationFormData, submitDoctorRegistrationForm, isLoading, error } =
-    useDoctorRegistrationFormStore();
+  const {
+    updateDoctorRegistrationFormData,
+    submitDoctorRegistrationForm,
+    isLoading,
+    error,
+    validationErrors,
+  } = useDoctorRegistrationFormStore();
 
   const handleNextStep = (data: Partial<DoctorRegistrationFormData>) => {
     updateDoctorRegistrationFormData(data);
@@ -32,9 +38,18 @@ export function DoctorRegistrationFlow({ currentStep }: DoctorRegistrationFlowPr
     }
   };
 
-  const handleFinishRegistration = async (data: Partial<DoctorRegistrationFormData>) => {
+  const handleFinishRegistration = async (
+    data: Partial<DoctorRegistrationFormData>,
+    setError?: UseFormSetError<any>
+  ) => {
     updateDoctorRegistrationFormData(data);
     const success = await submitDoctorRegistrationForm();
+
+    if (!success && setError && validationErrors && error) {
+      console.log('Erro ao registrar médico:', error);
+      console.error('Erro de validação:', validationErrors);
+      setError(Object.keys(validationErrors)[0], { message: error }, { shouldFocus: true });
+    }
 
     if (success) {
       router.replace('/(auth)/dashboard');

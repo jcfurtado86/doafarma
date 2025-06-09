@@ -48,6 +48,16 @@ api.interceptors.response.use(
       }
     }
 
+    // 422 Unprocessable Entity (erros de validação)
+    if (error.response?.status === 422) {
+      return Promise.reject({
+        ...error,
+        isValidationError: true,
+        validationErrors: error.response.data.errors || {},
+        message: error.response.data.message || 'Erro de validação',
+      });
+    }
+
     // 500 Internal Server Error
     if (error.response?.status === 500) {
       Toast.show({

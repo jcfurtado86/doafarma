@@ -22,10 +22,12 @@ const doctorPersonalDataSchema = z
     name: z
       .string({ required_error: 'Nome é obrigatório' })
       .max(255, 'Nome não pode ter mais de 255 caracteres'),
-    crm: z.string({ required_error: 'CRM é obrigatório' })
+    crm: z
+      .string({ required_error: 'CRM é obrigatório' })
       .length(6, 'CRM deve ter exatamente 6 dígitos')
       .regex(/^[0-9]{6}$/, 'CRM deve conter apenas 6 dígitos numéricos'),
-    crm_uf: z.string({ required_error: 'UF é obrigatório' })
+    crm_uf: z
+      .string({ required_error: 'UF é obrigatório' })
       .length(2, 'UF deve ter exatamente 2 caracteres'),
     ddd: z.string().nonempty('DDD é obrigatório').max(3, 'DDD não pode ter mais de 3 caracteres'),
     phone_number: z

@@ -20,6 +20,8 @@ class CsvTestBuilder
 
     private int $headerOffset = 41;
 
+    private string $delimiter = ',';
+
     /**
      * Create a new CSV test builder instance.
      */
@@ -48,6 +50,18 @@ class CsvTestBuilder
     public function withHeaderOffset(int $offset): self
     {
         $this->headerOffset = $offset;
+
+        return $this;
+    }
+
+    /**
+     * Set a custom delimiter for the CSV file.
+     *
+     * @param  string  $delimiter  The delimiter used in the CSV file
+     */
+    public function withDelimiter(string $delimiter): self
+    {
+        $this->delimiter = $delimiter;
 
         return $this;
     }
@@ -97,6 +111,26 @@ class CsvTestBuilder
     public function addCustomRow(array $row): self
     {
         $this->rows[] = $row;
+
+        return $this;
+    }
+
+    /**
+     * Add a drug that simulates real-world data with commas in values.
+     */
+    public function addRealWorldDrug(array $attributes = []): self
+    {
+        $defaults = [
+            'SUBSTÂNCIA'   => 'PARACETAMOL, CAFEÍNA, ÁCIDO ACETILSALICÍLICO',
+            'LABORATÓRIO'  => 'LABORATÓRIO TEUTO BRASILEIRO S/A',
+            'REGISTRO'     => fake()->unique()->numerify('##########'),
+            'PRODUTO'      => 'MEDICAMENTO COMPOSTO, 500MG',
+            'APRESENTAÇÃO' => '17,5% SOL INJ CT FA VD X 1,5 ML',
+            'TARJA'        => 'TARJA VERMELHA (**)',
+        ];
+
+        $drug         = array_merge($defaults, $attributes);
+        $this->rows[] = $drug;
 
         return $this;
     }
@@ -154,6 +188,7 @@ class CsvTestBuilder
 
         $csv = Writer::createFromPath($filename, 'w+');
         $csv->setEscape('');
+        $csv->setDelimiter($this->delimiter);
 
         for ($i = 0; $i < $this->headerOffset; $i++) {
             $csv->insertOne(["Metadata line " . ($i + 1), "Additional info", "More data"]);

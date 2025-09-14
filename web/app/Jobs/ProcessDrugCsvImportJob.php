@@ -37,9 +37,7 @@ class ProcessDrugCsvImportJob implements ShouldQueue
         try {
             $csv = $this->createCsvReader();
 
-            if (! $this->hasRequiredHeaders($csv)) {
-                return;
-            }
+            $this->hasRequiredHeaders($csv);
 
             $records = $csv->getRecords();
 
@@ -60,9 +58,12 @@ class ProcessDrugCsvImportJob implements ShouldQueue
      */
     private function createCsvReader(): Reader
     {
+        $delimiter = $this->detectDelimiter($this->filepath);
+
         $csv = Reader::createFromPath($this->filepath, 'r');
-        $csv->setHeaderOffset(self::HEADER_OFFSET);
         $csv->setEscape('');
+        $csv->setDelimiter($delimiter);
+        $csv->setHeaderOffset(self::HEADER_OFFSET);
 
         return $csv;
     }
@@ -108,21 +109,38 @@ class ProcessDrugCsvImportJob implements ShouldQueue
      */
     private function hasRequiredHeaders(Reader $csv): bool
     {
-        $rawHeader = $csv->getHeader();
-        $headers   = array_map(fn (string $h) => mb_strtoupper(trim($h)), $rawHeader);
+        try {
+            $rawHeader = $csv->getHeader();
+            $headers   = array_map(fn (string $h) => mb_strtoupper(trim($h)), $rawHeader);
 
-        $missing = array_values(array_diff(self::REQUIRED_HEADERS, $headers));
+            $missing = array_values(array_diff(self::REQUIRED_HEADERS, $headers));
 
-        if ($missing !== []) {
-            Log::error('Missing required CSV columns: ' . implode(', ', $missing), [
-                'file'    => $this->filepath,
-                'headers' => $rawHeader,
+            if ($missing !== []) {
+                $errorMessage = 'Missing required CSV columns: ' . implode(', ', $missing);
+
+                Log::error($errorMessage, [
+                    'file'     => $this->filepath,
+                    'headers'  => $rawHeader,
+                    'expected' => self::REQUIRED_HEADERS,
+                ]);
+
+                throw new \InvalidArgumentException($errorMessage);
+            }
+
+            Log::info('CSV headers validated successfully', [
+                'header_count'   => count($headers),
+                'delimiter_used' => $csv->getDelimiter(),
             ]);
 
-            return false;
-        }
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Failed to read CSV headers', [
+                'file'  => $this->filepath,
+                'error' => $e->getMessage(),
+            ]);
 
-        return true;
+            throw $e;
+        }
     }
 
     /**
@@ -247,5 +265,75 @@ class ProcessDrugCsvImportJob implements ShouldQueue
             'SEM TARJA'           => 'Sem Tarja',
             default               => $tarja,
         };
+    }
+
+    /**
+     * Detects the appropriate delimiter for the CSV file using League\Csv.
+     *
+     * @param string $filepath Path to the CSV file
+     * @return string The detected delimiter (';' or ',')
+     */
+    private function detectDelimiter(string $filepath): string
+    {
+        $semicolonReader = Reader::createFromPath($filepath, 'r');
+        $semicolonReader->setEscape('');
+        $semicolonReader->setDelimiter(';');
+        $semicolonReader->setHeaderOffset(self::HEADER_OFFSET);
+
+        try {
+            $semicolonHeader = $semicolonReader->getHeader();
+            $semicolonCount  = count($semicolonHeader);
+
+            Log::info('Delimiter detection with semicolon', [
+                'header_count'  => $semicolonCount,
+                'first_columns' => array_slice($semicolonHeader, 0, 3),
+            ]);
+
+            if ($this->containsRequiredHeaders($semicolonHeader)) {
+                return ';';
+            }
+        } catch (\Exception $e) {
+            Log::warning('Failed to read CSV with semicolon delimiter', ['error' => $e->getMessage()]);
+        }
+
+        // fallback
+        $commaReader = Reader::createFromPath($filepath, 'r');
+        $commaReader->setEscape('');
+        $commaReader->setDelimiter(',');
+        $commaReader->setHeaderOffset(self::HEADER_OFFSET);
+
+        try {
+            $commaHeader = $commaReader->getHeader();
+            $commaCount  = count($commaHeader);
+
+            Log::info('Delimiter detection with comma', [
+                'header_count'  => $commaCount,
+                'first_columns' => array_slice($commaHeader, 0, 3),
+            ]);
+
+            if ($this->containsRequiredHeaders($commaHeader)) {
+                return ',';
+            }
+        } catch (\Exception $e) {
+            Log::warning('Failed to read CSV with comma delimiter', ['error' => $e->getMessage()]);
+        }
+
+        Log::warning('Could not detect delimiter reliably, defaulting to semicolon');
+
+        return ';';
+    }
+
+    /**
+     * Checks if the header contains the required columns for drug import.
+     *
+     * @param array<string> $header The header array from CSV
+     * @return bool True if header contains required columns
+     */
+    private function containsRequiredHeaders(array $header): bool
+    {
+        $normalizedHeader = array_map(fn (string $h) => mb_strtoupper(trim($h)), $header);
+        $missing          = array_diff(self::REQUIRED_HEADERS, $normalizedHeader);
+
+        return empty($missing);
     }
 }

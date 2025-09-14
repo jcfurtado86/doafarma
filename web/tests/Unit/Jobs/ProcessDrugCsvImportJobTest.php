@@ -21,6 +21,7 @@ describe('ProcessDrugCsvImportJob', function (): void {
         // Arrange
         $csvPath = CsvTestBuilder::create()
             ->withHeaderOffset(41)
+            ->withDelimiter(';')
             ->addDrug([
                 'SUBSTÂNCIA'   => 'PARACETAMOL',
                 'LABORATÓRIO'  => 'EMS S.A.',
@@ -64,10 +65,41 @@ describe('ProcessDrugCsvImportJob', function (): void {
         expect(Drug::count())->toBe(3);
     });
 
+    it('detects semicolon delimiter correctly using League CSV', function (): void {
+        // Arrange
+        $csvPath = CsvTestBuilder::create()
+            ->withHeaderOffset(41)
+            ->withDelimiter(';')
+            ->addDrug([
+                'SUBSTÂNCIA'   => 'PARACETAMOL',
+                'LABORATÓRIO'  => 'EMS S.A.',
+                'REGISTRO'     => '1234567890',
+                'PRODUTO'      => 'PRODUTO COM, VÍRGULA',
+                'APRESENTAÇÃO' => '17,5% SOL INJ',
+                'TARJA'        => 'TARJA VERMELHA',
+            ])
+            ->build();
+
+        // Act
+        $job          = new ProcessDrugCsvImportJob($csvPath);
+        $reflection   = new ReflectionClass($job);
+        $detectMethod = $reflection->getMethod('detectDelimiter');
+        $detectMethod->setAccessible(true);
+
+        $detectedDelimiter = $detectMethod->invoke($job, $csvPath);
+
+        // Assert
+        expect($detectedDelimiter)->toBe(';');
+
+        $job->handle();
+        expect(Drug::count())->toBe(1);
+    });
+
     it('logs warning for invalid rows but continues processing', function (): void {
         // Arrange
         $csvPath = CsvTestBuilder::create()
             ->withHeaderOffset(41)
+            ->withDelimiter(';')
             ->addDrug([
                 'SUBSTÂNCIA'   => 'PARACETAMOL',
                 'LABORATÓRIO'  => 'Valid Lab',
@@ -138,6 +170,7 @@ describe('ProcessDrugCsvImportJob', function (): void {
         // Arrange
         $csvPath = CsvTestBuilder::create()
             ->withHeaderOffset(41)
+            ->withDelimiter(';')
             ->addDrug(['TARJA' => 'TARJA VERMELHA'])
             ->addDrug(['TARJA' => 'TARJA VERMELHA (**)'])
             ->addDrug(['TARJA' => 'TARJA PRETA'])
@@ -166,6 +199,7 @@ describe('ProcessDrugCsvImportJob', function (): void {
 
         $csvPath = CsvTestBuilder::create()
             ->withHeaderOffset(41)
+            ->withDelimiter(';')
             ->addDrug([
                 'REGISTRO'   => '123456',
                 'SUBSTÂNCIA' => 'Updated Substance',
@@ -189,6 +223,7 @@ describe('ProcessDrugCsvImportJob', function (): void {
         // Arrange
         $csvPath = CsvTestBuilder::create()
             ->withHeaderOffset(41)
+            ->withDelimiter(';')
             ->addDrugs(10000) // Adiciona 10000 drugs com dados aleatórios
             ->build();
 
@@ -208,6 +243,7 @@ describe('ProcessDrugCsvImportJob', function (): void {
         $csvPath = CsvTestBuilder::create()
             ->withHeader(['SUBSTÂNCIA', 'LABORATÓRIO']) // Missing required columns
             ->withHeaderOffset(41)
+            ->withDelimiter(';')
             ->addCustomRow(['PARACETAMOL', 'EMS'])
             ->build();
 

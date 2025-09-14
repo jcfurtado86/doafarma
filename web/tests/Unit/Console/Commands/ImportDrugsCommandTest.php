@@ -19,6 +19,7 @@ it('dispatches the import job when file exists', function (): void {
 
     $csvPath = CsvTestBuilder::create()
         ->withHeaderOffset(41)
+        ->withDelimiter(';')
         ->addDrug() // adiciona uma linha válida
         ->build();
 

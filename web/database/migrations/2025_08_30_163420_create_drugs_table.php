@@ -15,11 +15,11 @@ return new class () extends Migration
     {
         Schema::create('drugs', function (Blueprint $table): void {
             $table->id();
-            $table->string('substance');
+            $table->text('substance');
             $table->string('laboratory');
             $table->string('registration_number')->unique();
             $table->string('product_name');
-            $table->string('presentation');
+            $table->text('presentation');
             $table->string('stripe_color')->nullable(); // Tarja
             $table->timestamps();
         });

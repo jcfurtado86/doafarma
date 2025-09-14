@@ -37,6 +37,7 @@ expect()->extend('toBeValidCsv', function () {
     try {
         $csv = League\Csv\Reader::createFromPath($this->value, 'r');
         $csv->setHeaderOffset(0);
+        $csv->setEscape('');
         $header = $csv->getHeader();
 
         PHPUnit\Framework\Assert::assertIsArray($header, "Could not read CSV header");
@@ -53,6 +54,7 @@ expect()->extend('toHaveCsvHeader', function (array $expectedHeader) {
     try {
         $csv = League\Csv\Reader::createFromPath($this->value, 'r');
         $csv->setHeaderOffset(0);
+        $csv->setEscape('');
         $header = $csv->getHeader();
 
         $missingColumns = array_diff($expectedHeader, $header);
@@ -81,6 +83,7 @@ expect()->extend('toHaveCsvRowCount', function (int $expectedCount) {
     try {
         $csv = League\Csv\Reader::createFromPath($this->value, 'r');
         $csv->setHeaderOffset(0);
+        $csv->setEscape('');
 
         $actualCount = iterator_count($csv->getRecords());
 
@@ -102,6 +105,7 @@ expect()->extend('toHaveCsvRow', function (array $expectedRow, int | null $index
     try {
         $csv = League\Csv\Reader::createFromPath($this->value, 'r');
         $csv->setHeaderOffset(0);
+        $csv->setEscape('');
 
         // Re-index the array to start from 0
         $records = array_values(iterator_to_array($csv->getRecords()));
@@ -122,21 +126,63 @@ expect()->extend('toHaveCsvRow', function (array $expectedRow, int | null $index
                 ". Actual: " . json_encode($actualRecord)
             );
         } else {
-            $found = false;
-
-            foreach ($records as $record) {
-                if (csvRowMatches($record, $expectedRow)) {
-                    $found = true;
-
-                    break;
-                }
-            }
-
+            $found = array_any($records, fn ($record): bool => csvRowMatches($record, $expectedRow));
             PHPUnit\Framework\Assert::assertTrue(
                 $found,
                 "No CSV row matches the expected values."
             );
         }
+
+        return $this;
+    } catch (Exception $e) {
+        PHPUnit\Framework\Assert::fail("Error reading CSV: {$e->getMessage()}");
+    }
+});
+
+expect()->extend('toHaveCsvHeaderAtOffset', function (array $expectedHeader, int $headerOffset = 0) {
+    PHPUnit\Framework\Assert::assertFileExists($this->value, "CSV file {$this->value} does not exist.");
+
+    try {
+        $csv = League\Csv\Reader::createFromPath($this->value, 'r');
+        $csv->setHeaderOffset($headerOffset);
+        $csv->setEscape('');
+        $header = $csv->getHeader();
+
+        $missingColumns = array_diff($expectedHeader, $header);
+        PHPUnit\Framework\Assert::assertEmpty(
+            $missingColumns,
+            "CSV header is missing columns: " . implode(', ', $missingColumns) .
+            ". Actual header: " . json_encode($header)
+        );
+
+        $extraColumns = array_diff($header, $expectedHeader);
+        PHPUnit\Framework\Assert::assertEmpty(
+            $extraColumns,
+            "CSV header contains extra columns: " . implode(', ', $extraColumns) .
+            ". Actual header: " . json_encode($header)
+        );
+
+        return $this;
+    } catch (Exception $e) {
+        PHPUnit\Framework\Assert::fail("Error reading CSV: {$e->getMessage()}");
+    }
+});
+
+expect()->extend('toHaveCsvRowCountAtOffset', function (int $expectedCount, int $headerOffset = 0) {
+    PHPUnit\Framework\Assert::assertFileExists($this->value, "CSV file {$this->value} does not exist.");
+
+    try {
+        $csv = League\Csv\Reader::createFromPath($this->value, 'r');
+        $csv->setHeaderOffset($headerOffset);
+        $csv->setEscape('');
+
+        $actualCount = iterator_count($csv->getRecords());
+
+        PHPUnit\Framework\Assert::assertEquals(
+            $expectedCount,
+            $actualCount,
+            "CSV has {$actualCount} rows, but expected {$expectedCount}."
+        );
 
         return $this;
     } catch (Exception $e) {
@@ -168,12 +214,12 @@ $GLOBALS['pest_temp_files'] = [];
  */
 function createTestCsv(array $header, array $rows = [], string | null $filename = null): string
 {
-    $filename = $filename ?? sys_get_temp_dir() . '/pest_csv_' . uniqid() . '.csv';
+    $filename ??= sys_get_temp_dir() . '/pest_csv_' . uniqid() . '.csv';
 
     $csv = League\Csv\Writer::createFromPath($filename, 'w+');
     $csv->insertOne($header);
 
-    if (! empty($rows)) {
+    if ($rows !== []) {
         $csv->insertAll($rows);
     }
 
@@ -208,6 +254,7 @@ function readTestCsv(string $csvPath): array
 
     $csv = League\Csv\Reader::createFromPath($csvPath, 'r');
     $csv->setHeaderOffset(0);
+    $csv->setEscape('');
 
     return array_values(iterator_to_array($csv->getRecords()));
 }
@@ -226,48 +273,8 @@ function csvRowMatches(array $record, array $expectedRow): bool
     return true;
 }
 
-/**
- * Creates a CSV with drug data for testing drug import functionality.
- */
-function createDrugsCsv(int $count = 5, array $customAttributes = []): string
+function pest_cleanup_temp_files(): void
 {
-    $header = ['substance', 'laboratory', 'registration_number', 'presentation', 'stripe_color'];
-    $rows   = [];
-
-    for ($i = 0; $i < $count; $i++) {
-        $drugData = array_merge([
-            'substance'           => fake()->word(),
-            'laboratory'          => fake()->company(),
-            'registration_number' => fake()->unique()->regexify('[0-9]{8}'),
-            'presentation'        => fake()->sentence(3),
-            'stripe_color'        => fake()->randomElement(['red', 'yellow', 'blue', 'white', null]),
-        ], $customAttributes);
-
-        $rows[] = array_values($drugData);
-    }
-
-    return createTestCsv($header, $rows);
-}
-
-/**
- * Validates if a CSV file has the expected drug structure.
- */
-function validateDrugsCsvStructure(string $csvPath): bool
-{
-    $expectedHeader = ['substance', 'laboratory', 'registration_number', 'presentation', 'stripe_color'];
-
-    try {
-        $csv = League\Csv\Reader::createFromPath($csvPath, 'r');
-        $csv->setHeaderOffset(0);
-        $header = $csv->getHeader();
-
-        return $header === $expectedHeader;
-    } catch (Exception) {
-        return false;
-    }
-}
-
-afterEach(function () {
     if (isset($GLOBALS['pest_temp_files'])) {
         foreach ($GLOBALS['pest_temp_files'] as $file) {
             if (file_exists($file)) {
@@ -276,4 +283,8 @@ afterEach(function () {
         }
         $GLOBALS['pest_temp_files'] = [];
     }
+}
+
+afterEach(function (): void {
+    pest_cleanup_temp_files();
 });

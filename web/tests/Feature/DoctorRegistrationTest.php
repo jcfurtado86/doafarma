@@ -10,6 +10,7 @@ use function Pest\Laravel\postJson;
 use function PHPUnit\Framework\assertTrue;
 
 it('should be able to register a doctor', function (): void {
+    // todo: resolver esse teste que as vezes dá erro e as vezes não, acontece que ao usar o now(), para verificar o tempo que ele foi criado as vezes dá diferençae causa erro
     postJson(route('doctor.register'), [
         'name'                  => 'John Doe',
         'email'                 => 'test@example.com',

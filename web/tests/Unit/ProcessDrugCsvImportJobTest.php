@@ -56,6 +56,7 @@ describe('ProcessDrugCsvImportJob', function (): void {
             'substance'           => 'PARACETAMOL',
             'laboratory'          => 'EMS S.A.',
             'registration_number' => '1234567890123',
+            'product_name'        => 'TYLENOL',
             'presentation'        => '500 MG COM CT BL AL X 20',
             'stripe_color'        => 'Sem Tarja',
         ]);

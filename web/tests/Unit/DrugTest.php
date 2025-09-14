@@ -15,6 +15,7 @@ it('can create a drug using factory', function (): void {
         ->toHaveKey('substance')
         ->toHaveKey('laboratory')
         ->toHaveKey('registration_number')
+        ->toHaveKey('product_name')
         ->toHaveKey('presentation')
         ->toHaveKey('stripe_color');
 
@@ -29,6 +30,7 @@ it('generates valid data via factory', function (): void {
     expect($drug->substance)->not->toBeEmpty()
         ->and($drug->laboratory)->not->toBeEmpty()
         ->and($drug->registration_number)->not->toBeEmpty()
+        ->and($drug->product_name)->not->toBeEmpty()
         ->and($drug->presentation)->not->toBeEmpty();
 });
 
@@ -37,6 +39,7 @@ it('can store a drug in the database', function (): void {
         'substance'           => 'Paracetamol',
         'laboratory'          => 'Medley',
         'registration_number' => '12345678',
+        'product_name'        => 'Paracetamol 500mg',
         'presentation'        => 'Comprimido 500mg',
         'stripe_color'        => 'Tarja Branca',
     ];
@@ -45,6 +48,7 @@ it('can store a drug in the database', function (): void {
     $drug->substance           = $drugData['substance'];
     $drug->laboratory          = $drugData['laboratory'];
     $drug->registration_number = $drugData['registration_number'];
+    $drug->product_name        = $drugData['product_name'];
     $drug->presentation        = $drugData['presentation'];
     $drug->stripe_color        = $drugData['stripe_color'];
     $drug->save();

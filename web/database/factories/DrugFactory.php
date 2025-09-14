@@ -22,6 +22,7 @@ class DrugFactory extends Factory
             'substance'           => $this->faker->word(),
             'laboratory'          => $this->faker->word(),
             'registration_number' => $this->faker->unique()->word(),
+            'product_name'        => $this->faker->word(),
             'presentation'        => $this->faker->text(),
             'stripe_color'        => $this->faker->word(),
         ];

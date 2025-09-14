@@ -86,6 +86,7 @@ class ProcessDrugCsvImportJob implements ShouldQueue
                 [
                     'substance'    => trim($record['SUBSTÂNCIA'] ?? ''),
                     'laboratory'   => trim($record['LABORATÓRIO'] ?? ''),
+                    'product_name' => trim($record['PRODUTO'] ?? ''),
                     'presentation' => trim($record['APRESENTAÇÃO'] ?? ''),
                     'stripe_color' => $this->normalizeStripeColor($record['TARJA'] ?? ''),
                 ]
@@ -134,7 +135,8 @@ class ProcessDrugCsvImportJob implements ShouldQueue
     {
         return $this->hasValidRegistro($record)
             && $this->hasValidSubstancia($record)
-            && $this->hasValidLaboratorio($record);
+            && $this->hasValidLaboratorio($record)
+            && $this->hasValidProduto($record);
     }
 
     /**
@@ -205,6 +207,19 @@ class ProcessDrugCsvImportJob implements ShouldQueue
     private function hasValidLaboratorio(array $record): bool
     {
         return isset($record['LABORATÓRIO']) && ! in_array(trim($record['LABORATÓRIO']), ['', '0'], true);
+    }
+
+    /**
+     * Validates the 'PRODUTO' field of a drug record.
+     *
+     * Checks if the 'PRODUTO' field exists and is not empty or '0'.
+     *
+     * @param array<string> $record The drug record data from the CSV.
+     * @return bool Returns true if 'PRODUTO' is valid; false otherwise.
+     */
+    private function hasValidProduto(array $record): bool
+    {
+        return isset($record['PRODUTO']) && ! in_array(trim($record['PRODUTO']), ['', '0'], true);
     }
 
     /**

@@ -16,6 +16,7 @@ class Drug extends Model
         'substance',
         'laboratory',
         'registration_number',
+        'product_name',
         'presentation',
         'stripe_color',
     ];

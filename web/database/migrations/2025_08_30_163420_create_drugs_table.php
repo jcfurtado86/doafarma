@@ -18,6 +18,7 @@ return new class () extends Migration
             $table->string('substance');
             $table->string('laboratory');
             $table->string('registration_number')->unique();
+            $table->string('product_name');
             $table->string('presentation');
             $table->string('stripe_color')->nullable(); // Tarja
             $table->timestamps();

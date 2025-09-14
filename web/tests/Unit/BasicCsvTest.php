@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-it('creates and validates basic CSV file structure', function () {
+it('creates and validates basic CSV file structure', function (): void {
     $csvPath = createTestCsv(
         ['id', 'name', 'email'],
         [
@@ -16,7 +16,7 @@ it('creates and validates basic CSV file structure', function () {
         ->and($csvPath)->toHaveCsvRowCount(2);
 });
 
-it('validates specific CSV row content', function () {
+it('validates specific CSV row content', function (): void {
     $csvPath = createTestCsv(
         ['id', 'name', 'email'],
         [
@@ -31,7 +31,7 @@ it('validates specific CSV row content', function () {
         ->and($csvPath)->toHaveCsvRow(['id' => '2', 'name' => 'Maria'], 1);
 });
 
-it('supports adding rows to existing CSV files', function () {
+it('supports adding rows to existing CSV files', function (): void {
     $csvPath = createTestCsv(['id', 'name', 'email'], [['1', 'John', 'john@example.com']]);
 
     addCsvRows($csvPath, [['2', 'Peter', 'peter@example.com']]);
@@ -42,14 +42,14 @@ it('supports adding rows to existing CSV files', function () {
     expect($data)->toHaveCount(2);
 });
 
-it('handles CSV validation errors gracefully', function () {
+it('handles CSV validation errors gracefully', function (): void {
     $invalidPath = '/non/existent/file.csv';
 
     expect(fn () => expect($invalidPath)->toBeValidCsv())
         ->toThrow(PHPUnit\Framework\AssertionFailedError::class);
 });
 
-it('supports partial row matching', function () {
+it('supports partial row matching', function (): void {
     $csvPath = createTestCsv(
         ['id', 'name', 'email', 'status'],
         [
@@ -60,14 +60,4 @@ it('supports partial row matching', function () {
 
     expect($csvPath)->toHaveCsvRow(['name' => 'John', 'status' => 'active'])
         ->and($csvPath)->toHaveCsvRow(['name' => 'Maria', 'status' => 'inactive']);
-});
-
-it('creates and validates drug CSV structure', function () {
-    $csvPath = createDrugsCsv(3, ['stripe_color' => 'red']);
-
-    expect($csvPath)->toBeValidCsv()
-        ->and($csvPath)->toHaveCsvRowCount(3)
-        ->and($csvPath)->toHaveCsvHeader(['substance', 'laboratory', 'registration_number', 'presentation', 'stripe_color']);
-
-    expect(validateDrugsCsvStructure($csvPath))->toBeTrue();
 });

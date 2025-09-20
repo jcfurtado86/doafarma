@@ -1,4 +1,49 @@
 <laravel-boost-guidelines>
+=== project architecture & methodology rules ===
+
+## Project Overview
+- This project is a **medicine donation system**.
+- The Laravel application serves **only as an API**.
+- The frontend is a separate **Expo (React Native) application** which consumes this API.
+
+## Architecture & API Design
+- The architecture follows **Action-Driven Development**.
+    - **Rule:** Business logic should remain within the controller if it is only used in that single context.
+    - **Rule:** Only extract logic into a dedicated `Action` class (e.g., `app/Actions/MyAction.php`) when that specific logic needs to be reused in multiple places (e.g., another controller, a job, a command).
+- All API routes **must strictly follow RESTful patterns**. All routes should be prefixed with `/api/v1/`. For example: `GET /api/v1/users`, `POST /api/v1/donations`.
+
+## Test-Driven Development (TDD) Approach
+- This project uses TDD. Tests are always written before the implementation code.
+- When asked to create a new feature (e.g., "create an endpoint to list donations"), your primary task is to **scaffold the tests, not implement them**.
+- In the generated Pest test file, you **must not write the implementation** for the tests.
+- Instead, you must provide a list of test cases as **`// TODO:` comments**. This list should cover happy paths, edge cases, and validation errors. The developer will implement these tests.
+
+<code-snippet name="TDD TODO Example for a new feature" lang="php">
+it('cannot create a donation when unauthenticated', function () {
+    // TODO: Assert response is 401.
+});
+
+it('returns a validation error if the medication name is missing', function () {
+    // TODO: Post to the endpoint without 'medication_name'.
+    // TODO: Assert response is 422.
+    // TODO: Assert the JSON error response contains the correct message for 'medication_name'.
+});
+
+it('successfully creates a donation with valid data', function () {
+    // TODO: Authenticate a user.
+    // TODO: Post valid data to the endpoint.
+    // TODO: Assert response is 201.
+    // TODO: Assert the created donation exists in the database.
+});
+</code-snippet>
+
+## Code Quality & Best Practices
+- **Clarity is Key:** Write clean, readable, and maintainable code. The code should be self-documenting whenever possible.
+- **Naming Conventions:** Use clear and descriptive names for variables, methods, and classes that reveal their intent.
+- **Single Responsibility Principle (SRP):** Each class and method should have one, and only one, reason to change. Keep them small and focused.
+- **Type Safety:** Always use strict types (`declare(strict_types=1);`) and leverage PHP's type-hinting for method arguments, properties, and return types.
+- **Configuration:** Adhere to Laravel's convention of using `config()` helpers instead of the `env()` helper outside of configuration files.
+
 === foundation rules ===
 
 # Laravel Boost Guidelines

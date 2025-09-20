@@ -84,7 +84,6 @@ describe('ProcessDrugCsvImportJob', function (): void {
         $job          = new ProcessDrugCsvImportJob($csvPath);
         $reflection   = new ReflectionClass($job);
         $detectMethod = $reflection->getMethod('detectDelimiter');
-        $detectMethod->setAccessible(true);
 
         $detectedDelimiter = $detectMethod->invoke($job, $csvPath);
 

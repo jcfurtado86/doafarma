@@ -334,6 +334,6 @@ class ProcessDrugCsvImportJob implements ShouldQueue
         $normalizedHeader = array_map(fn (string $h) => mb_strtoupper(trim($h)), $header);
         $missing          = array_diff(self::REQUIRED_HEADERS, $normalizedHeader);
 
-        return empty($missing);
+        return $missing === [];
     }
 }

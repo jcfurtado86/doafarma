@@ -12,6 +12,24 @@
     - **Rule:** Only extract logic into a dedicated `Action` class (e.g., `app/Actions/MyAction.php`) when that specific logic needs to be reused in multiple places (e.g., another controller, a job, a command).
 - All API routes **must strictly follow RESTful patterns**. All routes should be prefixed with `/api/v1/`. For example: `GET /api/v1/users`, `POST /api/v1/donations`.
 
+### Route Definition Style
+- When defining routes in `routes/*.php` files, you **must** import the controller's namespace at the top of the file with a `use` statement.
+- You **must** prefer using single-action (invokable) controllers for API endpoints. This means the controller class itself is passed as the second argument to the route definition (e.g., `Route::get(...)`), without specifying a method name in an array.
+
+<code-snippet name="Correct Route Definition Example" lang="php">
+// At the top of routes/api.php
+use App\Http\Controllers\Api\V1\Drug;
+
+// ... inside the routing group
+Route::get('search', Drug\SearchController::class)
+    ->name('api.v1.drugs.search');
+</code-snippet>
+
+<code-snippet name="Incorrect Route Definition Example (Avoid)" lang="php">
+Route::get('search', [\App\Http\Controllers\Api\V1\Drug\SearchController::class, 'index'])
+    ->name('api.v1.drugs.search');
+</code-snippet>
+
 ## Test-Driven Development (TDD) Approach
 - This project uses TDD. Tests are always written before the implementation code.
 - When asked to create a new feature (e.g., "create an endpoint to list donations"), your primary task is to **scaffold the tests, not implement them**.
@@ -19,21 +37,16 @@
 - Instead, you must provide a list of test cases as **`// TODO:` comments**. This list should cover happy paths, edge cases, and validation errors. The developer will implement these tests.
 
 <code-snippet name="TDD TODO Example for a new feature" lang="php">
-it('cannot create a donation when unauthenticated', function () {
-    // TODO: Assert response is 401.
-});
+todo('should be accessible via GET /api/v1/drugs/search');
+</code-snippet>
 
-it('returns a validation error if the medication name is missing', function () {
-    // TODO: Post to the endpoint without 'medication_name'.
-    // TODO: Assert response is 422.
-    // TODO: Assert the JSON error response contains the correct message for 'medication_name'.
-});
+<code-snippet name="Example of TDD TODO after implementation" lang="php">
+it('should be accessible via GET /api/v1/drugs/search', function () {
+    get('/api/v1/drugs/search')
+        ->assertOk();
 
-it('successfully creates a donation with valid data', function () {
-    // TODO: Authenticate a user.
-    // TODO: Post valid data to the endpoint.
-    // TODO: Assert response is 201.
-    // TODO: Assert the created donation exists in the database.
+    get(route('api.v1.drugs.search'))
+        ->assertOk();
 });
 </code-snippet>
 

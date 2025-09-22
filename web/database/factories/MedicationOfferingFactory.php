@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace Database\Factories;
 
+use App\Models\Doctor;
+use App\Models\Drug;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +21,11 @@ class MedicationOfferingFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'doctor_id'  => Doctor::factory(),
+            'drug_id'    => Drug::factory(),
+            'lot_number' => $this->faker->bothify('LOT-#####'),
+            'expires_at' => now()->addMonths($this->faker->numberBetween(1, 24))->toDateString(),
+            'quantity'   => $this->faker->numberBetween(1, 500),
         ];
     }
 }

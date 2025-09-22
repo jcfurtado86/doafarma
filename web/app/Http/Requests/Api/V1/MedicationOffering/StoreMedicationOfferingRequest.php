@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Http\Requests\Api\V1\MedicationOffering;
 
+use App\Models\MedicationOffering;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreMedicationOfferingRequest extends FormRequest
@@ -13,7 +14,7 @@ class StoreMedicationOfferingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user() !== null && $this->user()->doctor()->exists();
+        return $this->user()->can('create', MedicationOffering::class);
     }
 
     /**

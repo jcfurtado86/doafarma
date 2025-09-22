@@ -30,7 +30,7 @@ class MedicationOfferingPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->doctor?->id !== null;
     }
 
     /**

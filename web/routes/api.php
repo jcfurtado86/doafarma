@@ -25,5 +25,8 @@ Route::prefix('v1')->group(function (): void {
         Route::post('/', MedicationOffering\StoreController::class)
             ->name('api.v1.medication-offerings.post')
             ->middleware('auth:sanctum');
+        Route::put('/{medicationOffering}', MedicationOffering\UpdateController::class)
+            ->name('api.v1.medication-offerings.put')
+            ->middleware('auth:sanctum');
     });
 });

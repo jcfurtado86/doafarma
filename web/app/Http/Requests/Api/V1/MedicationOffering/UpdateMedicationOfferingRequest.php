@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Api\V1\MedicationOffering;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -13,7 +13,7 @@ class UpdateMedicationOfferingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->can('update', $this->route('medicationOffering'));
     }
 
     /**
@@ -24,7 +24,9 @@ class UpdateMedicationOfferingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'lot_number' => ['sometimes', 'required', 'string', 'max:255'],
+            'expires_at' => ['sometimes', 'required', 'date', 'after:today'],
+            'quantity'   => ['sometimes', 'required', 'integer', 'min:1'],
         ];
     }
 }

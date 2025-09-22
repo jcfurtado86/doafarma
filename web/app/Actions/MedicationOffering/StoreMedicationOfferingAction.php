@@ -19,12 +19,6 @@ class StoreMedicationOfferingAction
     {
         $doctor = $user->doctor;
 
-        return $doctor->medicationOfferings()->create([
-            'user_id'    => $user->id,
-            'drug_id'    => (int) $data['drug_id'],
-            'lot_number' => trim((string) $data['lot_number']),
-            'expires_at' => $data['expires_at'],
-            'quantity'   => (int) $data['quantity'],
-        ]);
+        return $doctor->medicationOfferings()->create($data);
     }
 }

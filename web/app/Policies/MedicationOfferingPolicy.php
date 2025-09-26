@@ -14,7 +14,7 @@ class MedicationOfferingPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->doctor?->id !== null;
     }
 
     /**

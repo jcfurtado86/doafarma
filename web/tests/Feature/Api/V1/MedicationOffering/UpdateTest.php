@@ -84,7 +84,7 @@ it('allows partial updates (only provided fields are changed)', function (): voi
     ]);
 });
 
-it('returns a validation error for various invalid data payloads', function (array $invalidData, array | string $expectedErrors) {
+it('returns a validation error for various invalid data payloads', function (array $invalidData, array | string $expectedErrors): void {
     $doctor   = Doctor::factory()->create();
     $offering = MedicationOffering::factory()->create(['doctor_id' => $doctor->id]);
 

@@ -22,6 +22,9 @@ Route::prefix('v1')->group(function (): void {
     });
 
     Route::prefix('medication-offerings')->group(function (): void {
+        Route::get('/', MedicationOffering\ListController::class)
+            ->name('api.v1.medication-offerings.list')
+            ->middleware('auth:sanctum');
         Route::post('/', MedicationOffering\StoreController::class)
             ->name('api.v1.medication-offerings.post')
             ->middleware('auth:sanctum');

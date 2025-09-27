@@ -26,6 +26,9 @@ Route::prefix('v1')->group(function (): void {
         Route::get('search', Drug\SearchController::class)
             ->name('api.v1.drugs.search')
             ->middleware('auth:sanctum');
+        Route::get('/', Drug\ListController::class)
+            ->name('api.v1.drugs.list')
+            ->middleware('auth:sanctum');
     });
 
     Route::prefix('medication-offerings')->group(function (): void {

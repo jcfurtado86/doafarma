@@ -22,7 +22,7 @@ class MedicationOfferingPolicy
      */
     public function view(User $user, MedicationOffering $medicationOffering): bool
     {
-        return false;
+        return $user->doctor?->id === $medicationOffering->doctor_id;
     }
 
     /**

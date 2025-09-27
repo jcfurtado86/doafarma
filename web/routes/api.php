@@ -31,5 +31,8 @@ Route::prefix('v1')->group(function (): void {
         Route::put('/{medicationOffering}', MedicationOffering\UpdateController::class)
             ->name('api.v1.medication-offerings.put')
             ->middleware('auth:sanctum');
+        Route::delete('/{medicationOffering}', MedicationOffering\DeleteController::class)
+            ->name('api.v1.medication-offerings.delete')
+            ->middleware('auth:sanctum');
     });
 });

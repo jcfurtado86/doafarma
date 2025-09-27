@@ -20,7 +20,7 @@ it('returns only the medication offerings belonging to the authenticated doctor'
     actingAs($doctor->user);
 
     // ACT
-    $response = getJson(route('api.v1.medication-offerings.list'));
+    $response = getJson('/api/v1/medication-offerings');
 
     // ASSERT
     $response->assertOk();

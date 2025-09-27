@@ -2,6 +2,7 @@
 
 declare(strict_types = 1);
 
+use App\Http\Controllers\Api\V1\Auth;
 use App\Http\Controllers\Api\V1\Drug;
 use App\Http\Controllers\Api\V1\MedicationOffering;
 use App\Http\Controllers\Auth\DoctorRegistrationController;
@@ -15,6 +16,12 @@ Route::post('/register/doctor', DoctorRegistrationController::class)
     ->name('doctor.register');
 
 Route::prefix('v1')->group(function (): void {
+    Route::prefix('auth')->group(function (): void {
+        Route::post('login', Auth\LoginController::class)
+            ->middleware('guest')
+            ->name('api.v1.auth.login');
+    });
+
     Route::prefix('drugs')->group(function (): void {
         Route::get('search', Drug\SearchController::class)
             ->name('api.v1.drugs.search')

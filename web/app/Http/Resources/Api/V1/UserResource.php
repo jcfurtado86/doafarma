@@ -10,6 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @mixin \App\Models\User
+ *
  * @property Carbon|null $terms_accepted_at
  */
 class UserResource extends JsonResource

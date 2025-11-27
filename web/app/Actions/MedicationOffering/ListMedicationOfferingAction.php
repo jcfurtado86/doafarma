@@ -18,7 +18,13 @@ class ListMedicationOfferingAction
      */
     public function execute(User $user, array $includes = [], int $perPage = 15): LengthAwarePaginator
     {
-        return $user->doctor
+        $doctor = $user->doctor;
+
+        if ($doctor === null) {
+            throw new \RuntimeException('User is not a doctor');
+        }
+
+        return $doctor
             ->medicationOfferings()
             ->with($includes)
             ->latest()

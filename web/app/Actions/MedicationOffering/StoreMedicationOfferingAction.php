@@ -19,6 +19,10 @@ class StoreMedicationOfferingAction
     {
         $doctor = $user->doctor;
 
+        if ($doctor === null) {
+            throw new \RuntimeException('User is not a doctor');
+        }
+
         return $doctor->medicationOfferings()->create($data);
     }
 }

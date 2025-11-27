@@ -26,9 +26,9 @@ class StoreMedicationOfferingRequest extends FormRequest
     {
         return [
             'drug_id'    => ['required', 'integer', 'exists:drugs,id'],
-            'lot_number' => ['required', 'string', 'max:255'],
-            'expires_at' => ['required', 'date', 'after:today'],
-            'quantity'   => ['required', 'integer', 'min:1'],
+            'lot_number' => ['required', 'string', 'max:255', 'regex:/^[A-Z0-9\-]+$/i'],
+            'expires_at' => ['required', 'date', 'after:today', 'before:+10 years'],
+            'quantity'   => ['required', 'integer', 'min:1', 'max:100000'],
         ];
     }
 }

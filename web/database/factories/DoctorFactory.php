@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +20,7 @@ class DoctorFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => 1,
+            'user_id' => User::factory(),
             'crm'     => fake()->unique()->numerify('########'),
             'crm_uf'  => fake()->randomElement(['SP', 'RJ', 'MG', 'RS', 'PR', 'SC', 'DF', 'GO', 'MT', 'MS', 'AM', 'PA', 'BA', 'CE', 'MA', 'PB', 'PE', 'PI', 'RN', 'AL', 'ES', 'SE', 'TO', 'AC', 'AP', 'RR']),
         ];

@@ -1,25 +1,43 @@
 import { View, Text, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useAuthStore } from '@/stores/authStore';
 import PrimaryButton from '@/components/PrimaryButton';
+import SecondaryButton from '@/components/SecondaryButton';
 import { Colors } from '@/constants/Colors';
+import { Title } from '@/components/Title';
+import { Caption } from '@/components/Caption';
 
 export default function Dashboard() {
+  const router = useRouter();
   const { user, logout } = useAuthStore();
 
   const handleLogout = async () => {
     await logout();
   };
 
+  const handleMedicationOfferings = () => {
+    router.push('/(auth)/medication-offerings');
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.welcome}>Bem-vindo, Dr. {user?.name}</Text>
-        <Text style={styles.subtitle}>Painel do Médico</Text>
+        <Title>Bem-vindo, Dr. {user?.name}</Title>
+        <Caption>Painel do Médico</Caption>
         <Text style={styles.email}>{user?.email}</Text>
       </View>
 
+      <View style={styles.menu}>
+        <PrimaryButton label="Minhas Ofertas" onPress={handleMedicationOfferings} />
+
+        <SecondaryButton
+          label="Nova Oferta"
+          onPress={() => router.push('/(auth)/medication-offerings/create')}
+        />
+      </View>
+
       <View style={styles.footer}>
-        <PrimaryButton label="Sair" onPress={handleLogout} />
+        <SecondaryButton label="Sair" onPress={handleLogout} />
       </View>
     </View>
   );
@@ -35,19 +53,14 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 50,
   },
-  welcome: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: '#666',
-    marginBottom: 16,
+  menu: {
+    gap: 16,
+    marginBottom: 20,
   },
   email: {
     fontSize: 16,
     color: Colors.yellow_green_500,
+    marginTop: 8,
   },
   footer: {
     marginBottom: 20,

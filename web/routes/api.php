@@ -2,6 +2,9 @@
 
 declare(strict_types = 1);
 
+use App\Http\Controllers\Api\V1\Auth;
+use App\Http\Controllers\Api\V1\Drug;
+use App\Http\Controllers\Api\V1\MedicationOffering;
 use App\Http\Controllers\Auth\DoctorRegistrationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -11,3 +14,38 @@ Route::middleware(['auth:sanctum'])->get('/user', fn (Request $request) => $requ
 Route::post('/register/doctor', DoctorRegistrationController::class)
     ->middleware('guest')
     ->name('doctor.register');
+
+Route::prefix('v1')->group(function (): void {
+    Route::prefix('auth')->group(function (): void {
+        Route::post('login', Auth\LoginController::class)
+            ->middleware('guest')
+            ->name('api.v1.auth.login');
+    });
+
+    Route::prefix('drugs')->group(function (): void {
+        Route::get('search', Drug\SearchController::class)
+            ->name('api.v1.drugs.search')
+            ->middleware('auth:sanctum');
+        Route::get('/', Drug\ListController::class)
+            ->name('api.v1.drugs.list')
+            ->middleware('auth:sanctum');
+    });
+
+    Route::prefix('medication-offerings')->group(function (): void {
+        Route::get('/', MedicationOffering\ListController::class)
+            ->name('api.v1.medication-offerings.list')
+            ->middleware('auth:sanctum');
+        Route::post('/', MedicationOffering\StoreController::class)
+            ->name('api.v1.medication-offerings.post')
+            ->middleware('auth:sanctum');
+        Route::get('/{medicationOffering}', MedicationOffering\ShowController::class)
+            ->name('api.v1.medication-offerings.show')
+            ->middleware('auth:sanctum');
+        Route::put('/{medicationOffering}', MedicationOffering\UpdateController::class)
+            ->name('api.v1.medication-offerings.put')
+            ->middleware('auth:sanctum');
+        Route::delete('/{medicationOffering}', MedicationOffering\DeleteController::class)
+            ->name('api.v1.medication-offerings.delete')
+            ->middleware('auth:sanctum');
+    });
+});

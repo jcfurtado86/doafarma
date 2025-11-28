@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration
@@ -15,14 +16,20 @@ return new class () extends Migration
     {
         Schema::create('drugs', function (Blueprint $table): void {
             $table->id();
-            $table->text('substance');
+            $table->string('substance', 1000);
             $table->string('laboratory');
             $table->string('registration_number')->unique();
             $table->string('product_name');
-            $table->text('presentation');
-            $table->string('stripe_color')->nullable(); // Tarja
+            $table->string('presentation', 1000);
+            $table->string('stripe_color')->nullable();
             $table->timestamps();
         });
+
+        if (DB::connection()->getDriverName() === 'pgsql') {
+            DB::statement(
+                "CREATE INDEX drugs_search_idx ON drugs USING GIN(to_tsvector('portuguese', product_name || ' ' || substance))"
+            );
+        }
     }
 
     /**

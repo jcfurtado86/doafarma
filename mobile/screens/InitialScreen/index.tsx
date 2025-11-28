@@ -29,7 +29,7 @@ export function InitialScreen() {
           </View>
           <View style={styles.buttonContainer}>
             <PrimaryButton onPress={() => router.push('/register')} label="Registrar" />
-            <SecondaryButton label="Entrar" onPress={() => console.log('Entrar')} />
+            <SecondaryButton onPress={() => router.push('/login')} label="Entrar" />
           </View>
         </View>
       </View>

@@ -12,7 +12,6 @@ interface MedicationOfferingStoreState {
   isLoading: boolean;
   error: string | null;
 
-  // Actions
   fetchOfferings: () => Promise<void>;
   fetchOffering: (id: number) => Promise<void>;
   createOffering: (data: CreateMedicationOfferingData) => Promise<void>;
@@ -21,7 +20,7 @@ interface MedicationOfferingStoreState {
   clearError: () => void;
 }
 
-export const useMedicationOfferingStore = create<MedicationOfferingStoreState>((set, get) => ({
+export const useMedicationOfferingStore = create<MedicationOfferingStoreState>((set) => ({
   offerings: [],
   currentOffering: null,
   isLoading: false,
@@ -31,12 +30,10 @@ export const useMedicationOfferingStore = create<MedicationOfferingStoreState>((
     set({ isLoading: true, error: null });
     try {
       const offerings = await medicationOfferingService.list();
-      set({ offerings, isLoading: false });
+      set({ offerings, isLoading: false, error: null });
     } catch (error: any) {
-      set({
-        error: error.response?.data?.message || 'Erro ao carregar ofertas de medicamentos',
-        isLoading: false,
-      });
+      set({ error: error.message, isLoading: false });
+      throw error;
     }
   },
 
@@ -44,12 +41,10 @@ export const useMedicationOfferingStore = create<MedicationOfferingStoreState>((
     set({ isLoading: true, error: null });
     try {
       const offering = await medicationOfferingService.show(id);
-      set({ currentOffering: offering, isLoading: false });
+      set({ currentOffering: offering, isLoading: false, error: null });
     } catch (error: any) {
-      set({
-        error: error.response?.data?.message || 'Erro ao carregar oferta de medicamento',
-        isLoading: false,
-      });
+      set({ error: error.message, isLoading: false });
+      throw error;
     }
   },
 
@@ -60,12 +55,11 @@ export const useMedicationOfferingStore = create<MedicationOfferingStoreState>((
       set((state) => ({
         offerings: [newOffering, ...state.offerings],
         isLoading: false,
+        error: null,
       }));
     } catch (error: any) {
-      set({
-        error: error.response?.data?.message || 'Erro ao criar oferta de medicamento',
-        isLoading: false,
-      });
+      set({ error: error.message, isLoading: false });
+      throw error;
     }
   },
 
@@ -79,12 +73,11 @@ export const useMedicationOfferingStore = create<MedicationOfferingStoreState>((
         ),
         currentOffering: state.currentOffering?.id === id ? updatedOffering : state.currentOffering,
         isLoading: false,
+        error: null,
       }));
     } catch (error: any) {
-      set({
-        error: error.response?.data?.message || 'Erro ao atualizar oferta de medicamento',
-        isLoading: false,
-      });
+      set({ error: error.message, isLoading: false });
+      throw error;
     }
   },
 
@@ -96,12 +89,11 @@ export const useMedicationOfferingStore = create<MedicationOfferingStoreState>((
         offerings: state.offerings.filter((offering) => offering.id !== id),
         currentOffering: state.currentOffering?.id === id ? null : state.currentOffering,
         isLoading: false,
+        error: null,
       }));
     } catch (error: any) {
-      set({
-        error: error.response?.data?.message || 'Erro ao deletar oferta de medicamento',
-        isLoading: false,
-      });
+      set({ error: error.message, isLoading: false });
+      throw error;
     }
   },
 

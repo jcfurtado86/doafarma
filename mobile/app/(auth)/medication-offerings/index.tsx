@@ -6,6 +6,7 @@ import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import PrimaryButton from '@/components/PrimaryButton';
 import { MedicationOfferingCard } from '@/components/MedicationOfferingCard';
+import type { MedicationOffering } from '@/types/medicationOffering';
 
 export default function MedicationOfferingsScreen() {
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function MedicationOfferingsScreen() {
     fetchOfferingsCallback();
   }, [fetchOfferingsCallback]);
 
-  const handleDelete = (id: number, drugName: string) => {
+  const handleDelete = async (id: number, drugName: string) => {
     Alert.alert(
       'Confirmar exclusão',
       `Tem certeza que deseja excluir a oferta do medicamento "${drugName}"?`,
@@ -28,21 +29,31 @@ export default function MedicationOfferingsScreen() {
         {
           text: 'Excluir',
           style: 'destructive',
-          onPress: () => deleteOffering(id),
+          onPress: async () => {
+            try {
+              await deleteOffering(id);
+              Alert.alert('Sucesso', 'Oferta excluída com sucesso!');
+            } catch (error: any) {
+              Alert.alert(
+                'Erro ao excluir',
+                error.message || 'Não foi possível excluir a oferta. Tente novamente.'
+              );
+            }
+          },
         },
       ]
     );
   };
 
-  const handleEdit = (offering: any) => {
+  const handleEdit = (offering: MedicationOffering) => {
     router.push(`/(auth)/medication-offerings/edit/${offering.id}`);
   };
 
-  const renderOffering = ({ item }: { item: any }) => (
+  const renderOffering = ({ item }: { item: MedicationOffering }) => (
     <MedicationOfferingCard
       offering={item}
       onEdit={() => handleEdit(item)}
-      onDelete={() => handleDelete(item.id, item.drug?.name || 'Medicamento')}
+      onDelete={() => handleDelete(item.id, item.drug?.product_name || 'Medicamento')}
     />
   );
 

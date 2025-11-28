@@ -8,28 +8,15 @@ import { Input } from '@/components/Input';
 import { Select, SelectItem } from '@/components/Select';
 import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';
-import { z } from 'zod';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
 import api from '@/services/api';
 import { Drug } from '@/types/medicationOffering';
 import { InputRow } from '@/components/InputRow';
-
-const createOfferingSchema = z.object({
-  drug_id: z
-    .string({ required_error: 'Medicamento é obrigatório' })
-    .min(1, 'Selecione um medicamento'),
-  lot_number: z
-    .string({ required_error: 'Número do lote é obrigatório' })
-    .max(255, 'Número do lote não pode ter mais de 255 caracteres'),
-  expires_at: z
-    .string({ required_error: 'Data de vencimento é obrigatória' })
-    .min(1, 'Data de vencimento é obrigatória'),
-  quantity: z
-    .string({ required_error: 'Quantidade é obrigatória' })
-    .min(1, 'Quantidade deve ser pelo menos 1'),
-});
-
-type CreateOfferingFormData = z.infer<typeof createOfferingSchema>;
+import {
+  createMedicationOfferingSchema,
+  CreateMedicationOfferingFormData,
+} from '@/utils/validation/medicationOfferingValidation';
+import { formatDateInput, convertDateToAPI } from '@/utils/validation/dateHelpers';
 
 export default function CreateMedicationOfferingScreen() {
   const router = useRouter();
@@ -41,9 +28,9 @@ export default function CreateMedicationOfferingScreen() {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
-    setValue, // ← ADICIONAR setValue
-  } = useFeatureForm<CreateOfferingFormData>({
-    schema: createOfferingSchema,
+    setValue,
+  } = useFeatureForm<CreateMedicationOfferingFormData>({
+    schema: createMedicationOfferingSchema,
   });
 
   const drugRef = useRef<any>(null);
@@ -60,49 +47,30 @@ export default function CreateMedicationOfferingScreen() {
       const response = await api.get('/v1/drugs');
       setDrugs(response.data.data);
     } catch (error) {
-      console.error('Erro ao carregar medicamentos:', error);
       Alert.alert('Erro', 'Erro ao carregar lista de medicamentos');
     } finally {
       setLoadingDrugs(false);
     }
   };
 
-  // Função para aplicar máscara DD/MM/YYYY
-  const formatDateInput = (text: string) => {
-    // Remove tudo que não é número
-    const numbers = text.replace(/\D/g, '');
-
-    // Aplica a máscara DD/MM/YYYY
-    if (numbers.length <= 2) {
-      return numbers;
-    } else if (numbers.length <= 4) {
-      return `${numbers.slice(0, 2)}/${numbers.slice(2)}`;
-    } else {
-      return `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}/${numbers.slice(4, 8)}`;
-    }
-  };
-
-  // Função para converter DD/MM/YYYY para YYYY-MM-DD
-  const convertDateToAPI = (dateString: string) => {
-    const [day, month, year] = dateString.split('/');
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-  };
-
-  const handleCreateOffering = async (data: CreateOfferingFormData) => {
+  const handleCreateOffering = async (data: CreateMedicationOfferingFormData) => {
     try {
       await createOffering({
-        drug_id: parseInt(data.drug_id),
+        drug_id: parseInt(data.drug_id, 10),
         lot_number: data.lot_number,
         expires_at: convertDateToAPI(data.expires_at),
-        quantity: parseInt(data.quantity),
+        quantity: parseInt(data.quantity, 10),
       });
 
       Alert.alert('Sucesso', 'Oferta de medicamento criada com sucesso!', [
         { text: 'OK', onPress: () => router.back() },
       ]);
     } catch (error: any) {
-      console.error('Erro ao criar oferta:', error);
-      Alert.alert('Erro', 'Erro ao criar oferta de medicamento');
+      Alert.alert(
+        'Erro ao criar oferta',
+        error.message || 'Ocorreu um erro inesperado. Tente novamente.',
+        [{ text: 'OK' }]
+      );
     }
   };
 
@@ -146,6 +114,7 @@ export default function CreateMedicationOfferingScreen() {
           }}
           inputProps={{
             placeholder: 'Número do lote',
+            autoCapitalize: 'characters',
             returnKeyType: 'next',
             onSubmitEditing: () => expiresAtRef.current?.focus(),
           }}
@@ -166,7 +135,7 @@ export default function CreateMedicationOfferingScreen() {
             onSubmitEditing: () => quantityRef.current?.focus(),
             onChangeText: (text) => {
               const formatted = formatDateInput(text);
-              setValue('expires_at', formatted); // ← USAR setValue aqui
+              setValue('expires_at', formatted);
             },
           }}
           error={errors.expires_at?.message}

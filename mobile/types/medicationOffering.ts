@@ -26,7 +26,6 @@ export interface CreateMedicationOfferingData {
 }
 
 export interface UpdateMedicationOfferingData {
-  drug_id?: number;
   lot_number?: string;
   expires_at?: string;
   quantity?: number;

@@ -251,7 +251,7 @@ class ProcessDrugCsvImportJob implements ShouldQueue
      */
     private function normalizeStripeColor(?string $tarja): ?string
     {
-        if ($tarja === null || $tarja === '' || $tarja === '0') {
+        if (in_array($tarja, [null, '', '0'], true)) {
             return null;
         }
 

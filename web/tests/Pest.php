@@ -126,7 +126,7 @@ expect()->extend('toHaveCsvRow', function (array $expectedRow, int | null $index
                 ". Actual: " . json_encode($actualRecord)
             );
         } else {
-            $found = array_any($records, fn ($record): bool => csvRowMatches($record, $expectedRow));
+            $found = array_any($records, fn (array $record): bool => csvRowMatches($record, $expectedRow));
             PHPUnit\Framework\Assert::assertTrue(
                 $found,
                 "No CSV row matches the expected values."
@@ -264,13 +264,7 @@ function readTestCsv(string $csvPath): array
  */
 function csvRowMatches(array $record, array $expectedRow): bool
 {
-    foreach ($expectedRow as $key => $value) {
-        if (! isset($record[$key]) || $record[$key] !== $value) {
-            return false;
-        }
-    }
-
-    return true;
+    return array_all($expectedRow, fn ($value, $key): bool => isset($record[$key]) && $record[$key] === $value);
 }
 
 function pest_cleanup_temp_files(): void

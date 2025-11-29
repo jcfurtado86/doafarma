@@ -1,4 +1,8 @@
-import { receptorService, ReceptorRegistrationData } from '@/services/receptorService';
+import {
+  receptorService,
+  ReceptorRegistrationData,
+  ReceptorServiceError,
+} from '@/services/receptorService';
 import { create } from 'zustand';
 import * as Device from 'expo-device';
 import { useAuthStore } from './authStore';
@@ -79,13 +83,30 @@ export const useReceptorRegistrationStore = create<ReceptorRegistrationFormStore
 
       set({ isLoading: false });
       return true;
-    } catch (error: any) {
-      if (error.isValidationError) {
-        set({
-          isLoading: false,
-          validationErrors: error.validationErrors,
-          error: error.message,
-        });
+    } catch (error: unknown) {
+      if (error instanceof ReceptorServiceError) {
+        if (error.isValidationError) {
+          set({
+            isLoading: false,
+            validationErrors: error.validationErrors,
+            error: error.message,
+          });
+        } else if (error.isNetworkError) {
+          set({
+            isLoading: false,
+            error: error.message,
+          });
+        } else if (error.isServerError) {
+          set({
+            isLoading: false,
+            error: error.message,
+          });
+        } else {
+          set({
+            isLoading: false,
+            error: error.message,
+          });
+        }
       } else {
         set({
           isLoading: false,

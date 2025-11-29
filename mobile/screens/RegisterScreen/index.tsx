@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRouter } from 'expo-router';
+import { useRouter, Href } from 'expo-router';
 import { View, Image, ImageBackground } from 'react-native';
 import PrimaryButton from '@/components/PrimaryButton';
 import { styles } from './styles';
@@ -25,7 +25,10 @@ export function RegisterScreen() {
         <View style={styles.choiceContainer}>
           <View style={styles.imageContainer}>
             <Image source={require('@/assets/images/Paciente.png')} style={styles.patientImage} />
-            <PrimaryButton onPress={() => console.log('Paciente')} label="Paciente" />
+            <PrimaryButton
+              onPress={() => router.push('/register/receptor' as Href)}
+              label="Paciente"
+            />
           </View>
 
           <View style={styles.imageContainer}>

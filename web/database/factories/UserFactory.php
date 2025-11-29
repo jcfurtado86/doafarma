@@ -29,8 +29,10 @@ class UserFactory extends Factory
         return [
             'name'              => fake()->name(),
             'email'             => fake()->unique()->safeEmail(),
+            'cpf'               => fake()->unique()->numerify('###########'),
+            'role'              => 'receptor',
             'email_verified_at' => now(),
-            'phone_number'      => fake()->phoneNumber(),
+            'phone_number'      => fake()->numerify('###########'),
             'terms_accepted'    => true,
             'terms_accepted_at' => now(),
             'password'          => static::$password ??= Hash::make('password'),
@@ -50,7 +52,9 @@ class UserFactory extends Factory
 
     public function doctor(?string $crm = null, ?string $crm_uf = null): static
     {
-        return $this->afterCreating(function ($user) use ($crm, $crm_uf): void {
+        return $this->state(fn (array $attributes): array => [
+            'role' => 'doctor',
+        ])->afterCreating(function ($user) use ($crm, $crm_uf): void {
             $doctorAttributes = array_filter([
                 'user_id' => $user->id,
                 'crm'     => $crm,
@@ -59,5 +63,15 @@ class UserFactory extends Factory
 
             Doctor::factory()->create($doctorAttributes);
         });
+    }
+
+    /**
+     * Indicate that the user is a receptor (patient).
+     */
+    public function receptor(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'role' => 'receptor',
+        ]);
     }
 }

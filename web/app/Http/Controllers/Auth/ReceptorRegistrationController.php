@@ -8,7 +8,7 @@ use App\Actions\Auth\CreateReceptorAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ReceptorRegistrationRequest;
 use App\Http\Resources\UserResource;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\JsonResponse;
 
 class ReceptorRegistrationController extends Controller
 {
@@ -20,7 +20,7 @@ class ReceptorRegistrationController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(ReceptorRegistrationRequest $request): Response
+    public function __invoke(ReceptorRegistrationRequest $request): JsonResponse
     {
         $user = $this->createReceptorAction->execute([
             'name'           => $request->validated('name'),
@@ -38,6 +38,6 @@ class ReceptorRegistrationController extends Controller
                 'user'  => new UserResource($user),
                 'token' => $token,
             ],
-        ], Response::HTTP_CREATED);
+        ], JsonResponse::HTTP_CREATED);
     }
 }

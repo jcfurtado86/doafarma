@@ -331,6 +331,33 @@ describe('Receptor Registration - Validation Errors', function (): void {
 });
 
 describe('Receptor Registration - Security Tests', function (): void {
+    it('should NOT allow role injection via request (Mass Assignment Protection)', function (): void {
+        $response = postJson(route('receptor.register'), [
+            'name'                  => 'Hacker Test',
+            'email'                 => 'hacker@example.com',
+            'cpf'                   => '529.982.247-25',
+            'phone_number'          => '(11) 98765-4321',
+            'password'              => 'SecurePass123!',
+            'password_confirmation' => 'SecurePass123!',
+            'device_name'           => 'Test Device',
+            'terms_accepted'        => true,
+            'role'                  => 'doctor', // Attempt to inject role
+        ]);
+
+        $response->assertCreated();
+
+        // Role should ALWAYS be 'receptor', never 'doctor'
+        assertDatabaseHas('users', [
+            'email' => 'hacker@example.com',
+            'role'  => 'receptor', // Must be receptor, not doctor
+        ]);
+
+        assertDatabaseMissing('users', [
+            'email' => 'hacker@example.com',
+            'role'  => 'doctor',
+        ]);
+    });
+
     it('should sanitize CPF input (remove mask)', function (): void {
         postJson(route('receptor.register'), [
             'name'                  => 'Security Test',
@@ -386,6 +413,29 @@ describe('Receptor Registration - Security Tests', function (): void {
             ]);
             assertDatabaseCount('users', 1);
         }
+    });
+
+    it('should handle XSS attempts in name field safely', function (): void {
+        $xssPayload = '<script>alert("XSS")</script>';
+
+        $response = postJson(route('receptor.register'), [
+            'name'                  => $xssPayload,
+            'email'                 => 'xss@example.com',
+            'cpf'                   => '529.982.247-25',
+            'phone_number'          => '(11) 98765-4321',
+            'password'              => 'SecurePass123!',
+            'password_confirmation' => 'SecurePass123!',
+            'device_name'           => 'Test Device',
+            'terms_accepted'        => true,
+        ]);
+
+        $response->assertCreated();
+
+        // Name is stored as-is (XSS prevention is done at output/frontend)
+        // The important thing is that it doesn't break the system
+        assertDatabaseHas('users', [
+            'email' => 'xss@example.com',
+        ]);
     });
 
     it('should reject SQL injection attempts in email field', function (): void {

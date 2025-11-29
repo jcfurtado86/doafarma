@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Auth;
 use App\Http\Controllers\Api\V1\Drug;
 use App\Http\Controllers\Api\V1\MedicationOffering;
 use App\Http\Controllers\Auth\DoctorRegistrationController;
+use App\Http\Controllers\Auth\ReceptorRegistrationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,10 @@ Route::middleware(['auth:sanctum'])->get('/user', fn (Request $request) => $requ
 Route::post('/register/doctor', DoctorRegistrationController::class)
     ->middleware('guest')
     ->name('doctor.register');
+
+Route::post('/register/receptor', ReceptorRegistrationController::class)
+    ->middleware('guest')
+    ->name('receptor.register');
 
 Route::prefix('v1')->group(function (): void {
     Route::prefix('auth')->group(function (): void {

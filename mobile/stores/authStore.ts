@@ -3,10 +3,12 @@ import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 
-interface User {
+export interface User {
   id: number;
   name: string;
   email: string;
+  phone_number?: string;
+  role: 'doctor' | 'receptor';
 }
 
 interface AuthStoreState {
@@ -19,6 +21,7 @@ interface AuthStoreState {
   saveSession: (user: User, token: string) => Promise<void>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<boolean>;
+  clearError: () => void;
 }
 
 export const useAuthStore = create<AuthStoreState>((set) => ({
@@ -84,4 +87,6 @@ export const useAuthStore = create<AuthStoreState>((set) => ({
       return false;
     }
   },
+
+  clearError: () => set({ error: null }),
 }));

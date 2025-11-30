@@ -5,12 +5,17 @@ declare(strict_types = 1);
 use App\Http\Controllers\Api\V1\Auth;
 use App\Http\Controllers\Api\V1\Drug;
 use App\Http\Controllers\Api\V1\MedicationOffering;
+use App\Http\Controllers\Auth\ApiLoginController;
 use App\Http\Controllers\Auth\DoctorRegistrationController;
 use App\Http\Controllers\Auth\ReceptorRegistrationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum'])->get('/user', fn (Request $request) => $request->user());
+
+Route::post('/login', ApiLoginController::class)
+    ->middleware('guest')
+    ->name('api.login');
 
 Route::post('/register/doctor', DoctorRegistrationController::class)
     ->middleware('guest')

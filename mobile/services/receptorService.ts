@@ -89,10 +89,10 @@ export const receptorService = {
 
         // Erro de servidor (500+)
         if (status >= 500) {
-          throw new ReceptorServiceError(
-            'Erro no servidor. Tente novamente em alguns instantes.',
-            { isServerError: true, statusCode: status }
-          );
+          throw new ReceptorServiceError('Erro no servidor. Tente novamente em alguns instantes.', {
+            isServerError: true,
+            statusCode: status,
+          });
         }
 
         // Outros erros HTTP

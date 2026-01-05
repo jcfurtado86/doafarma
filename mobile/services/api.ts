@@ -39,13 +39,38 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    // 403 Forbidden
+    // 401 Unauthorized (token expirado ou inválido)
+    if (error.response?.status === 401) {
+      await useAuthStore.getState().logout();
+
+      if (router) {
+        router.replace('/');
+      }
+
+      Toast.show({
+        type: 'error',
+        text1: 'Sessão expirada',
+        text2: 'Faça login novamente para continuar.',
+        visibilityTime: 3000,
+        autoHide: true,
+      });
+    }
+
+    // 403 Forbidden (sem permissão)
     if (error.response?.status === 403) {
       await useAuthStore.getState().logout();
 
       if (router) {
         router.replace('/');
       }
+
+      Toast.show({
+        type: 'error',
+        text1: 'Acesso negado',
+        text2: 'Você não tem permissão para esta ação.',
+        visibilityTime: 3000,
+        autoHide: true,
+      });
     }
 
     // 422 Unprocessable Entity (erros de validação)

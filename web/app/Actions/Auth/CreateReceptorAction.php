@@ -30,17 +30,15 @@ class CreateReceptorAction
      */
     public function execute(array $data): User
     {
-        return DB::transaction(function () use ($data): User {
-            return User::create([
-                'name'              => $data['name'],
-                'email'             => $data['email'],
-                'cpf'               => $data['cpf'],
-                'role'              => 'receptor',
-                'phone_number'      => $data['phone_number'],
-                'password'          => Hash::make($data['password']),
-                'terms_accepted'    => $data['terms_accepted'],
-                'terms_accepted_at' => now(),
-            ]);
-        });
+        return DB::transaction(fn (): User => User::create([
+            'name'              => $data['name'],
+            'email'             => $data['email'],
+            'cpf'               => $data['cpf'],
+            'role'              => 'receptor',
+            'phone_number'      => $data['phone_number'],
+            'password'          => Hash::make($data['password']),
+            'terms_accepted'    => $data['terms_accepted'],
+            'terms_accepted_at' => now(),
+        ]));
     }
 }

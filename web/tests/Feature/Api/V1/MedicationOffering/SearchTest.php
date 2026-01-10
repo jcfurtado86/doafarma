@@ -49,24 +49,40 @@ it('rejects user without receptor role with 403', function (): void {
         ->assertForbidden();
 });
 
-it('rejects missing q parameter with 422', function (): void {
+it('returns all offerings when q parameter is missing', function (): void {
     $receptor = User::factory()->receptor()->create();
+    $doctor   = Doctor::factory()->create();
+    $drug     = Drug::factory()->create(['product_name' => 'Dipirona']);
+
+    MedicationOffering::factory()->create([
+        'doctor_id' => $doctor->id,
+        'drug_id'   => $drug->id,
+        'quantity'  => 5,
+    ]);
 
     actingAs($receptor);
 
     getJson('/api/v1/medication-offerings/search')
-        ->assertUnprocessable()
-        ->assertJsonValidationErrors(['q']);
+        ->assertOk()
+        ->assertJsonCount(1, 'data');
 });
 
-it('rejects empty q parameter with 422', function (): void {
+it('returns all offerings when q parameter is empty', function (): void {
     $receptor = User::factory()->receptor()->create();
+    $doctor   = Doctor::factory()->create();
+    $drug     = Drug::factory()->create(['product_name' => 'Paracetamol']);
+
+    MedicationOffering::factory()->create([
+        'doctor_id' => $doctor->id,
+        'drug_id'   => $drug->id,
+        'quantity'  => 10,
+    ]);
 
     actingAs($receptor);
 
     getJson('/api/v1/medication-offerings/search?q=')
-        ->assertUnprocessable()
-        ->assertJsonValidationErrors(['q']);
+        ->assertOk()
+        ->assertJsonCount(1, 'data');
 });
 
 it('accepts valid search query', function (): void {

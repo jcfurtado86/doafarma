@@ -24,7 +24,7 @@ class SearchMedicationOfferingsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'q' => ['required', 'string', 'min:1'],
+            'q' => ['nullable', 'string', 'min:1'],
         ];
     }
 
@@ -37,9 +37,8 @@ class SearchMedicationOfferingsRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'q.required' => 'O campo de busca é obrigatório.',
-            'q.string'   => 'O campo de busca deve ser um texto.',
-            'q.min'      => 'O campo de busca deve ter pelo menos :min caractere.',
+            'q.string' => 'O campo de busca deve ser um texto.',
+            'q.min'    => 'O campo de busca deve ter pelo menos :min caractere.',
         ];
     }
 }

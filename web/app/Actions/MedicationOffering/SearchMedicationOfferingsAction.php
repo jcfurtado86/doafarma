@@ -15,12 +15,20 @@ class SearchMedicationOfferingsAction
      *
      * @return Collection<int, MedicationOffering>
      */
-    public function execute(string $query): Collection
+    public function execute(?string $query = null): Collection
     {
+        $baseQuery = MedicationOffering::query()
+            ->where('quantity', '>', 0)
+            ->with(['drug', 'doctor.user']);
+
+        // Se não há termo de busca, retorna todas as ofertas ativas
+        if ($query === null || $query === '') {
+            return $baseQuery->get();
+        }
+
         $searchTerm = '%' . $query . '%';
 
-        return MedicationOffering::query()
-            ->where('quantity', '>', 0)
+        return $baseQuery
             ->whereHas('drug', function ($q) use ($searchTerm): void {
                 if (DB::getDriverName() === 'pgsql') {
                     $q->where('product_name', 'ILIKE', $searchTerm)
@@ -31,7 +39,6 @@ class SearchMedicationOfferingsAction
                         ->orWhere('substance', 'LIKE', $searchTerm);
                 }
             })
-            ->with(['drug', 'doctor.user'])
             ->get();
     }
 }

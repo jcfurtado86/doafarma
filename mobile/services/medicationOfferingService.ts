@@ -3,6 +3,7 @@ import {
   MedicationOffering,
   CreateMedicationOfferingData,
   UpdateMedicationOfferingData,
+  MedicationOfferingSearchResult,
 } from '@/types/medicationOffering';
 import { extractErrorMessage } from '@/utils/validation/errorHelpers';
 
@@ -54,6 +55,17 @@ export const medicationOfferingService = {
   delete: async (id: number): Promise<void> => {
     try {
       await api.delete(`/v1/medication-offerings/${id}`);
+    } catch (error: any) {
+      throw new Error(extractErrorMessage(error));
+    }
+  },
+
+  search: async (query: string): Promise<MedicationOfferingSearchResult[]> => {
+    try {
+      const response = await api.get('/v1/medication-offerings/search', {
+        params: { q: query },
+      });
+      return response.data.data;
     } catch (error: any) {
       throw new Error(extractErrorMessage(error));
     }

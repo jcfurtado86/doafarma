@@ -26,6 +26,13 @@ export default function ReceptorLayout() {
           headerShown: true,
         }}
       />
+      <Stack.Screen
+        name="requests"
+        options={{
+          title: 'Minhas Solicitações',
+          headerShown: true,
+        }}
+      />
     </Stack>
   );
 }

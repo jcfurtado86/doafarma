@@ -1,6 +1,12 @@
 # DoaFarma - AI Assistant Context
 
-This is a medication donation platform connecting doctors with patients who need medications.
+Medication donation platform connecting doctors with patients who need medications.
+
+## Mandatory Workflow
+
+**Before any task, read and follow `docs/AI_WORKFLOW.md`.**
+
+This file defines the 5-phase workflow (Clarification → Design → Test Planning → Implementation → Review) that ALL AI-assisted development must follow. No exceptions.
 
 ## Quick Reference
 
@@ -11,21 +17,23 @@ This is a medication donation platform connecting doctors with patients who need
 
 ## Documentation
 
-All detailed documentation is in `/docs`:
+All documentation is in `/docs`:
 
-- `CONTEXT.md` - Business domain and entities
-- `ARCHITECTURE.md` - Technical structure and patterns
-- `CONVENTIONS.md` - Code style and naming
-- `AI_GUIDELINES.md` - Rules for AI-assisted development
-- `DECISIONS.md` - Architectural decisions and assumptions
+| File | Purpose |
+|------|---------|
+| `AI_WORKFLOW.md` | **Mandatory workflow for all tasks** |
+| `CONTEXT.md` | Business domain and entities |
+| `ARCHITECTURE.md` | Technical structure and patterns |
+| `CONVENTIONS.md` | Code style and naming |
+| `AI_GUIDELINES.md` | Rules for AI-assisted development |
+| `DECISIONS.md` | Architectural decisions and assumptions |
 
 ## Essential Commands
 
 ```bash
 # Backend (from /web)
-composer fix          # Run all quality checks (rector + phpstan + pint + pest)
+composer fix          # Run all quality checks
 composer t            # Run tests
-php artisan serve     # Start dev server
 
 # Mobile (from /mobile)
 npm start             # Start Expo
@@ -34,16 +42,15 @@ npm run lint          # Lint code
 
 ## Key Patterns
 
-- **Actions:** Business logic in `app/Actions/` (e.g., `LoginAction`, `SearchDrugAction`)
+- **Actions:** Business logic in `app/Actions/`
 - **Form Requests:** Validation in `app/Http/Requests/`
 - **Resources:** JSON transformation in `app/Http/Resources/`
 - **Policies:** Authorization in `app/Policies/`
 
-## Before Making Changes
+## Rules
 
-1. Read the relevant `/docs` files
-2. Follow existing patterns in the codebase
+1. Follow `docs/AI_WORKFLOW.md` phases strictly
+2. Document decisions in `docs/DECISIONS.md`
 3. Run `composer fix` before committing (backend)
 4. Write validation messages in Portuguese
-
-If documentation conflicts with the current codebase, prioritize documentation and ask for confirmation.
+5. If documentation conflicts with codebase, prioritize documentation and ask for confirmation

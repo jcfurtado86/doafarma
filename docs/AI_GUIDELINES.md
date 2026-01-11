@@ -90,3 +90,16 @@ This helps verify the suggestion matches existing code.
 
 AI assistants must not silently propagate existing technical debt.
 If a pattern seems inconsistent, flag it instead of replicating it.
+
+## Decision Tracking Rule
+
+Whenever a feature discussion results in:
+- clarification of ambiguous requirements
+- assumptions about business rules
+- scope limitation or expansion
+- product-level interpretation of a vague task
+
+You MUST:
+1. Explicitly state that a decision was made
+2. Propose an entry to docs/DECISIONS.md
+3. Ask for confirmation before writing it

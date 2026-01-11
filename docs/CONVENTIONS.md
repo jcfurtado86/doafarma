@@ -131,3 +131,11 @@ refactor(web): extract validation to form request
 
 - Jest with React Native Testing Library
 - Test user interactions, not implementation
+
+## Git Workflow
+
+- main: stable milestones
+- develop: active development branch
+- feature branches: created per task and merged into develop
+
+All changes are tested locally before merging.

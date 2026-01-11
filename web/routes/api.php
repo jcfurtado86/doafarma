@@ -42,6 +42,9 @@ Route::prefix('v1')->group(function (): void {
     });
 
     Route::prefix('medication-offerings')->group(function (): void {
+        Route::get('/search', MedicationOffering\SearchController::class)
+            ->name('api.v1.medication-offerings.search')
+            ->middleware('auth:sanctum');
         Route::get('/', MedicationOffering\ListController::class)
             ->name('api.v1.medication-offerings.list')
             ->middleware('auth:sanctum');

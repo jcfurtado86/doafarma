@@ -30,3 +30,26 @@ export interface UpdateMedicationOfferingData {
   expires_at?: string;
   quantity?: number;
 }
+
+// Search Result Types
+export interface DrugSearchResult {
+  id: number;
+  product_name: string;
+  substance: string;
+  presentation: string;
+  laboratory: string;
+}
+
+export interface DoctorSearchResult {
+  id: number;
+  name: string;
+}
+
+export interface MedicationOfferingSearchResult {
+  id: number;
+  quantity: number;
+  lot_number: string;
+  expires_at: string;
+  drug: DrugSearchResult;
+  doctor: DoctorSearchResult;
+}

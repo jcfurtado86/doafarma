@@ -87,7 +87,7 @@ export default function LoginScreen() {
       if (user.role === 'doctor') {
         router.replace('/(auth)/dashboard' as Href);
       } else if (user.role === 'receptor') {
-        router.replace('/(auth)/dashboard' as Href);
+        router.replace('/(auth)/receptor/search' as Href);
       } else {
         router.replace('/(auth)/dashboard' as Href);
       }

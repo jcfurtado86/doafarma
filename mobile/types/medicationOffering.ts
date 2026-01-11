@@ -45,11 +45,14 @@ export interface DoctorSearchResult {
   name: string;
 }
 
+export type MedicationOfferingStatus = 'available' | 'reserved' | 'completed';
+
 export interface MedicationOfferingSearchResult {
   id: number;
   quantity: number;
   lot_number: string;
   expires_at: string;
+  status: MedicationOfferingStatus;
   drug: DrugSearchResult;
   doctor: DoctorSearchResult;
 }

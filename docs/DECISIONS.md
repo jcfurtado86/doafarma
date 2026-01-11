@@ -120,12 +120,48 @@ Addresses are stored as text. Geocoding, map integration, or proximity search ar
 
 ---
 
+### D8: Partial Index for Active Medication Requests
+
+**Decision:** Use PostgreSQL partial unique index to ensure only one pending request per offering.
+
+**Rationale:**
+- Prevents race conditions at database level
+- More reliable than application-level checks alone
+- Allows historical rejected requests to coexist with new pending requests
+- SQLite fallback uses application-level validation with DB transaction for testing
+
+---
+
+### D9: Explicit Status on MedicationOffering
+
+**Decision:** Add explicit `status` field to MedicationOffering rather than deriving from requests.
+
+**Rationale:**
+- Simpler queries for available offerings
+- Clear state management
+- Easier to extend with future statuses (e.g., 'completed')
+- Avoids complex joins for basic listing operations
+
+---
+
+### D10: Receptor via User Model
+
+**Decision:** Store `receptor_id` pointing to `users.id` rather than creating a separate `Receptor` model.
+
+**Rationale:**
+- Simpler architecture (users already have `role` field)
+- Consistent with existing pattern (doctors have separate table for CRM data)
+- Receptors don't have additional required fields beyond User
+- Single authentication flow for all user types
+
+---
+
 ## Future Considerations
 
 Items explicitly out of scope but documented for awareness:
 
 1. **Notification system** - Push notifications for new offerings
-2. **Reservation system** - Patients reserving medications
+2. ~~**Reservation system** - Patients reserving medications~~ (Implemented)
 3. **Delivery tracking** - Tracking donation handoffs
 4. **Analytics dashboard** - Usage statistics
 5. **External CRM validation** - API integration with medical councils

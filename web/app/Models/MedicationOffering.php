@@ -4,9 +4,12 @@ declare(strict_types = 1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class MedicationOffering extends Model
 {
@@ -21,6 +24,7 @@ class MedicationOffering extends Model
         'lot_number',
         'expires_at',
         'quantity',
+        'status',
     ];
 
     /**
@@ -52,5 +56,47 @@ class MedicationOffering extends Model
     public function drug(): BelongsTo
     {
         return $this->belongsTo(Drug::class);
+    }
+
+    /**
+     * Get all requests for this offering.
+     *
+     * @return HasMany<MedicationRequest, $this>
+     */
+    public function requests(): HasMany
+    {
+        return $this->hasMany(MedicationRequest::class);
+    }
+
+    /**
+     * Get the active (pending) request for this offering.
+     *
+     * @return HasOne<MedicationRequest, $this>
+     */
+    public function activeRequest(): HasOne
+    {
+        return $this->hasOne(MedicationRequest::class)->where('status', 'pending');
+    }
+
+    /**
+     * Scope a query to only include available offerings.
+     *
+     * @param Builder<MedicationOffering> $query
+     * @return Builder<MedicationOffering>
+     */
+    public function scopeAvailable(Builder $query): Builder
+    {
+        return $query->where('status', 'available');
+    }
+
+    /**
+     * Scope a query to only include reserved offerings.
+     *
+     * @param Builder<MedicationOffering> $query
+     * @return Builder<MedicationOffering>
+     */
+    public function scopeReserved(Builder $query): Builder
+    {
+        return $query->where('status', 'reserved');
     }
 }

@@ -1,0 +1,267 @@
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  RefreshControl,
+  ActivityIndicator,
+  Alert,
+  Pressable,
+} from 'react-native';
+import { useMedicationRequestStore } from '@/stores/medicationRequestStore';
+import { MedicationRequestCard } from '@/components/MedicationRequestCard';
+import { Colors } from '@/constants/Colors';
+import { MedicationRequest, MedicationRequestStatus } from '@/types/medicationRequest';
+
+type FilterOption = 'all' | MedicationRequestStatus;
+
+export default function DoctorReceivedRequestsScreen() {
+  const {
+    receivedRequests,
+    isLoading,
+    error,
+    fetchReceivedRequests,
+    confirmRequest,
+    rejectRequest,
+    clearError,
+  } = useMedicationRequestStore();
+
+  const [filter, setFilter] = useState<FilterOption>('pending');
+
+  const loadRequests = () => {
+    const status = filter === 'all' ? undefined : filter;
+    fetchReceivedRequests(status);
+  };
+
+  useEffect(() => {
+    loadRequests();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter]);
+
+  const handleConfirm = (request: MedicationRequest) => {
+    Alert.alert(
+      'Confirmar Solicitação',
+      `Confirmar a entrega do medicamento "${request.medication_offering?.drug?.product_name}" para ${request.receptor?.name}?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Confirmar',
+          onPress: async () => {
+            try {
+              await confirmRequest(request.id);
+              Alert.alert('Sucesso', 'Solicitação confirmada com sucesso!');
+            } catch (error: any) {
+              Alert.alert('Erro', error.message || 'Não foi possível confirmar a solicitação.');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleReject = (request: MedicationRequest) => {
+    Alert.alert(
+      'Recusar Solicitação',
+      `Recusar a solicitação do medicamento "${request.medication_offering?.drug?.product_name}" de ${request.receptor?.name}?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Recusar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await rejectRequest(request.id);
+              Alert.alert('Sucesso', 'Solicitação recusada.');
+            } catch (error: any) {
+              Alert.alert('Erro', error.message || 'Não foi possível recusar a solicitação.');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const renderItem = ({ item }: { item: MedicationRequest }) => (
+    <MedicationRequestCard
+      request={item}
+      variant="doctor"
+      onConfirm={() => handleConfirm(item)}
+      onReject={() => handleReject(item)}
+    />
+  );
+
+  const renderEmpty = () => {
+    if (isLoading) return null;
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyIcon}>📋</Text>
+        <Text style={styles.emptyTitle}>Nenhuma solicitação</Text>
+        <Text style={styles.emptyText}>
+          {filter === 'pending'
+            ? 'Não há solicitações pendentes no momento.'
+            : filter === 'confirmed'
+              ? 'Não há solicitações confirmadas.'
+              : filter === 'rejected'
+                ? 'Não há solicitações recusadas.'
+                : 'Você não recebeu nenhuma solicitação ainda.'}
+        </Text>
+      </View>
+    );
+  };
+
+  const FilterButton = ({ value, label }: { value: FilterOption; label: string }) => (
+    <Pressable
+      style={[styles.filterButton, filter === value && styles.filterButtonActive]}
+      onPress={() => setFilter(value)}
+    >
+      <Text style={[styles.filterButtonText, filter === value && styles.filterButtonTextActive]}>
+        {label}
+      </Text>
+    </Pressable>
+  );
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorIcon}>⚠️</Text>
+        <Text style={styles.errorText}>{error}</Text>
+        <Text
+          style={styles.retryText}
+          onPress={() => {
+            clearError();
+            loadRequests();
+          }}
+        >
+          Tentar novamente
+        </Text>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      {/* Filter Tabs */}
+      <View style={styles.filterContainer}>
+        <FilterButton value="pending" label="Pendentes" />
+        <FilterButton value="confirmed" label="Confirmadas" />
+        <FilterButton value="rejected" label="Recusadas" />
+        <FilterButton value="all" label="Todas" />
+      </View>
+
+      {isLoading && receivedRequests.length === 0 ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={Colors.yellow_green_500} />
+          <Text style={styles.loadingText}>Carregando solicitações...</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={receivedRequests}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+          contentContainerStyle={styles.listContent}
+          refreshControl={
+            <RefreshControl
+              refreshing={isLoading}
+              onRefresh={loadRequests}
+              colors={[Colors.yellow_green_500]}
+              tintColor={Colors.yellow_green_500}
+            />
+          }
+          ListEmptyComponent={renderEmpty}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f3f4f6',
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    padding: 12,
+    backgroundColor: '#ffffff',
+    gap: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  filterButton: {
+    flex: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    backgroundColor: '#f3f4f6',
+    alignItems: 'center',
+  },
+  filterButtonActive: {
+    backgroundColor: Colors.yellow_green_500,
+  },
+  filterButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6b7280',
+  },
+  filterButtonTextActive: {
+    color: '#ffffff',
+  },
+  listContent: {
+    padding: 16,
+    flexGrow: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 16,
+  },
+  loadingText: {
+    fontSize: 14,
+    color: '#6b7280',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 32,
+  },
+  emptyIcon: {
+    fontSize: 64,
+    marginBottom: 16,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1f2937',
+    marginBottom: 8,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#6b7280',
+    textAlign: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
+  },
+  errorIcon: {
+    fontSize: 48,
+    marginBottom: 16,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#ef4444',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  retryText: {
+    fontSize: 16,
+    color: Colors.yellow_green_500,
+    fontWeight: '600',
+  },
+});

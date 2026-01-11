@@ -11,29 +11,59 @@ export default function Dashboard() {
   const router = useRouter();
   const { user, logout } = useAuthStore();
 
+  const isDoctor = user?.role === 'doctor';
+  const isReceptor = user?.role === 'receptor';
+
   const handleLogout = async () => {
     await logout();
   };
 
+  // Doctor navigation
   const handleMedicationOfferings = () => {
     router.push('/(auth)/medication-offerings');
+  };
+
+  const handleReceivedRequests = () => {
+    router.push('/(auth)/medication-requests');
+  };
+
+  // Receptor navigation
+  const handleSearchMedications = () => {
+    router.push('/(auth)/receptor/search');
+  };
+
+  const handleMyRequests = () => {
+    router.push('/(auth)/receptor/requests');
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <Title>Bem-vindo, Dr. {user?.name}</Title>
-        <Caption>Painel do Médico</Caption>
+        <Title>
+          Bem-vindo{isDoctor ? ', Dr.' : ','} {user?.name}
+        </Title>
+        <Caption>{isDoctor ? 'Painel do Médico' : 'Painel do Receptor'}</Caption>
         <Text style={styles.email}>{user?.email}</Text>
       </View>
 
       <View style={styles.menu}>
-        <PrimaryButton label="Minhas Ofertas" onPress={handleMedicationOfferings} />
+        {isDoctor && (
+          <>
+            <PrimaryButton label="Minhas Ofertas" onPress={handleMedicationOfferings} />
+            <SecondaryButton
+              label="Nova Oferta"
+              onPress={() => router.push('/(auth)/medication-offerings/create')}
+            />
+            <SecondaryButton label="Solicitações Recebidas" onPress={handleReceivedRequests} />
+          </>
+        )}
 
-        <SecondaryButton
-          label="Nova Oferta"
-          onPress={() => router.push('/(auth)/medication-offerings/create')}
-        />
+        {isReceptor && (
+          <>
+            <PrimaryButton label="Buscar Medicamentos" onPress={handleSearchMedications} />
+            <SecondaryButton label="Minhas Solicitações" onPress={handleMyRequests} />
+          </>
+        )}
       </View>
 
       <View style={styles.footer}>

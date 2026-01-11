@@ -1,11 +1,16 @@
-import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import React, { useMemo, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { MedicationOfferingSearchResult } from '@/types/medicationOffering';
+import { useMedicationRequestStore } from '@/stores/medicationRequestStore';
+import PrimaryButton from '@/components/PrimaryButton';
 
 export default function OfferingDetailScreen() {
   const { offering: offeringParam } = useLocalSearchParams<{ id: string; offering: string }>();
+  const router = useRouter();
+  const { createRequest } = useMedicationRequestStore();
+  const [isRequesting, setIsRequesting] = useState(false);
 
   const offering = useMemo<MedicationOfferingSearchResult | null>(() => {
     if (!offeringParam) return null;
@@ -15,6 +20,44 @@ export default function OfferingDetailScreen() {
       return null;
     }
   }, [offeringParam]);
+
+  const handleRequestMedication = async () => {
+    if (!offering) return;
+
+    Alert.alert(
+      'Confirmar Solicitação',
+      `Deseja solicitar o medicamento "${offering.drug.product_name}"?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Solicitar',
+          onPress: async () => {
+            setIsRequesting(true);
+            try {
+              await createRequest(offering.id);
+              Alert.alert(
+                'Sucesso',
+                'Solicitação enviada com sucesso! Aguarde a confirmação do médico.',
+                [
+                  {
+                    text: 'Ver Minhas Solicitações',
+                    onPress: () => router.push('/(auth)/receptor/requests'),
+                  },
+                  { text: 'OK', onPress: () => router.back() },
+                ]
+              );
+            } catch (error: any) {
+              Alert.alert('Erro', error.message || 'Não foi possível enviar a solicitação.');
+            } finally {
+              setIsRequesting(false);
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const isAvailable = offering?.status === 'available';
 
   if (!offering) {
     return (
@@ -78,9 +121,26 @@ export default function OfferingDetailScreen() {
         </View>
       </View>
 
-      {/* Espaço para futuras ações */}
-      <View style={styles.actionsPlaceholder}>
-        <Text style={styles.actionsPlaceholderText}>Em breve: solicitar doação</Text>
+      {/* Ação: Solicitar Medicamento */}
+      <View style={styles.actionsContainer}>
+        {isAvailable ? (
+          isRequesting ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="small" color={Colors.yellow_green_500} />
+              <Text style={styles.loadingText}>Enviando solicitação...</Text>
+            </View>
+          ) : (
+            <PrimaryButton label="Solicitar Medicamento" onPress={handleRequestMedication} />
+          )
+        ) : (
+          <View style={styles.unavailableBadge}>
+            <Text style={styles.unavailableText}>
+              {offering?.status === 'reserved'
+                ? 'Medicamento já reservado'
+                : 'Medicamento indisponível'}
+            </Text>
+          </View>
+        )}
       </View>
     </ScrollView>
   );
@@ -173,17 +233,35 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#1f2937',
   },
-  actionsPlaceholder: {
+  actionsContainer: {
     marginTop: 8,
+    marginBottom: 20,
+  },
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: 16,
-    backgroundColor: '#e5e7eb',
+    backgroundColor: '#f3f4f6',
+    borderRadius: 8,
+    gap: 12,
+  },
+  loadingText: {
+    fontSize: 14,
+    color: '#6b7280',
+  },
+  unavailableBadge: {
+    padding: 16,
+    backgroundColor: '#fef2f2',
     borderRadius: 8,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#fecaca',
   },
-  actionsPlaceholderText: {
+  unavailableText: {
     fontSize: 14,
-    color: '#9ca3af',
-    fontStyle: 'italic',
+    color: '#ef4444',
+    fontWeight: '500',
   },
   errorContainer: {
     flex: 1,

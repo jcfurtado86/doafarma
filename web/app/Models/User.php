@@ -79,4 +79,14 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasManyThrough(MedicationOffering::class, Doctor::class);
     }
+
+    /**
+     * Get the medication requests made by this user (as receptor).
+     *
+     * @return HasMany<MedicationRequest, $this>
+     */
+    public function medicationRequests(): HasMany
+    {
+        return $this->hasMany(MedicationRequest::class, 'receptor_id');
+    }
 }

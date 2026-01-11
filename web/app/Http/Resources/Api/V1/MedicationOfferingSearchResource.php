@@ -27,6 +27,7 @@ class MedicationOfferingSearchResource extends JsonResource
             'quantity'   => $this->quantity,
             'lot_number' => $this->lot_number,
             'expires_at' => $this->expires_at->toDateString(),
+            'status'     => $this->status,
             'drug'       => [
                 'id'           => $this->drug->id,
                 'product_name' => $this->drug->product_name,

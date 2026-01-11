@@ -26,6 +26,37 @@ class MedicationOfferingFactory extends Factory
             'lot_number' => $this->faker->bothify('LOT-#####'),
             'expires_at' => now()->addMonths($this->faker->numberBetween(1, 24))->toDateString(),
             'quantity'   => $this->faker->numberBetween(1, 500),
+            'status'     => 'available',
         ];
+    }
+
+    /**
+     * Indicate that the offering is available.
+     */
+    public function available(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'status' => 'available',
+        ]);
+    }
+
+    /**
+     * Indicate that the offering is reserved.
+     */
+    public function reserved(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'status' => 'reserved',
+        ]);
+    }
+
+    /**
+     * Indicate that the offering is completed.
+     */
+    public function completed(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'status' => 'completed',
+        ]);
     }
 }

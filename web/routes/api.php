@@ -5,6 +5,7 @@ declare(strict_types = 1);
 use App\Http\Controllers\Api\V1\Auth;
 use App\Http\Controllers\Api\V1\Drug;
 use App\Http\Controllers\Api\V1\MedicationOffering;
+use App\Http\Controllers\Api\V1\MedicationRequest;
 use App\Http\Controllers\Auth\ApiLoginController;
 use App\Http\Controllers\Auth\DoctorRegistrationController;
 use App\Http\Controllers\Auth\ReceptorRegistrationController;
@@ -60,5 +61,18 @@ Route::prefix('v1')->group(function (): void {
         Route::delete('/{medicationOffering}', MedicationOffering\DeleteController::class)
             ->name('api.v1.medication-offerings.delete')
             ->middleware('auth:sanctum');
+    });
+
+    Route::prefix('medication-requests')->middleware('auth:sanctum')->group(function (): void {
+        Route::get('/', MedicationRequest\ListController::class)
+            ->name('api.v1.medication-requests.list');
+        Route::post('/', MedicationRequest\StoreController::class)
+            ->name('api.v1.medication-requests.store');
+        Route::get('/received', MedicationRequest\ReceivedController::class)
+            ->name('api.v1.medication-requests.received');
+        Route::patch('/{medicationRequest}/confirm', MedicationRequest\ConfirmController::class)
+            ->name('api.v1.medication-requests.confirm');
+        Route::patch('/{medicationRequest}/reject', MedicationRequest\RejectController::class)
+            ->name('api.v1.medication-requests.reject');
     });
 });

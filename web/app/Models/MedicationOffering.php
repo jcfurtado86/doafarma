@@ -99,4 +99,15 @@ class MedicationOffering extends Model
     {
         return $query->where('status', 'reserved');
     }
+
+    /**
+     * Scope a query to only include completed offerings.
+     *
+     * @param Builder<MedicationOffering> $query
+     * @return Builder<MedicationOffering>
+     */
+    public function scopeCompleted(Builder $query): Builder
+    {
+        return $query->where('status', 'completed');
+    }
 }

@@ -27,6 +27,10 @@ export default function Dashboard() {
     router.push('/(auth)/medication-requests');
   };
 
+  const handleReceivedAppointments = () => {
+    router.push('/(auth)/medication-appointments');
+  };
+
   // Receptor navigation
   const handleSearchMedications = () => {
     router.push('/(auth)/receptor/search');
@@ -55,6 +59,7 @@ export default function Dashboard() {
               onPress={() => router.push('/(auth)/medication-offerings/create')}
             />
             <SecondaryButton label="Solicitações Recebidas" onPress={handleReceivedRequests} />
+            <SecondaryButton label="Agendamentos" onPress={handleReceivedAppointments} />
           </>
         )}
 

@@ -41,7 +41,7 @@ export default function OfferingDetailScreen() {
                 [
                   {
                     text: 'Ver Minhas Solicitações',
-                    onPress: () => router.push('/(auth)/receptor/requests'),
+                    onPress: () => router.push('/(auth)/receptor/(tabs)/requests'),
                   },
                   { text: 'OK', onPress: () => router.back() },
                 ]

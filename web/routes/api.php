@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 use App\Http\Controllers\Api\V1\Auth;
 use App\Http\Controllers\Api\V1\Drug;
+use App\Http\Controllers\Api\V1\MedicationAppointment;
 use App\Http\Controllers\Api\V1\MedicationOffering;
 use App\Http\Controllers\Api\V1\MedicationRequest;
 use App\Http\Controllers\Auth\ApiLoginController;
@@ -74,5 +75,24 @@ Route::prefix('v1')->group(function (): void {
             ->name('api.v1.medication-requests.confirm');
         Route::patch('/{medicationRequest}/reject', MedicationRequest\RejectController::class)
             ->name('api.v1.medication-requests.reject');
+    });
+
+    Route::prefix('medication-appointments')->middleware('auth:sanctum')->group(function (): void {
+        Route::get('/', MedicationAppointment\ListController::class)
+            ->name('api.v1.medication-appointments.list');
+        Route::post('/', MedicationAppointment\StoreController::class)
+            ->name('api.v1.medication-appointments.store');
+        Route::get('/received', MedicationAppointment\ReceivedController::class)
+            ->name('api.v1.medication-appointments.received');
+        Route::patch(
+            '/{medicationAppointment}/confirm-delivery-receptor',
+            MedicationAppointment\ConfirmDeliveryReceptorController::class
+        )
+            ->name('api.v1.medication-appointments.confirm-delivery-receptor');
+        Route::patch(
+            '/{medicationAppointment}/confirm-delivery-doctor',
+            MedicationAppointment\ConfirmDeliveryDoctorController::class
+        )
+            ->name('api.v1.medication-appointments.confirm-delivery-doctor');
     });
 });

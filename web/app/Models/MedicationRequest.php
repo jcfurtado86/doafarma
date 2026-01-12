@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class MedicationRequest extends Model
 {
@@ -40,6 +41,16 @@ class MedicationRequest extends Model
     public function medicationOffering(): BelongsTo
     {
         return $this->belongsTo(MedicationOffering::class);
+    }
+
+    /**
+     * Get the appointment for this request.
+     *
+     * @return HasOne<MedicationAppointment, $this>
+     */
+    public function appointment(): HasOne
+    {
+        return $this->hasOne(MedicationAppointment::class);
     }
 
     /**

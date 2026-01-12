@@ -9,6 +9,8 @@ interface MedicationRequestCardProps {
   variant: 'receptor' | 'doctor';
   onConfirm?: () => void;
   onReject?: () => void;
+  onSchedule?: () => void;
+  hasAppointment?: boolean;
 }
 
 export function MedicationRequestCard({
@@ -16,6 +18,8 @@ export function MedicationRequestCard({
   variant,
   onConfirm,
   onReject,
+  onSchedule,
+  hasAppointment = false,
 }: MedicationRequestCardProps) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR');
@@ -91,6 +95,20 @@ export function MedicationRequestCard({
           </Pressable>
         </View>
       )}
+
+      {variant === 'receptor' && request.status === 'confirmed' && !hasAppointment && (
+        <View style={styles.actions}>
+          <Pressable style={[styles.button, styles.scheduleButton]} onPress={onSchedule}>
+            <Text style={styles.buttonText}>Agendar Retirada</Text>
+          </Pressable>
+        </View>
+      )}
+
+      {variant === 'receptor' && request.status === 'confirmed' && hasAppointment && (
+        <View style={styles.scheduledBadge}>
+          <Text style={styles.scheduledText}>Agendamento realizado</Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -162,9 +180,24 @@ const styles = StyleSheet.create({
   rejectButton: {
     backgroundColor: '#ef4444',
   },
+  scheduleButton: {
+    backgroundColor: '#3b82f6',
+  },
   buttonText: {
     color: '#ffffff',
     fontWeight: '600',
     fontSize: 14,
+  },
+  scheduledBadge: {
+    marginTop: 12,
+    backgroundColor: '#dbeafe',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  scheduledText: {
+    color: '#1d4ed8',
+    fontWeight: '600',
+    fontSize: 13,
   },
 });

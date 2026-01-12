@@ -19,7 +19,10 @@ class AddressFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'location_name' => fake()->company(),
+            'full_address'  => fake()->address(),
+            'complement'    => fake()->optional()->secondaryAddress(),
+            'cep'           => fake()->numerify('########'),
         ];
     }
 }

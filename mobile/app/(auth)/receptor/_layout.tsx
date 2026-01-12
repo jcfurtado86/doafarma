@@ -11,14 +11,8 @@ export default function ReceptorLayout() {
   }
 
   return (
-    <Stack>
-      <Stack.Screen
-        name="search"
-        options={{
-          title: 'Buscar Medicamentos',
-          headerShown: true,
-        }}
-      />
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen
         name="offering/[id]"
         options={{
@@ -27,9 +21,9 @@ export default function ReceptorLayout() {
         }}
       />
       <Stack.Screen
-        name="requests"
+        name="schedule/[requestId]"
         options={{
-          title: 'Minhas Solicitações',
+          title: 'Agendar Retirada',
           headerShown: true,
         }}
       />

@@ -1,20 +1,44 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useMedicationRequestStore } from '@/stores/medicationRequestStore';
+import { useMedicationAppointmentStore } from '@/stores/medicationAppointmentStore';
 import { MedicationRequestCard } from '@/components/MedicationRequestCard';
 import { Colors } from '@/constants/Colors';
 import { MedicationRequest } from '@/types/medicationRequest';
 
 export default function ReceptorRequestsScreen() {
+  const router = useRouter();
   const { requests, isLoading, error, fetchMyRequests, clearError } = useMedicationRequestStore();
+  const { appointments, fetchMyAppointments } = useMedicationAppointmentStore();
 
   useEffect(() => {
     fetchMyRequests();
+    fetchMyAppointments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Set de request IDs que já têm agendamento
+  const requestIdsWithAppointment = useMemo(() => {
+    return new Set(appointments.map((a) => a.medication_request?.id).filter(Boolean));
+  }, [appointments]);
+
+  const handleSchedule = (requestId: number) => {
+    router.push(`/(auth)/receptor/schedule/${requestId}`);
+  };
+
+  const handleRefresh = () => {
+    fetchMyRequests();
+    fetchMyAppointments();
+  };
+
   const renderItem = ({ item }: { item: MedicationRequest }) => (
-    <MedicationRequestCard request={item} variant="receptor" />
+    <MedicationRequestCard
+      request={item}
+      variant="receptor"
+      hasAppointment={requestIdsWithAppointment.has(item.id)}
+      onSchedule={() => handleSchedule(item.id)}
+    />
   );
 
   const renderEmpty = () => {
@@ -65,7 +89,7 @@ export default function ReceptorRequestsScreen() {
           refreshControl={
             <RefreshControl
               refreshing={isLoading}
-              onRefresh={fetchMyRequests}
+              onRefresh={handleRefresh}
               colors={[Colors.yellow_green_500]}
               tintColor={Colors.yellow_green_500}
             />

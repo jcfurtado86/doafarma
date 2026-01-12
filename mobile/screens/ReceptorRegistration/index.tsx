@@ -122,7 +122,7 @@ export function ReceptorRegistrationScreen() {
     }
 
     if (success) {
-      router.replace('/(auth)/dashboard');
+      router.replace('/(auth)/receptor');
     }
   };
 

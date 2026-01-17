@@ -23,10 +23,12 @@ export default function ReceptorAppointmentsScreen() {
     error,
     fetchMyAppointments,
     confirmDeliveryReceptor,
+    acceptAppointment,
+    counterProposeAppointment,
     clearError,
   } = useMedicationAppointmentStore();
 
-  const [filter, setFilter] = useState<FilterOption>('scheduled');
+  const [filter, setFilter] = useState<FilterOption>('proposed');
 
   const loadAppointments = () => {
     const status = filter === 'all' ? undefined : filter;
@@ -37,6 +39,39 @@ export default function ReceptorAppointmentsScreen() {
     loadAppointments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
+
+  const handleAccept = (appointment: MedicationAppointment) => {
+    Alert.alert(
+      'Aceitar Proposta',
+      `Aceitar o agendamento para ${new Date(appointment.scheduled_date).toLocaleDateString('pt-BR')} às ${appointment.scheduled_time.substring(0, 5)}?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Aceitar',
+          onPress: async () => {
+            try {
+              await acceptAppointment(appointment.id, false);
+              Alert.alert('Sucesso', 'Agendamento confirmado!');
+            } catch (err: any) {
+              Alert.alert('Erro', err.message || 'Não foi possível aceitar o agendamento.');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleCounterPropose = async (
+    appointmentId: number,
+    data: { scheduled_date: string; scheduled_time: string; address_id?: number }
+  ) => {
+    try {
+      await counterProposeAppointment(appointmentId, data, false);
+      Alert.alert('Sucesso', 'Contraproposta enviada!');
+    } catch (err: any) {
+      throw err; // Let the modal handle the error display
+    }
+  };
 
   const handleConfirmDelivery = (appointment: MedicationAppointment) => {
     Alert.alert(
@@ -64,6 +99,8 @@ export default function ReceptorAppointmentsScreen() {
       appointment={item}
       variant="receptor"
       onConfirmDelivery={() => handleConfirmDelivery(item)}
+      onAccept={() => handleAccept(item)}
+      onCounterPropose={(data) => handleCounterPropose(item.id, data)}
     />
   );
 
@@ -74,11 +111,13 @@ export default function ReceptorAppointmentsScreen() {
         <Text style={styles.emptyIcon}>📅</Text>
         <Text style={styles.emptyTitle}>Nenhum agendamento</Text>
         <Text style={styles.emptyText}>
-          {filter === 'scheduled'
-            ? 'Não há agendamentos pendentes no momento.'
-            : filter === 'completed'
-              ? 'Não há agendamentos concluídos.'
-              : 'Você não possui nenhum agendamento ainda.'}
+          {filter === 'proposed'
+            ? 'Não há propostas de agendamento no momento.'
+            : filter === 'confirmed'
+              ? 'Não há agendamentos confirmados.'
+              : filter === 'completed'
+                ? 'Não há agendamentos concluídos.'
+                : 'Você não possui nenhum agendamento ainda.'}
         </Text>
         <Text style={styles.emptyHint}>
           Após uma solicitação ser confirmada pelo médico, você poderá agendar a retirada.
@@ -120,7 +159,8 @@ export default function ReceptorAppointmentsScreen() {
     <View style={styles.container}>
       {/* Filter Tabs */}
       <View style={styles.filterContainer}>
-        <FilterButton value="scheduled" label="Agendados" />
+        <FilterButton value="proposed" label="Propostas" />
+        <FilterButton value="confirmed" label="Confirmados" />
         <FilterButton value="completed" label="Concluídos" />
         <FilterButton value="all" label="Todos" />
       </View>

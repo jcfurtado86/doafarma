@@ -4,6 +4,7 @@ import {
   MedicationAppointment,
   MedicationAppointmentStatus,
   CreateMedicationAppointmentData,
+  CounterProposeAppointmentData,
 } from '@/types/medicationAppointment';
 
 interface MedicationAppointmentStoreState {
@@ -22,6 +23,14 @@ interface MedicationAppointmentStoreState {
   // Doctor actions
   fetchReceivedAppointments: (status?: MedicationAppointmentStatus) => Promise<void>;
   confirmDeliveryDoctor: (id: number) => Promise<void>;
+
+  // Negotiation actions (both roles)
+  acceptAppointment: (id: number, isDoctor: boolean) => Promise<void>;
+  counterProposeAppointment: (
+    id: number,
+    data: CounterProposeAppointmentData,
+    isDoctor: boolean
+  ) => Promise<void>;
 
   clearError: () => void;
 }
@@ -98,6 +107,68 @@ export const useMedicationAppointmentStore = create<MedicationAppointmentStoreSt
         isLoading: false,
         error: null,
       }));
+    } catch (error: any) {
+      set({ error: error.message, isLoading: false });
+      throw error;
+    }
+  },
+
+  acceptAppointment: async (id: number, isDoctor: boolean) => {
+    set({ isLoading: true, error: null });
+    try {
+      const updatedAppointment = await medicationAppointmentService.accept(id);
+      set((state) => {
+        if (isDoctor) {
+          return {
+            receivedAppointments: state.receivedAppointments.map((appointment) =>
+              appointment.id === id ? updatedAppointment : appointment
+            ),
+            isLoading: false,
+            error: null,
+          };
+        } else {
+          return {
+            appointments: state.appointments.map((appointment) =>
+              appointment.id === id ? updatedAppointment : appointment
+            ),
+            isLoading: false,
+            error: null,
+          };
+        }
+      });
+    } catch (error: any) {
+      set({ error: error.message, isLoading: false });
+      throw error;
+    }
+  },
+
+  counterProposeAppointment: async (
+    id: number,
+    data: CounterProposeAppointmentData,
+    isDoctor: boolean
+  ) => {
+    set({ isLoading: true, error: null });
+    try {
+      const updatedAppointment = await medicationAppointmentService.counterPropose(id, data);
+      set((state) => {
+        if (isDoctor) {
+          return {
+            receivedAppointments: state.receivedAppointments.map((appointment) =>
+              appointment.id === id ? updatedAppointment : appointment
+            ),
+            isLoading: false,
+            error: null,
+          };
+        } else {
+          return {
+            appointments: state.appointments.map((appointment) =>
+              appointment.id === id ? updatedAppointment : appointment
+            ),
+            isLoading: false,
+            error: null,
+          };
+        }
+      });
     } catch (error: any) {
       set({ error: error.message, isLoading: false });
       throw error;

@@ -61,4 +61,41 @@ class MedicationAppointmentPolicy
 
         return $appointment->medicationRequest->medicationOffering->doctor_id === $user->doctor->id;
     }
+
+    /**
+     * Determine if the user can accept the appointment.
+     * Only the party who did NOT propose can accept.
+     */
+    public function accept(User $user, MedicationAppointment $appointment): bool
+    {
+        return $this->canRespond($user, $appointment);
+    }
+
+    /**
+     * Determine if the user can counter-propose.
+     * Only the party who did NOT propose can counter-propose.
+     */
+    public function counterPropose(User $user, MedicationAppointment $appointment): bool
+    {
+        return $this->canRespond($user, $appointment);
+    }
+
+    /**
+     * Check if user is the one who needs to respond (not the proposer).
+     */
+    private function canRespond(User $user, MedicationAppointment $appointment): bool
+    {
+        $isReceptor = $user->role === 'receptor'
+            && $appointment->medicationRequest->receptor_id === $user->id;
+
+        $isDoctor = $user->role === 'doctor'
+            && $user->doctor !== null
+            && $appointment->medicationRequest->medicationOffering->doctor_id === $user->doctor->id;
+
+        if ($appointment->proposed_by === 'receptor') {
+            return $isDoctor;
+        }
+
+        return $isReceptor;
+    }
 }

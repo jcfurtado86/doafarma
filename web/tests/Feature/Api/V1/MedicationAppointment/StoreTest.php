@@ -39,7 +39,8 @@ it('should allow receptor to create appointment for confirmed request', function
     assertDatabaseHas('medication_appointments', [
         'medication_request_id' => $request->id,
         'scheduled_date'        => now()->addDays(3)->toDateString(),
-        'status'                => 'scheduled',
+        'status'                => 'proposed',
+        'proposed_by'           => 'receptor',
         'receptor_confirmed'    => false,
         'doctor_confirmed'      => false,
     ]);
@@ -87,7 +88,8 @@ it('should return 201 with appointment data including request and address', func
                 ],
             ],
         ])
-        ->assertJsonPath('data.status', 'scheduled');
+        ->assertJsonPath('data.status', 'proposed')
+        ->assertJsonPath('data.proposed_by', 'receptor');
 });
 
 it('should use doctors first address automatically', function (): void {

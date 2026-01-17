@@ -31,7 +31,8 @@ class CreateMedicationAppointmentAction
             'address_id'            => $address->id,
             'scheduled_date'        => $scheduledDate,
             'scheduled_time'        => $scheduledTime,
-            'status'                => 'scheduled',
+            'status'                => 'proposed',
+            'proposed_by'           => 'receptor',
         ]);
 
         return $appointment->load([

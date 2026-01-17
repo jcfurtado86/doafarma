@@ -28,7 +28,8 @@ class MedicationAppointmentFactory extends Factory
             'address_id'            => $this->getAddressForRequest(...),
             'scheduled_date'        => $this->faker->dateTimeBetween('now', '+30 days')->format('Y-m-d'),
             'scheduled_time'        => $this->faker->time('H:i'),
-            'status'                => 'scheduled',
+            'status'                => 'proposed',
+            'proposed_by'           => 'receptor',
             'receptor_confirmed'    => false,
             'doctor_confirmed'      => false,
         ];
@@ -57,12 +58,44 @@ class MedicationAppointmentFactory extends Factory
     }
 
     /**
-     * Indicate that the appointment is scheduled.
+     * Indicate that the appointment is proposed (awaiting acceptance).
      */
-    public function scheduled(): static
+    public function proposed(): static
     {
         return $this->state(fn (): array => [
-            'status'             => 'scheduled',
+            'status'             => 'proposed',
+            'receptor_confirmed' => false,
+            'doctor_confirmed'   => false,
+        ]);
+    }
+
+    /**
+     * Indicate that the appointment was proposed by the receptor.
+     */
+    public function proposedByReceptor(): static
+    {
+        return $this->state(fn (): array => [
+            'proposed_by' => 'receptor',
+        ]);
+    }
+
+    /**
+     * Indicate that the appointment was proposed by the doctor.
+     */
+    public function proposedByDoctor(): static
+    {
+        return $this->state(fn (): array => [
+            'proposed_by' => 'doctor',
+        ]);
+    }
+
+    /**
+     * Indicate that the appointment is confirmed (both parties agreed).
+     */
+    public function confirmed(): static
+    {
+        return $this->state(fn (): array => [
+            'status'             => 'confirmed',
             'receptor_confirmed' => false,
             'doctor_confirmed'   => false,
         ]);

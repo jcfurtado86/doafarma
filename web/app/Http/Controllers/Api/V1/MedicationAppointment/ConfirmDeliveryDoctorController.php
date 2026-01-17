@@ -28,6 +28,13 @@ class ConfirmDeliveryDoctorController extends Controller
             ], 422);
         }
 
+        // Check if appointment is confirmed (both parties agreed on date/time)
+        if ($medicationAppointment->status !== 'confirmed') {
+            return response()->json([
+                'message' => 'O agendamento precisa ser confirmado antes da entrega.',
+            ], 422);
+        }
+
         // Check if already confirmed by doctor
         if ($medicationAppointment->doctor_confirmed) {
             return response()->json([

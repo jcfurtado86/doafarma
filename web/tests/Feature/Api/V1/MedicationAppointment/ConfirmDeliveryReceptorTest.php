@@ -24,7 +24,7 @@ it('should allow receptor to confirm delivery', function (): void {
         ->forOffering($offering)
         ->confirmed()
         ->create();
-    $appointment = MedicationAppointment::factory()->scheduled()->create([
+    $appointment = MedicationAppointment::factory()->confirmed()->create([
         'medication_request_id' => $request->id,
         'address_id'            => $address->id,
         'scheduled_date'        => now()->subDays(1)->toDateString(),
@@ -36,7 +36,7 @@ it('should allow receptor to confirm delivery', function (): void {
 
     $response->assertOk()
         ->assertJsonPath('data.receptor_confirmed', true)
-        ->assertJsonPath('data.status', 'scheduled');
+        ->assertJsonPath('data.status', 'confirmed');
 });
 
 it('should complete appointment when both parties confirm', function (): void {
@@ -49,7 +49,7 @@ it('should complete appointment when both parties confirm', function (): void {
         ->forOffering($offering)
         ->confirmed()
         ->create();
-    $appointment = MedicationAppointment::factory()->scheduled()->create([
+    $appointment = MedicationAppointment::factory()->confirmed()->create([
         'medication_request_id' => $request->id,
         'address_id'            => $address->id,
         'scheduled_date'        => now()->subDays(1)->toDateString(),
@@ -80,7 +80,7 @@ it('should allow confirmation on scheduled date', function (): void {
         ->forOffering($offering)
         ->confirmed()
         ->create();
-    $appointment = MedicationAppointment::factory()->scheduled()->create([
+    $appointment = MedicationAppointment::factory()->confirmed()->create([
         'medication_request_id' => $request->id,
         'address_id'            => $address->id,
         'scheduled_date'        => now()->toDateString(),
@@ -95,7 +95,7 @@ it('should allow confirmation on scheduled date', function (): void {
 // Authorization Error Tests
 
 it('should return 401 for unauthenticated users', function (): void {
-    $appointment = MedicationAppointment::factory()->scheduled()->create([
+    $appointment = MedicationAppointment::factory()->confirmed()->create([
         'scheduled_date' => now()->subDays(1)->toDateString(),
     ]);
 
@@ -113,7 +113,7 @@ it('should return 403 when doctor tries to confirm as receptor', function (): vo
         ->forOffering($offering)
         ->confirmed()
         ->create();
-    $appointment = MedicationAppointment::factory()->scheduled()->create([
+    $appointment = MedicationAppointment::factory()->confirmed()->create([
         'medication_request_id' => $request->id,
         'address_id'            => $address->id,
         'scheduled_date'        => now()->subDays(1)->toDateString(),
@@ -136,7 +136,7 @@ it('should return 403 when receptor confirms another receptors appointment', fun
         ->forOffering($offering)
         ->confirmed()
         ->create();
-    $appointment = MedicationAppointment::factory()->scheduled()->create([
+    $appointment = MedicationAppointment::factory()->confirmed()->create([
         'medication_request_id' => $request->id,
         'address_id'            => $address->id,
         'scheduled_date'        => now()->subDays(1)->toDateString(),
@@ -182,7 +182,7 @@ it('should return 422 when confirming before scheduled date', function (): void 
         ->forOffering($offering)
         ->confirmed()
         ->create();
-    $appointment = MedicationAppointment::factory()->scheduled()->create([
+    $appointment = MedicationAppointment::factory()->confirmed()->create([
         'medication_request_id' => $request->id,
         'address_id'            => $address->id,
         'scheduled_date'        => now()->addDays(5)->toDateString(),
@@ -205,7 +205,7 @@ it('should return 422 when receptor already confirmed', function (): void {
         ->forOffering($offering)
         ->confirmed()
         ->create();
-    $appointment = MedicationAppointment::factory()->scheduled()->create([
+    $appointment = MedicationAppointment::factory()->confirmed()->create([
         'medication_request_id' => $request->id,
         'address_id'            => $address->id,
         'scheduled_date'        => now()->subDays(1)->toDateString(),

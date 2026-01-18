@@ -26,6 +26,7 @@ class MedicationAppointment extends Model
         'scheduled_date',
         'scheduled_time',
         'status',
+        'proposed_by',
         'receptor_confirmed',
         'doctor_confirmed',
     ];
@@ -63,14 +64,25 @@ class MedicationAppointment extends Model
     }
 
     /**
-     * Scope a query to only include scheduled appointments.
+     * Scope a query to only include proposed appointments (awaiting acceptance).
      *
      * @param Builder<MedicationAppointment> $query
      * @return Builder<MedicationAppointment>
      */
-    public function scopeScheduled(Builder $query): Builder
+    public function scopeProposed(Builder $query): Builder
     {
-        return $query->where('status', 'scheduled');
+        return $query->where('status', 'proposed');
+    }
+
+    /**
+     * Scope a query to only include confirmed appointments.
+     *
+     * @param Builder<MedicationAppointment> $query
+     * @return Builder<MedicationAppointment>
+     */
+    public function scopeConfirmed(Builder $query): Builder
+    {
+        return $query->where('status', 'confirmed');
     }
 
     /**
@@ -82,6 +94,30 @@ class MedicationAppointment extends Model
     public function scopeCompleted(Builder $query): Builder
     {
         return $query->where('status', 'completed');
+    }
+
+    /**
+     * Check if the given user needs to respond to this appointment.
+     * The user who did NOT propose is the one who needs to respond.
+     */
+    public function needsResponseFrom(User $user): bool
+    {
+        if ($this->status !== 'proposed') {
+            return false;
+        }
+
+        $isReceptor = $user->role === 'receptor'
+            && $this->medicationRequest->receptor_id === $user->id;
+
+        $isDoctor = $user->role === 'doctor'
+            && $user->doctor !== null
+            && $this->medicationRequest->medicationOffering->doctor_id === $user->doctor->id;
+
+        if ($this->proposed_by === 'receptor') {
+            return $isDoctor;
+        }
+
+        return $isReceptor;
     }
 
     /**

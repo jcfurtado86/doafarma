@@ -1,6 +1,7 @@
 import { MedicationRequest } from './medicationRequest';
 
-export type MedicationAppointmentStatus = 'scheduled' | 'completed';
+export type MedicationAppointmentStatus = 'proposed' | 'confirmed' | 'completed';
+export type ProposedBy = 'receptor' | 'doctor';
 
 export interface Address {
   id: number;
@@ -15,6 +16,7 @@ export interface MedicationAppointment {
   scheduled_date: string;
   scheduled_time: string;
   status: MedicationAppointmentStatus;
+  proposed_by: ProposedBy;
   receptor_confirmed: boolean;
   doctor_confirmed: boolean;
   created_at: string;
@@ -29,12 +31,20 @@ export interface CreateMedicationAppointmentData {
   scheduled_time: string;
 }
 
+export interface CounterProposeAppointmentData {
+  scheduled_date: string;
+  scheduled_time: string;
+  address_id?: number;
+}
+
 export const APPOINTMENT_STATUS_LABELS: Record<MedicationAppointmentStatus, string> = {
-  scheduled: 'Agendado',
+  proposed: 'Proposto',
+  confirmed: 'Confirmado',
   completed: 'Concluído',
 };
 
 export const APPOINTMENT_STATUS_COLORS: Record<MedicationAppointmentStatus, string> = {
-  scheduled: '#3b82f6', // blue
+  proposed: '#f59e0b', // amber
+  confirmed: '#3b82f6', // blue
   completed: '#10b981', // green
 };

@@ -2,6 +2,7 @@ import api from './api';
 import {
   MedicationAppointment,
   CreateMedicationAppointmentData,
+  CounterProposeAppointmentData,
   MedicationAppointmentStatus,
 } from '@/types/medicationAppointment';
 import { extractErrorMessage } from '@/utils/validation/errorHelpers';
@@ -39,6 +40,33 @@ export const medicationAppointmentService = {
     try {
       const params = status ? { status } : {};
       const response = await api.get('/v1/medication-appointments/received', { params });
+      return response.data.data;
+    } catch (error: any) {
+      throw new Error(extractErrorMessage(error));
+    }
+  },
+
+  /**
+   * Accept an appointment proposal
+   */
+  accept: async (id: number): Promise<MedicationAppointment> => {
+    try {
+      const response = await api.patch(`/v1/medication-appointments/${id}/accept`);
+      return response.data.data;
+    } catch (error: any) {
+      throw new Error(extractErrorMessage(error));
+    }
+  },
+
+  /**
+   * Counter-propose an appointment with new date/time/address
+   */
+  counterPropose: async (
+    id: number,
+    data: CounterProposeAppointmentData
+  ): Promise<MedicationAppointment> => {
+    try {
+      const response = await api.patch(`/v1/medication-appointments/${id}/counter-propose`, data);
       return response.data.data;
     } catch (error: any) {
       throw new Error(extractErrorMessage(error));

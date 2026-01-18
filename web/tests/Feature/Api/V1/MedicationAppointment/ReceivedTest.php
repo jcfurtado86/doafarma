@@ -124,7 +124,7 @@ it('should filter by status', function (): void {
         ->confirmed()
         ->create();
 
-    MedicationAppointment::factory()->scheduled()->create([
+    MedicationAppointment::factory()->proposed()->create([
         'medication_request_id' => $request1->id,
         'address_id'            => $address->id,
     ]);
@@ -135,7 +135,7 @@ it('should filter by status', function (): void {
 
     actingAs($doctor->user);
 
-    getJson('/api/v1/medication-appointments/received?status=scheduled')
+    getJson('/api/v1/medication-appointments/received?status=proposed')
         ->assertOk()
         ->assertJsonCount(1, 'data');
 });

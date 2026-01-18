@@ -94,5 +94,15 @@ Route::prefix('v1')->group(function (): void {
             MedicationAppointment\ConfirmDeliveryDoctorController::class
         )
             ->name('api.v1.medication-appointments.confirm-delivery-doctor');
+        Route::patch(
+            '/{medicationAppointment}/accept',
+            MedicationAppointment\AcceptController::class
+        )
+            ->name('api.v1.medication-appointments.accept');
+        Route::patch(
+            '/{medicationAppointment}/counter-propose',
+            MedicationAppointment\CounterProposeController::class
+        )
+            ->name('api.v1.medication-appointments.counter-propose');
     });
 });

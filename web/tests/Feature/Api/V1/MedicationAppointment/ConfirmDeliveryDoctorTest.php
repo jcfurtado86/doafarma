@@ -24,7 +24,7 @@ it('should allow doctor to confirm delivery', function (): void {
         ->forOffering($offering)
         ->confirmed()
         ->create();
-    $appointment = MedicationAppointment::factory()->scheduled()->create([
+    $appointment = MedicationAppointment::factory()->confirmed()->create([
         'medication_request_id' => $request->id,
         'address_id'            => $address->id,
         'scheduled_date'        => now()->subDays(1)->toDateString(),
@@ -36,7 +36,7 @@ it('should allow doctor to confirm delivery', function (): void {
 
     $response->assertOk()
         ->assertJsonPath('data.doctor_confirmed', true)
-        ->assertJsonPath('data.status', 'scheduled');
+        ->assertJsonPath('data.status', 'confirmed');
 });
 
 it('should complete appointment and offering when both confirm', function (): void {
@@ -49,7 +49,7 @@ it('should complete appointment and offering when both confirm', function (): vo
         ->forOffering($offering)
         ->confirmed()
         ->create();
-    $appointment = MedicationAppointment::factory()->scheduled()->create([
+    $appointment = MedicationAppointment::factory()->confirmed()->create([
         'medication_request_id' => $request->id,
         'address_id'            => $address->id,
         'scheduled_date'        => now()->subDays(1)->toDateString(),
@@ -69,7 +69,7 @@ it('should complete appointment and offering when both confirm', function (): vo
 // Authorization Error Tests
 
 it('should return 401 for unauthenticated users', function (): void {
-    $appointment = MedicationAppointment::factory()->scheduled()->create([
+    $appointment = MedicationAppointment::factory()->confirmed()->create([
         'scheduled_date' => now()->subDays(1)->toDateString(),
     ]);
 
@@ -87,7 +87,7 @@ it('should return 403 when receptor tries to confirm as doctor', function (): vo
         ->forOffering($offering)
         ->confirmed()
         ->create();
-    $appointment = MedicationAppointment::factory()->scheduled()->create([
+    $appointment = MedicationAppointment::factory()->confirmed()->create([
         'medication_request_id' => $request->id,
         'address_id'            => $address->id,
         'scheduled_date'        => now()->subDays(1)->toDateString(),
@@ -110,7 +110,7 @@ it('should return 403 when doctor confirms another doctors appointment', functio
         ->forOffering($offering)
         ->confirmed()
         ->create();
-    $appointment = MedicationAppointment::factory()->scheduled()->create([
+    $appointment = MedicationAppointment::factory()->confirmed()->create([
         'medication_request_id' => $request->id,
         'address_id'            => $address->id,
         'scheduled_date'        => now()->subDays(1)->toDateString(),
@@ -156,7 +156,7 @@ it('should return 422 when confirming before scheduled date', function (): void 
         ->forOffering($offering)
         ->confirmed()
         ->create();
-    $appointment = MedicationAppointment::factory()->scheduled()->create([
+    $appointment = MedicationAppointment::factory()->confirmed()->create([
         'medication_request_id' => $request->id,
         'address_id'            => $address->id,
         'scheduled_date'        => now()->addDays(5)->toDateString(),
@@ -179,7 +179,7 @@ it('should return 422 when doctor already confirmed', function (): void {
         ->forOffering($offering)
         ->confirmed()
         ->create();
-    $appointment = MedicationAppointment::factory()->scheduled()->create([
+    $appointment = MedicationAppointment::factory()->confirmed()->create([
         'medication_request_id' => $request->id,
         'address_id'            => $address->id,
         'scheduled_date'        => now()->subDays(1)->toDateString(),

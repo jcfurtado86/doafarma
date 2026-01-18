@@ -28,6 +28,7 @@ class MedicationAppointmentResource extends JsonResource
             'scheduled_date'     => $this->scheduled_date->toDateString(),
             'scheduled_time'     => $this->scheduled_time,
             'status'             => $this->status,
+            'proposed_by'        => $this->proposed_by,
             'receptor_confirmed' => $this->receptor_confirmed,
             'doctor_confirmed'   => $this->doctor_confirmed,
             'created_at'         => $this->created_at->toIso8601String(),

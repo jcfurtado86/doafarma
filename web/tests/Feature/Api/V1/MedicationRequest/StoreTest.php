@@ -2,10 +2,12 @@
 
 declare(strict_types = 1);
 
+use App\Jobs\NotifyDoctorNewRequestJob;
 use App\Models\Doctor;
 use App\Models\MedicationOffering;
 use App\Models\MedicationRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\Queue;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -215,4 +217,45 @@ it('should allow requesting an offering that was previously rejected', function 
     ])->assertCreated();
 
     expect(MedicationRequest::count())->toBe(2);
+});
+
+// Notification Tests
+
+it('should dispatch NotifyDoctorNewRequestJob when creating a request', function (): void {
+    Queue::fake();
+
+    $receptor = User::factory()->receptor()->create();
+    $offering = MedicationOffering::factory()->available()->create();
+
+    actingAs($receptor);
+
+    postJson('/api/v1/medication-requests', [
+        'medication_offering_id' => $offering->id,
+    ])->assertCreated();
+
+    Queue::assertPushed(NotifyDoctorNewRequestJob::class, fn ($job): true => true);
+});
+
+it('should dispatch notification with correct request id', function (): void {
+    Queue::fake();
+
+    $receptor = User::factory()->receptor()->create();
+    $offering = MedicationOffering::factory()->available()->create();
+
+    actingAs($receptor);
+
+    postJson('/api/v1/medication-requests', [
+        'medication_offering_id' => $offering->id,
+    ])->assertCreated();
+
+    $createdRequest = MedicationRequest::first();
+
+    Queue::assertPushed(NotifyDoctorNewRequestJob::class, function ($job) use ($createdRequest): bool {
+        // Use reflection to access the private property
+        $reflection = new ReflectionClass($job);
+        $property   = $reflection->getProperty('medicationRequestId');
+        $requestId  = $property->getValue($job);
+
+        return $requestId === $createdRequest->id;
+    });
 });

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Actions\MedicationRequest;
 
+use App\Jobs\NotifyDoctorNewRequestJob;
 use App\Models\MedicationOffering;
 use App\Models\MedicationRequest;
 use App\Models\User;
@@ -22,7 +23,7 @@ class CreateMedicationRequestAction
      */
     public function execute(int $medicationOfferingId, User $receptor): MedicationRequest
     {
-        return DB::transaction(function () use ($medicationOfferingId, $receptor): MedicationRequest {
+        $request = DB::transaction(function () use ($medicationOfferingId, $receptor): MedicationRequest {
             // Lock the offering row to prevent race conditions
             $offering = MedicationOffering::lockForUpdate()->findOrFail($medicationOfferingId);
 
@@ -32,7 +33,7 @@ class CreateMedicationRequestAction
             }
 
             // Create the request
-            $request = MedicationRequest::create([
+            $medicationRequest = MedicationRequest::create([
                 'receptor_id'            => $receptor->id,
                 'medication_offering_id' => $offering->id,
                 'status'                 => 'pending',
@@ -42,9 +43,14 @@ class CreateMedicationRequestAction
             $offering->update(['status' => 'reserved']);
 
             // Load relationships for the response
-            $request->load(['medicationOffering.drug', 'medicationOffering.doctor.user', 'receptor']);
+            $medicationRequest->load(['medicationOffering.drug', 'medicationOffering.doctor.user', 'receptor']);
 
-            return $request;
+            return $medicationRequest;
         });
+
+        // Dispatch notification job after transaction commits
+        NotifyDoctorNewRequestJob::dispatch($request->id);
+
+        return $request;
     }
 }

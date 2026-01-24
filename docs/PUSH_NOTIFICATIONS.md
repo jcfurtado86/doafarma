@@ -64,7 +64,8 @@ O sistema de push notifications do DoaFarma permite enviar lembretes nativos (co
 | **RegisterPushTokenAction** | `app/Actions/PushToken/RegisterPushTokenAction.php` | Lógica de registro (upsert) |
 | **RegisterController** | `app/Http/Controllers/V1/PushToken/RegisterController.php` | Endpoint POST /push-tokens |
 | **DeleteController** | `app/Http/Controllers/V1/PushToken/DeleteController.php` | Endpoint DELETE /push-tokens |
-| **SendAppointmentReminderJob** | `app/Jobs/SendAppointmentReminderJob.php` | Envia notificação via Expo API |
+| **SendAppointmentReminderJob** | `app/Jobs/SendAppointmentReminderJob.php` | Envia lembrete de agendamento via Expo API |
+| **NotifyDoctorNewRequestJob** | `app/Jobs/NotifyDoctorNewRequestJob.php` | Notifica médico sobre nova solicitação |
 | **SendAppointmentRemindersCommand** | `app/Console/Commands/SendAppointmentRemindersCommand.php` | Busca agendamentos e dispara jobs |
 
 ### Mobile (React Native/Expo)
@@ -175,12 +176,26 @@ addNotificationResponseReceivedListener((response) => {
 });
 ```
 
-## Lembretes Enviados
+## Tipos de Notificações
 
-| Momento | Janela de Envio | Mensagem |
-|---------|-----------------|----------|
-| 24h antes | 23:55 a 24:05 antes do horário | "Você tem um agendamento amanhã às HH:MM..." |
-| 1h antes | 0:55 a 1:05 antes do horário | "Você tem um agendamento em 1 hora..." |
+### 1. Lembrete de Agendamento
+
+| Momento | Janela de Envio | Destinatário | Mensagem |
+|---------|-----------------|--------------|----------|
+| 24h antes | 23:55 a 24:05 antes do horário | Receptor e Médico | "Você tem um agendamento amanhã às HH:MM..." |
+| 1h antes | 0:55 a 1:05 antes do horário | Receptor e Médico | "Você tem um agendamento em 1 hora..." |
+
+**Job:** `SendAppointmentReminderJob`
+**Trigger:** Scheduler (a cada 5 minutos)
+
+### 2. Nova Solicitação de Medicamento
+
+| Evento | Destinatário | Mensagem |
+|--------|--------------|----------|
+| Receptor solicita medicamento | Médico (dono da oferta) | "Nova solicitação de medicamento: [Receptor] solicitou o medicamento [Medicamento]" |
+
+**Job:** `NotifyDoctorNewRequestJob`
+**Trigger:** Ao criar um `MedicationRequest` (via `CreateMedicationRequestAction`)
 
 ## Testes Manuais
 

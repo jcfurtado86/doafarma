@@ -82,6 +82,8 @@ Route::prefix('v1')->group(function (): void {
             ->name('api.v1.medication-appointments.list');
         Route::post('/', MedicationAppointment\StoreController::class)
             ->name('api.v1.medication-appointments.store');
+        Route::get('/history', MedicationAppointment\HistoryController::class)
+            ->name('api.v1.medication-appointments.history');
         Route::get('/received', MedicationAppointment\ReceivedController::class)
             ->name('api.v1.medication-appointments.received');
         Route::patch(

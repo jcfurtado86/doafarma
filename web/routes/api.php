@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\Drug;
 use App\Http\Controllers\Api\V1\MedicationAppointment;
 use App\Http\Controllers\Api\V1\MedicationOffering;
 use App\Http\Controllers\Api\V1\MedicationRequest;
+use App\Http\Controllers\Api\V1\PushToken;
 use App\Http\Controllers\Auth\ApiLoginController;
 use App\Http\Controllers\Auth\DoctorRegistrationController;
 use App\Http\Controllers\Auth\ReceptorRegistrationController;
@@ -108,5 +109,12 @@ Route::prefix('v1')->group(function (): void {
             MedicationAppointment\CounterProposeController::class
         )
             ->name('api.v1.medication-appointments.counter-propose');
+    });
+
+    Route::prefix('push-tokens')->middleware('auth:sanctum')->group(function (): void {
+        Route::post('/', PushToken\RegisterController::class)
+            ->name('api.v1.push-tokens.register');
+        Route::delete('/', PushToken\DeleteController::class)
+            ->name('api.v1.push-tokens.delete');
     });
 });

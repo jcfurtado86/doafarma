@@ -89,4 +89,14 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(MedicationRequest::class, 'receptor_id');
     }
+
+    /**
+     * Get the push tokens for this user.
+     *
+     * @return HasMany<PushToken, $this>
+     */
+    public function pushTokens(): HasMany
+    {
+        return $this->hasMany(PushToken::class);
+    }
 }

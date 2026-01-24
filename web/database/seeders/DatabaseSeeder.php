@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
      * - 10 real medications (Losartana, Metformina, Omeprazol, etc.)
      * - 5 medication offerings from the doctor
      * - Sample requests and appointments for testing
+     * - 3 completed appointments for medication history (receptor)
      */
     public function run(): void
     {
@@ -35,6 +36,9 @@ class DatabaseSeeder extends Seeder
 
             // 4. Create requests and appointments (requires all above)
             MedicationRequestSeeder::class,
+
+            // 5. Create completed appointments for medication history
+            MedicationHistorySeeder::class,
         ]);
 
         $this->command->info('');

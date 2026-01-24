@@ -1,4 +1,9 @@
 import api from '@/services/api';
+import {
+  registerForPushNotificationsAsync,
+  registerPushTokenWithBackend,
+  removePushTokenFromBackend,
+} from '@/services/pushNotificationService';
 import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
@@ -14,6 +19,7 @@ export interface User {
 interface AuthStoreState {
   user: User | null;
   token: string | null;
+  pushToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -22,11 +28,13 @@ interface AuthStoreState {
   logout: () => Promise<void>;
   checkAuth: () => Promise<boolean>;
   clearError: () => void;
+  setupPushNotifications: () => Promise<void>;
 }
 
-export const useAuthStore = create<AuthStoreState>((set) => ({
+export const useAuthStore = create<AuthStoreState>((set, get) => ({
   user: null,
   token: null,
+  pushToken: null,
   isAuthenticated: false,
   isLoading: false,
   error: null,
@@ -47,12 +55,20 @@ export const useAuthStore = create<AuthStoreState>((set) => ({
 
   logout: async () => {
     try {
+      const { pushToken } = get();
+
+      // Remove push token from backend before logging out
+      if (pushToken) {
+        await removePushTokenFromBackend(pushToken);
+      }
+
       await SecureStore.deleteItemAsync('auth_token');
       await AsyncStorage.removeItem('user');
+      await AsyncStorage.removeItem('push_token');
 
       delete api.defaults.headers.common['Authorization'];
 
-      set({ user: null, token: null, isAuthenticated: false });
+      set({ user: null, token: null, pushToken: null, isAuthenticated: false });
     } catch (error) {
       console.error('Error logging out:', error);
       set({ error: 'Failed to log out' });
@@ -89,4 +105,24 @@ export const useAuthStore = create<AuthStoreState>((set) => ({
   },
 
   clearError: () => set({ error: null }),
+
+  setupPushNotifications: async () => {
+    try {
+      // Get push token from device
+      const expoPushToken = await registerForPushNotificationsAsync();
+
+      if (expoPushToken) {
+        // Register with backend
+        await registerPushTokenWithBackend(expoPushToken);
+
+        // Save locally
+        await AsyncStorage.setItem('push_token', expoPushToken);
+        set({ pushToken: expoPushToken });
+
+        console.log('Push notifications configured:', expoPushToken);
+      }
+    } catch (error) {
+      console.error('Error setting up push notifications:', error);
+    }
+  },
 }));

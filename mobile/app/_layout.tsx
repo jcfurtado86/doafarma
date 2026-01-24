@@ -1,6 +1,6 @@
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import 'react-native-reanimated';
 
 import {
@@ -12,6 +12,11 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { useAuthStore } from '@/stores/authStore';
 import Toast from 'react-native-toast-message';
+import type { Subscription } from 'expo-notifications';
+import {
+  addNotificationReceivedListener,
+  addNotificationResponseReceivedListener,
+} from '@/services/pushNotificationService';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -34,6 +39,8 @@ export default function RootLayout() {
   });
 
   const checkAuth = useAuthStore((state) => state.checkAuth);
+  const notificationListener = useRef<Subscription>();
+  const responseListener = useRef<Subscription>();
 
   useEffect(() => {
     if (error) throw error;
@@ -48,6 +55,44 @@ export default function RootLayout() {
     }
     prepare();
   }, [loaded, checkAuth]);
+
+  // Setup notification listeners
+  useEffect(() => {
+    // When a notification is received while app is in foreground
+    notificationListener.current = addNotificationReceivedListener((notification) => {
+      const { title, body } = notification.request.content;
+      Toast.show({
+        type: 'info',
+        text1: title || 'Notificação',
+        text2: body || '',
+        visibilityTime: 4000,
+      });
+    });
+
+    // When user taps on a notification
+    responseListener.current = addNotificationResponseReceivedListener((response) => {
+      const data = response.notification.request.content.data;
+
+      // Navigate to appointments if it's an appointment reminder
+      if (data?.type === 'appointment_reminder') {
+        const user = useAuthStore.getState().user;
+        if (user?.role === 'doctor') {
+          router.push('/(auth)/appointments/received');
+        } else {
+          router.push('/(auth)/receptor/appointments');
+        }
+      }
+    });
+
+    return () => {
+      if (notificationListener.current) {
+        notificationListener.current.remove();
+      }
+      if (responseListener.current) {
+        responseListener.current.remove();
+      }
+    };
+  }, []);
 
   if (!loaded) {
     return null;

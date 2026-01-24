@@ -36,7 +36,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { saveSession } = useAuthStore();
+  const { saveSession, setupPushNotifications } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -82,6 +82,9 @@ export default function LoginScreen() {
       const { user, token } = response.data;
 
       await saveSession(user, token);
+
+      // Configure push notifications in background
+      setupPushNotifications();
 
       // Navegação condicional baseada na role
       if (user.role === 'doctor') {

@@ -58,6 +58,16 @@ export default function ReceptorTabsLayout() {
           headerTitle: 'Meus Agendamentos',
         }}
       />
+      <Tabs.Screen
+        name="history"
+        options={{
+          title: 'Histórico',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="time-outline" size={size} color={color} />
+          ),
+          headerTitle: 'Histórico de Medicamentos',
+        }}
+      />
     </Tabs>
   );
 }

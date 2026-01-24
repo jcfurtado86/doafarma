@@ -72,3 +72,11 @@ web-build/
 *.keystore
 appcenter-pre-build.sh
 fastlane
+
+# IDE                                                                                                                                                                                       
+  .cursor/                                                                                                                                                                                    
+  .vscode/                                                                                                                                                                                    
+                                                                                                                                                                                              
+  # Claude (manter só o knowledge)                                                                                                                                                            
+  .claude/handoffs/                                                                                                                                                                           
+  .claude/todos/

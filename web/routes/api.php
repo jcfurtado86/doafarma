@@ -84,6 +84,8 @@ Route::prefix('v1')->group(function (): void {
             ->name('api.v1.medication-appointments.store');
         Route::get('/history', MedicationAppointment\HistoryController::class)
             ->name('api.v1.medication-appointments.history');
+        Route::get('/doctor-history', MedicationAppointment\DoctorHistoryController::class)
+            ->name('api.v1.medication-appointments.doctor-history');
         Route::get('/received', MedicationAppointment\ReceivedController::class)
             ->name('api.v1.medication-appointments.received');
         Route::patch(

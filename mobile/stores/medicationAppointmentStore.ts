@@ -14,6 +14,8 @@ interface MedicationAppointmentStoreState {
   receivedAppointments: MedicationAppointment[];
   // Receptor's medication history (completed appointments)
   history: MedicationAppointment[];
+  // Doctor's donation history (completed appointments)
+  donationHistory: MedicationAppointment[];
   isLoading: boolean;
   error: string | null;
 
@@ -26,6 +28,7 @@ interface MedicationAppointmentStoreState {
   // Doctor actions
   fetchReceivedAppointments: (status?: MedicationAppointmentStatus) => Promise<void>;
   confirmDeliveryDoctor: (id: number) => Promise<void>;
+  fetchDoctorHistory: () => Promise<void>;
 
   // Negotiation actions (both roles)
   acceptAppointment: (id: number, isDoctor: boolean) => Promise<void>;
@@ -42,6 +45,7 @@ export const useMedicationAppointmentStore = create<MedicationAppointmentStoreSt
   appointments: [],
   receivedAppointments: [],
   history: [],
+  donationHistory: [],
   isLoading: false,
   error: null,
 
@@ -122,6 +126,17 @@ export const useMedicationAppointmentStore = create<MedicationAppointmentStoreSt
         isLoading: false,
         error: null,
       }));
+    } catch (error: any) {
+      set({ error: error.message, isLoading: false });
+      throw error;
+    }
+  },
+
+  fetchDoctorHistory: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const donationHistory = await medicationAppointmentService.listDoctorHistory();
+      set({ donationHistory, isLoading: false, error: null });
     } catch (error: any) {
       set({ error: error.message, isLoading: false });
       throw error;

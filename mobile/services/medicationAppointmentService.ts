@@ -110,4 +110,16 @@ export const medicationAppointmentService = {
       throw new Error(extractErrorMessage(error));
     }
   },
+
+  /**
+   * List doctor's donation history (completed appointments)
+   */
+  listDoctorHistory: async (): Promise<MedicationAppointment[]> => {
+    try {
+      const response = await api.get('/v1/medication-appointments/doctor-history');
+      return response.data.data;
+    } catch (error: any) {
+      throw new Error(extractErrorMessage(error));
+    }
+  },
 };

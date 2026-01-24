@@ -40,6 +40,15 @@ class MedicationAppointmentPolicy
     }
 
     /**
+     * Determine whether the user can view their donation history.
+     * Only doctors can view their donation history.
+     */
+    public function viewDonationHistory(User $user): bool
+    {
+        return $user->role === 'doctor' && $user->doctor !== null;
+    }
+
+    /**
      * Determine whether the receptor can confirm delivery.
      * Note: Status checks (completed, already confirmed) are done in the controller as business rules.
      */

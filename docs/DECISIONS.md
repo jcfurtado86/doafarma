@@ -156,6 +156,40 @@ Addresses are stored as text. Geocoding, map integration, or proximity search ar
 
 ---
 
+### D11: Filament for Admin Panel
+
+**Decision:** Use Filament v3 for the admin interface instead of custom API endpoints.
+
+**Rationale:**
+- Complete admin panel with minimal code
+- Built-in CRUD, filters, bulk actions, and notifications
+- Handles authentication and authorization
+- Consistent UI/UX out of the box
+- Separates admin interface from mobile API
+- Active community and good Laravel integration
+
+**Note:** API endpoints remain for mobile app; Filament handles web admin only.
+
+---
+
+### D12: User Status Workflow for Registration Validation
+
+**Decision:** Implement a pending/approved/rejected workflow for user registration.
+
+**Rationale:**
+- Security: prevents unauthorized access until admin verifies user
+- Audit trail: tracks who approved/rejected and when
+- Flexibility: allows for future automation of approval process
+- Compliance: ensures only verified doctors can offer medications
+
+**Flow:**
+1. User registers → status = `pending`
+2. User attempts API access → blocked with 403 if not approved
+3. Admin reviews and approves/rejects via Filament panel
+4. Approved users gain full API access
+
+---
+
 ## Future Considerations
 
 Items explicitly out of scope but documented for awareness:

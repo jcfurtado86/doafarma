@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Policies;
 
+use App\Enums\UserRole;
 use App\Models\MedicationAppointment;
 use App\Models\MedicationRequest;
 use App\Models\User;
@@ -17,7 +18,7 @@ class MedicationAppointmentPolicy
      */
     public function create(User $user, MedicationRequest $request): bool
     {
-        return $user->role === 'receptor'
+        return $user->role === UserRole::Receptor
             && $request->receptor_id === $user->id;
     }
 
@@ -27,7 +28,7 @@ class MedicationAppointmentPolicy
      */
     public function viewOwn(User $user): bool
     {
-        return $user->role === 'receptor';
+        return $user->role === UserRole::Receptor;
     }
 
     /**
@@ -36,7 +37,7 @@ class MedicationAppointmentPolicy
      */
     public function viewReceived(User $user): bool
     {
-        return $user->role === 'doctor' && $user->doctor !== null;
+        return $user->role === UserRole::Doctor && $user->doctor !== null;
     }
 
     /**
@@ -45,7 +46,7 @@ class MedicationAppointmentPolicy
      */
     public function viewDonationHistory(User $user): bool
     {
-        return $user->role === 'doctor' && $user->doctor !== null;
+        return $user->role === UserRole::Doctor && $user->doctor !== null;
     }
 
     /**
@@ -54,7 +55,7 @@ class MedicationAppointmentPolicy
      */
     public function confirmDeliveryReceptor(User $user, MedicationAppointment $appointment): bool
     {
-        return $user->role === 'receptor'
+        return $user->role === UserRole::Receptor
             && $appointment->medicationRequest->receptor_id === $user->id;
     }
 
@@ -94,10 +95,10 @@ class MedicationAppointmentPolicy
      */
     private function canRespond(User $user, MedicationAppointment $appointment): bool
     {
-        $isReceptor = $user->role === 'receptor'
+        $isReceptor = $user->role === UserRole::Receptor
             && $appointment->medicationRequest->receptor_id === $user->id;
 
-        $isDoctor = $user->role === 'doctor'
+        $isDoctor = $user->role === UserRole::Doctor
             && $user->doctor !== null
             && $appointment->medicationRequest->medicationOffering->doctor_id === $user->doctor->id;
 

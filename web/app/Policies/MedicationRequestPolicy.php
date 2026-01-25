@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Policies;
 
+use App\Enums\UserRole;
 use App\Models\MedicationRequest;
 use App\Models\User;
 
@@ -15,7 +16,7 @@ class MedicationRequestPolicy
      */
     public function create(User $user): bool
     {
-        return $user->role === 'receptor';
+        return $user->role === UserRole::Receptor;
     }
 
     /**
@@ -24,7 +25,7 @@ class MedicationRequestPolicy
      */
     public function viewOwn(User $user): bool
     {
-        return $user->role === 'receptor';
+        return $user->role === UserRole::Receptor;
     }
 
     /**
@@ -33,7 +34,7 @@ class MedicationRequestPolicy
      */
     public function viewReceived(User $user): bool
     {
-        return $user->role === 'doctor' && $user->doctor !== null;
+        return $user->role === UserRole::Doctor && $user->doctor !== null;
     }
 
     /**

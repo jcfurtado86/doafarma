@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Http\Controllers\Api\V1\DoctorRating;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\V1\DoctorRatingResource;
 use App\Models\DoctorRating;
@@ -19,7 +20,7 @@ class MyRatingsController extends Controller
     {
         $user = $request->user();
 
-        if ($user->role !== 'doctor' || ! $user->doctor) {
+        if ($user->role !== UserRole::Doctor || ! $user->doctor) {
             return response()->json([
                 'message' => 'Apenas médicos podem acessar suas avaliações.',
             ], 403);

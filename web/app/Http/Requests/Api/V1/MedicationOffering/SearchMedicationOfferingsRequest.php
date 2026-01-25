@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Http\Requests\Api\V1\MedicationOffering;
 
+use App\Enums\UserRole;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SearchMedicationOfferingsRequest extends FormRequest
@@ -13,7 +14,7 @@ class SearchMedicationOfferingsRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()?->role === 'receptor';
+        return $this->user()?->role === UserRole::Receptor;
     }
 
     /**

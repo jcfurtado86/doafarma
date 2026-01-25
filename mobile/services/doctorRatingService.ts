@@ -1,5 +1,5 @@
 import api from './api';
-import { DoctorRating, CreateDoctorRatingData } from '@/types/doctorRating';
+import { DoctorRating, CreateDoctorRatingData, MyRatingsResponse } from '@/types/doctorRating';
 import { extractErrorMessage } from '@/utils/validation/errorHelpers';
 
 export const doctorRatingService = {
@@ -46,6 +46,18 @@ export const doctorRatingService = {
     try {
       const response = await api.get(`/v1/doctor-ratings/doctor/${doctorId}`);
       return response.data.data;
+    } catch (error: any) {
+      throw new Error(extractErrorMessage(error));
+    }
+  },
+
+  /**
+   * Get authenticated doctor's own ratings with summary statistics
+   */
+  getMyRatings: async (): Promise<MyRatingsResponse> => {
+    try {
+      const response = await api.get('/v1/doctor-ratings/my-ratings');
+      return response.data;
     } catch (error: any) {
       throw new Error(extractErrorMessage(error));
     }

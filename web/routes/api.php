@@ -120,6 +120,8 @@ Route::prefix('v1')->group(function (): void {
     });
 
     Route::prefix('doctor-ratings')->middleware('auth:sanctum')->group(function (): void {
+        Route::get('/my-ratings', DoctorRating\MyRatingsController::class)
+            ->name('api.v1.doctor-ratings.my-ratings');
         Route::post('/{medicationAppointment}', DoctorRating\StoreController::class)
             ->name('api.v1.doctor-ratings.store');
         Route::get('/appointment/{medicationAppointment}', DoctorRating\ShowByAppointmentController::class)

@@ -35,6 +35,10 @@ export default function Dashboard() {
     router.push('/(auth)/doctor/history');
   };
 
+  const handleMyRatings = () => {
+    router.push('/(auth)/doctor/ratings');
+  };
+
   // Receptor navigation
   const handleSearchMedications = () => {
     router.push('/(auth)/receptor/search');
@@ -65,6 +69,7 @@ export default function Dashboard() {
             <SecondaryButton label="Solicitações Recebidas" onPress={handleReceivedRequests} />
             <SecondaryButton label="Agendamentos" onPress={handleReceivedAppointments} />
             <SecondaryButton label="Histórico de Doações" onPress={handleDonationHistory} />
+            <SecondaryButton label="Minhas Avaliações" onPress={handleMyRatings} />
           </>
         )}
 

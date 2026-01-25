@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -23,26 +23,80 @@ export default function RateDoctorScreen() {
 
   const [rating, setRating] = useState<number>(0);
   const [comment, setComment] = useState('');
-  const { createRating, isLoading, error, clearError } = useDoctorRatingStore();
+  const [isEditMode, setIsEditMode] = useState(false);
 
-  const handleSubmit = async () => {
+  const {
+    createRating,
+    updateRating,
+    fetchRatingByAppointment,
+    currentRating,
+    isLoading,
+    error,
+    clearError,
+    clearCurrentRating,
+  } = useDoctorRatingStore();
+
+  // Load existing rating on mount
+  useEffect(() => {
+    const loadExistingRating = async () => {
+      try {
+        const existingRating = await fetchRatingByAppointment(parseInt(appointmentId, 10));
+        if (existingRating) {
+          setRating(existingRating.rating);
+          setComment(existingRating.comment || '');
+          setIsEditMode(true);
+        }
+      } catch {
+        // Error handled by store
+      }
+    };
+
+    loadExistingRating();
+
+    return () => {
+      clearCurrentRating();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [appointmentId]);
+
+  const showConfirmation = () => {
     if (rating === 0) {
       Alert.alert('Avaliação obrigatória', 'Por favor, selecione uma avaliação de 1 a 5 estrelas.');
       return;
     }
 
-    try {
-      await createRating(parseInt(appointmentId, 10), {
-        rating,
-        comment: comment.trim() || undefined,
-      });
+    const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+    const commentText = comment.trim() ? `\n\nComentário: "${comment.trim()}"` : '';
 
-      Alert.alert('Avaliação enviada!', 'Obrigado por avaliar sua experiência.', [
-        {
-          text: 'OK',
-          onPress: () => router.back(),
-        },
-      ]);
+    Alert.alert(
+      isEditMode ? 'Confirmar alteração' : 'Confirmar avaliação',
+      `Sua avaliação:\n\n${stars} (${RATING_LABELS[rating]})${commentText}`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: isEditMode ? 'Salvar' : 'Enviar', onPress: handleSubmit },
+      ]
+    );
+  };
+
+  const handleSubmit = async () => {
+    try {
+      if (isEditMode && currentRating) {
+        await updateRating(currentRating.id, {
+          rating,
+          comment: comment.trim() || undefined,
+        });
+        Alert.alert('Avaliação atualizada!', 'Sua avaliação foi alterada com sucesso.', [
+          { text: 'OK', onPress: () => router.back() },
+        ]);
+      } else {
+        await createRating(parseInt(appointmentId, 10), {
+          rating,
+          comment: comment.trim() || undefined,
+        });
+        Alert.alert('Avaliação enviada!', 'Obrigado por avaliar sua experiência.', [
+          { text: 'OK', onPress: () => router.back() },
+        ]);
+      }
     } catch {
       // Error is handled by the store
     }
@@ -64,14 +118,26 @@ export default function RateDoctorScreen() {
     );
   };
 
+  // Show loading while fetching existing rating
+  if (isLoading && !rating) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={Colors.yellow_green_500} />
+        <Text style={styles.loadingText}>Carregando...</Text>
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerIcon}>⭐</Text>
-        <Text style={styles.headerTitle}>Avaliar Doador</Text>
+        <Text style={styles.headerIcon}>{isEditMode ? '✏️' : '⭐'}</Text>
+        <Text style={styles.headerTitle}>{isEditMode ? 'Editar Avaliação' : 'Avaliar Doador'}</Text>
         <Text style={styles.headerSubtitle}>
-          Sua opinião ajuda outros pacientes e incentiva boas práticas.
+          {isEditMode
+            ? 'Você pode alterar sua avaliação a qualquer momento.'
+            : 'Sua opinião ajuda outros pacientes e incentiva boas práticas.'}
         </Text>
       </View>
 
@@ -130,14 +196,16 @@ export default function RateDoctorScreen() {
       {/* Submit Button */}
       <TouchableOpacity
         style={[styles.submitButton, (isLoading || rating === 0) && styles.submitButtonDisabled]}
-        onPress={handleSubmit}
+        onPress={showConfirmation}
         disabled={isLoading || rating === 0}
         activeOpacity={0.8}
       >
         {isLoading ? (
           <ActivityIndicator color="#ffffff" />
         ) : (
-          <Text style={styles.submitButtonText}>Enviar Avaliação</Text>
+          <Text style={styles.submitButtonText}>
+            {isEditMode ? 'Salvar Alterações' : 'Enviar Avaliação'}
+          </Text>
         )}
       </TouchableOpacity>
 
@@ -147,7 +215,7 @@ export default function RateDoctorScreen() {
         onPress={() => router.back()}
         disabled={isLoading}
       >
-        <Text style={styles.skipButtonText}>Avaliar depois</Text>
+        <Text style={styles.skipButtonText}>{isEditMode ? 'Cancelar' : 'Avaliar depois'}</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -161,6 +229,17 @@ const styles = StyleSheet.create({
   contentContainer: {
     padding: 16,
     paddingBottom: 32,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f3f4f6',
+    gap: 16,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#6b7280',
   },
   header: {
     alignItems: 'center',

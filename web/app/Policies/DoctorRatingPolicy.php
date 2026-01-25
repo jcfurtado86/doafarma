@@ -38,4 +38,14 @@ class DoctorRatingPolicy
         return $user->role === 'receptor'
             && $rating->receptor_id === $user->id;
     }
+
+    /**
+     * Determine whether the user can view rating for a specific appointment.
+     * Only the receptor of that appointment can check if they already rated.
+     */
+    public function showByAppointment(User $user, MedicationAppointment $appointment): bool
+    {
+        return $user->role === 'receptor'
+            && $appointment->medicationRequest->receptor_id === $user->id;
+    }
 }

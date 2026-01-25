@@ -16,6 +16,30 @@ export const doctorRatingService = {
   },
 
   /**
+   * Update an existing rating
+   */
+  update: async (ratingId: number, data: CreateDoctorRatingData): Promise<DoctorRating> => {
+    try {
+      const response = await api.patch(`/v1/doctor-ratings/${ratingId}`, data);
+      return response.data.data;
+    } catch (error: any) {
+      throw new Error(extractErrorMessage(error));
+    }
+  },
+
+  /**
+   * Get rating for a specific appointment (or null if not rated)
+   */
+  getByAppointment: async (appointmentId: number): Promise<DoctorRating | null> => {
+    try {
+      const response = await api.get(`/v1/doctor-ratings/appointment/${appointmentId}`);
+      return response.data.data;
+    } catch (error: any) {
+      throw new Error(extractErrorMessage(error));
+    }
+  },
+
+  /**
    * List all ratings for a specific doctor
    */
   listByDoctor: async (doctorId: number): Promise<DoctorRating[]> => {

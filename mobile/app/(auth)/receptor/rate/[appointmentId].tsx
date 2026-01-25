@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,8 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
@@ -24,6 +26,7 @@ export default function RateDoctorScreen() {
   const [rating, setRating] = useState<number>(0);
   const [comment, setComment] = useState('');
   const [isEditMode, setIsEditMode] = useState(false);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const {
     createRating,
@@ -129,99 +132,122 @@ export default function RateDoctorScreen() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerIcon}>{isEditMode ? '✏️' : '⭐'}</Text>
-        <Text style={styles.headerTitle}>{isEditMode ? 'Editar Avaliação' : 'Avaliar Doador'}</Text>
-        <Text style={styles.headerSubtitle}>
-          {isEditMode
-            ? 'Você pode alterar sua avaliação a qualquer momento.'
-            : 'Sua opinião ajuda outros pacientes e incentiva boas práticas.'}
-        </Text>
-      </View>
-
-      {/* Medication Info */}
-      {(doctorName || medicationName) && (
-        <View style={styles.infoCard}>
-          {medicationName && (
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Medicamento:</Text>
-              <Text style={styles.infoValue}>{medicationName}</Text>
-            </View>
-          )}
-          {doctorName && (
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Doador:</Text>
-              <Text style={styles.infoValue}>{doctorName}</Text>
-            </View>
-          )}
-        </View>
-      )}
-
-      {/* Rating Stars */}
-      <View style={styles.ratingSection}>
-        <Text style={styles.sectionTitle}>Como foi sua experiência?</Text>
-        <View style={styles.starsContainer}>{[1, 2, 3, 4, 5].map(renderStar)}</View>
-        {rating > 0 && <Text style={styles.ratingLabel}>{RATING_LABELS[rating]}</Text>}
-      </View>
-
-      {/* Comment Input */}
-      <View style={styles.commentSection}>
-        <Text style={styles.sectionTitle}>Comentário (opcional)</Text>
-        <TextInput
-          style={styles.commentInput}
-          placeholder="Conte como foi sua experiência com este doador..."
-          placeholderTextColor="#9ca3af"
-          value={comment}
-          onChangeText={setComment}
-          multiline
-          numberOfLines={4}
-          maxLength={1000}
-          textAlignVertical="top"
-        />
-        <Text style={styles.charCount}>{comment.length}/1000</Text>
-      </View>
-
-      {/* Error Message */}
-      {error && (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error}</Text>
-          <TouchableOpacity onPress={clearError}>
-            <Text style={styles.errorDismiss}>Fechar</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      {/* Submit Button */}
-      <TouchableOpacity
-        style={[styles.submitButton, (isLoading || rating === 0) && styles.submitButtonDisabled]}
-        onPress={showConfirmation}
-        disabled={isLoading || rating === 0}
-        activeOpacity={0.8}
+    <KeyboardAvoidingView
+      style={styles.keyboardAvoid}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+    >
+      <ScrollView
+        ref={scrollViewRef}
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}
+        keyboardShouldPersistTaps="handled"
       >
-        {isLoading ? (
-          <ActivityIndicator color="#ffffff" />
-        ) : (
-          <Text style={styles.submitButtonText}>
-            {isEditMode ? 'Salvar Alterações' : 'Enviar Avaliação'}
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.headerIcon}>{isEditMode ? '✏️' : '⭐'}</Text>
+          <Text style={styles.headerTitle}>
+            {isEditMode ? 'Editar Avaliação' : 'Avaliar Doador'}
           </Text>
-        )}
-      </TouchableOpacity>
+          <Text style={styles.headerSubtitle}>
+            {isEditMode
+              ? 'Você pode alterar sua avaliação a qualquer momento.'
+              : 'Sua opinião ajuda outros pacientes e incentiva boas práticas.'}
+          </Text>
+        </View>
 
-      {/* Skip Link */}
-      <TouchableOpacity
-        style={styles.skipButton}
-        onPress={() => router.back()}
-        disabled={isLoading}
-      >
-        <Text style={styles.skipButtonText}>{isEditMode ? 'Cancelar' : 'Avaliar depois'}</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        {/* Medication Info */}
+        {(doctorName || medicationName) && (
+          <View style={styles.infoCard}>
+            {medicationName && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Medicamento:</Text>
+                <Text style={styles.infoValue}>{medicationName}</Text>
+              </View>
+            )}
+            {doctorName && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Doador:</Text>
+                <Text style={styles.infoValue}>{doctorName}</Text>
+              </View>
+            )}
+          </View>
+        )}
+
+        {/* Rating Stars */}
+        <View style={styles.ratingSection}>
+          <Text style={styles.sectionTitle}>Como foi sua experiência?</Text>
+          <View style={styles.starsContainer}>{[1, 2, 3, 4, 5].map(renderStar)}</View>
+          {rating > 0 && <Text style={styles.ratingLabel}>{RATING_LABELS[rating]}</Text>}
+        </View>
+
+        {/* Comment Input */}
+        <View style={styles.commentSection}>
+          <Text style={styles.sectionTitle}>Comentário (opcional)</Text>
+          <TextInput
+            style={styles.commentInput}
+            placeholder="Conte como foi sua experiência com este doador..."
+            placeholderTextColor="#9ca3af"
+            value={comment}
+            onChangeText={setComment}
+            multiline
+            numberOfLines={4}
+            maxLength={1000}
+            textAlignVertical="top"
+            autoCorrect={true}
+            autoCapitalize="sentences"
+            onFocus={() => {
+              setTimeout(() => {
+                scrollViewRef.current?.scrollToEnd({ animated: true });
+              }, 300);
+            }}
+          />
+          <Text style={styles.charCount}>{comment.length}/1000</Text>
+        </View>
+
+        {/* Error Message */}
+        {error && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
+            <TouchableOpacity onPress={clearError}>
+              <Text style={styles.errorDismiss}>Fechar</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* Submit Button */}
+        <TouchableOpacity
+          style={[styles.submitButton, (isLoading || rating === 0) && styles.submitButtonDisabled]}
+          onPress={showConfirmation}
+          disabled={isLoading || rating === 0}
+          activeOpacity={0.8}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#ffffff" />
+          ) : (
+            <Text style={styles.submitButtonText}>
+              {isEditMode ? 'Salvar Alterações' : 'Enviar Avaliação'}
+            </Text>
+          )}
+        </TouchableOpacity>
+
+        {/* Skip Link */}
+        <TouchableOpacity
+          style={styles.skipButton}
+          onPress={() => router.back()}
+          disabled={isLoading}
+        >
+          <Text style={styles.skipButtonText}>{isEditMode ? 'Cancelar' : 'Avaliar depois'}</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
+  keyboardAvoid: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: '#f3f4f6',

@@ -1,5 +1,14 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  RefreshControl,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
+import { router } from 'expo-router';
 import { useMedicationAppointmentStore } from '@/stores/medicationAppointmentStore';
 import { Colors } from '@/constants/Colors';
 import { MedicationAppointment } from '@/types/medicationAppointment';
@@ -18,6 +27,20 @@ export default function ReceptorHistoryScreen() {
       day: '2-digit',
       month: 'long',
       year: 'numeric',
+    });
+  };
+
+  const handleRateDoctor = (appointment: MedicationAppointment) => {
+    const drug = appointment.medication_request?.medication_offering?.drug;
+    const doctor = appointment.medication_request?.medication_offering?.doctor;
+
+    router.push({
+      pathname: '/receptor/rate/[appointmentId]',
+      params: {
+        appointmentId: appointment.id.toString(),
+        doctorName: doctor?.name || '',
+        medicationName: drug?.product_name || '',
+      },
     });
   };
 
@@ -80,6 +103,16 @@ export default function ReceptorHistoryScreen() {
             <Text style={styles.dateIcon}>📅</Text>
             <Text style={styles.dateText}>Recebido em {formatDate(item.updated_at)}</Text>
           </View>
+
+          {/* Rate Button */}
+          <TouchableOpacity
+            style={styles.rateButton}
+            onPress={() => handleRateDoctor(item)}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.rateButtonIcon}>⭐</Text>
+            <Text style={styles.rateButtonText}>Avaliar Doador</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -310,6 +343,25 @@ const styles = StyleSheet.create({
   retryText: {
     fontSize: 16,
     color: Colors.yellow_green_500,
+    fontWeight: '600',
+  },
+  rateButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.yellow_green_500,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginTop: 12,
+    gap: 8,
+  },
+  rateButtonIcon: {
+    fontSize: 16,
+  },
+  rateButtonText: {
+    color: '#ffffff',
+    fontSize: 14,
     fontWeight: '600',
   },
 });

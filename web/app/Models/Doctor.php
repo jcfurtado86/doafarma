@@ -39,4 +39,14 @@ class Doctor extends Model
     {
         return $this->hasMany(MedicationOffering::class);
     }
+
+    /**
+     * Get the ratings received by the doctor.
+     *
+     * @return HasMany<DoctorRating, $this>
+     */
+    public function ratings(): HasMany
+    {
+        return $this->hasMany(DoctorRating::class);
+    }
 }

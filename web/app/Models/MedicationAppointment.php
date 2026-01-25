@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property Carbon $scheduled_date
@@ -61,6 +62,16 @@ class MedicationAppointment extends Model
     public function address(): BelongsTo
     {
         return $this->belongsTo(Address::class);
+    }
+
+    /**
+     * Get the rating for this appointment.
+     *
+     * @return HasOne<DoctorRating, $this>
+     */
+    public function rating(): HasOne
+    {
+        return $this->hasOne(DoctorRating::class, 'medication_appointment_id');
     }
 
     /**

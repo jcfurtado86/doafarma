@@ -3,6 +3,7 @@
 declare(strict_types = 1);
 
 use App\Http\Controllers\Api\V1\Auth;
+use App\Http\Controllers\Api\V1\DoctorRating;
 use App\Http\Controllers\Api\V1\Drug;
 use App\Http\Controllers\Api\V1\MedicationAppointment;
 use App\Http\Controllers\Api\V1\MedicationOffering;
@@ -116,5 +117,16 @@ Route::prefix('v1')->group(function (): void {
             ->name('api.v1.push-tokens.register');
         Route::delete('/', PushToken\DeleteController::class)
             ->name('api.v1.push-tokens.delete');
+    });
+
+    Route::prefix('doctor-ratings')->middleware('auth:sanctum')->group(function (): void {
+        Route::post('/{medicationAppointment}', DoctorRating\StoreController::class)
+            ->name('api.v1.doctor-ratings.store');
+        Route::get('/appointment/{medicationAppointment}', DoctorRating\ShowByAppointmentController::class)
+            ->name('api.v1.doctor-ratings.show-by-appointment');
+        Route::patch('/{doctorRating}', DoctorRating\UpdateController::class)
+            ->name('api.v1.doctor-ratings.update');
+        Route::get('/doctor/{doctor}', DoctorRating\ListController::class)
+            ->name('api.v1.doctor-ratings.list');
     });
 });

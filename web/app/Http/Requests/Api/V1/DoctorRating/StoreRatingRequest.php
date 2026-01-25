@@ -1,0 +1,57 @@
+<?php
+
+declare(strict_types = 1);
+
+namespace App\Http\Requests\Api\V1\DoctorRating;
+
+use App\Models\DoctorRating;
+use App\Models\MedicationAppointment;
+use Illuminate\Foundation\Http\FormRequest;
+
+class StoreRatingRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        $appointment = $this->route('medicationAppointment');
+
+        if (! $appointment instanceof MedicationAppointment) {
+            return false;
+        }
+
+        return $this->user()->can('create', [DoctorRating::class, $appointment]);
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'rating'  => ['required', 'integer', 'min:1', 'max:5'],
+            'comment' => ['nullable', 'string', 'max:1000'],
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array<string, string>
+     */
+    #[\Override]
+    public function messages(): array
+    {
+        return [
+            'rating.required' => 'A avaliação é obrigatória.',
+            'rating.integer'  => 'A avaliação deve ser um número inteiro.',
+            'rating.min'      => 'A avaliação deve ser no mínimo 1 estrela.',
+            'rating.max'      => 'A avaliação deve ser no máximo 5 estrelas.',
+            'comment.string'  => 'O comentário deve ser um texto.',
+            'comment.max'     => 'O comentário deve ter no máximo 1000 caracteres.',
+        ];
+    }
+}

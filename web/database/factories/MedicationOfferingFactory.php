@@ -59,4 +59,14 @@ class MedicationOfferingFactory extends Factory
             'status' => 'completed',
         ]);
     }
+
+    /**
+     * Set expiration date to a specific number of days from now.
+     */
+    public function expiresInDays(int $days): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'expires_at' => now()->addDays($days)->toDateString(),
+        ]);
+    }
 }

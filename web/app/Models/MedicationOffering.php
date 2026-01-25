@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * @property \Carbon\Carbon $expires_at
+ */
 class MedicationOffering extends Model
 {
     /** @use HasFactory<\Database\Factories\MedicationOfferingFactory> */

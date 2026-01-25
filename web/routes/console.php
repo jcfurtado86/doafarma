@@ -14,3 +14,8 @@ Artisan::command('inspire', function (): void {
 Schedule::command('appointments:send-reminders')
     ->everyFiveMinutes()
     ->withoutOverlapping();
+
+// Send medication expiration alerts daily at 9:00 AM
+Schedule::command('medications:send-expiration-alerts')
+    ->dailyAt('09:00')
+    ->withoutOverlapping();

@@ -26,3 +26,14 @@ export const RATING_LABELS: Record<number, string> = {
   4: 'Bom',
   5: 'Excelente',
 };
+
+export interface RatingSummary {
+  total_ratings: number;
+  average_rating: number;
+  rating_distribution: Record<number, number>;
+}
+
+export interface MyRatingsResponse {
+  summary: RatingSummary;
+  ratings: DoctorRating[];
+}

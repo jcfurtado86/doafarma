@@ -2,7 +2,6 @@
 
 declare(strict_types = 1);
 
-use App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Api\V1\Auth;
 use App\Http\Controllers\Api\V1\DoctorRating;
 use App\Http\Controllers\Api\V1\Drug;
@@ -125,24 +124,6 @@ Route::prefix('v1')->group(function (): void {
                 ->name('api.v1.doctor-ratings.update');
             Route::get('/doctor/{doctor}', DoctorRating\ListController::class)
                 ->name('api.v1.doctor-ratings.list');
-        });
-    });
-
-    // Admin routes - require authentication and admin role
-    Route::prefix('admin')->middleware(['auth:sanctum', 'admin'])->group(function (): void {
-        Route::prefix('users')->group(function (): void {
-            Route::get('/', [Admin\UserManagementController::class, 'index'])
-                ->name('api.v1.admin.users.index');
-            Route::get('/pending', [Admin\UserManagementController::class, 'pending'])
-                ->name('api.v1.admin.users.pending');
-            Route::get('/stats', [Admin\UserManagementController::class, 'stats'])
-                ->name('api.v1.admin.users.stats');
-            Route::get('/{user}', [Admin\UserManagementController::class, 'show'])
-                ->name('api.v1.admin.users.show');
-            Route::patch('/{user}/approve', [Admin\UserManagementController::class, 'approve'])
-                ->name('api.v1.admin.users.approve');
-            Route::patch('/{user}/reject', [Admin\UserManagementController::class, 'reject'])
-                ->name('api.v1.admin.users.reject');
         });
     });
 });

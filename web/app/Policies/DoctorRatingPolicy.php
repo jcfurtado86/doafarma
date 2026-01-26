@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Policies;
 
+use App\Enums\UserRole;
 use App\Models\DoctorRating;
 use App\Models\MedicationAppointment;
 use App\Models\User;
@@ -17,7 +18,7 @@ class DoctorRatingPolicy
      */
     public function create(User $user, MedicationAppointment $appointment): bool
     {
-        return $user->role === 'receptor'
+        return $user->role === UserRole::Receptor
             && $appointment->medicationRequest->receptor_id === $user->id;
     }
 
@@ -35,7 +36,7 @@ class DoctorRatingPolicy
      */
     public function update(User $user, DoctorRating $rating): bool
     {
-        return $user->role === 'receptor'
+        return $user->role === UserRole::Receptor
             && $rating->receptor_id === $user->id;
     }
 
@@ -45,7 +46,7 @@ class DoctorRatingPolicy
      */
     public function showByAppointment(User $user, MedicationAppointment $appointment): bool
     {
-        return $user->role === 'receptor'
+        return $user->role === UserRole::Receptor
             && $appointment->medicationRequest->receptor_id === $user->id;
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Http\Controllers\Api\V1\MedicationAppointment;
 
 use App\Actions\MedicationAppointment\CounterProposeAppointmentAction;
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\MedicationAppointment\CounterProposeAppointmentRequest;
 use App\Http\Resources\Api\V1\MedicationAppointmentResource;
@@ -34,7 +35,7 @@ class CounterProposeController extends Controller
         $addressId = $request->validated('address_id');
 
         // If doctor is counter-proposing and provided an address, validate ownership
-        if ($user->role === 'doctor' && $addressId !== null) {
+        if ($user->role === UserRole::Doctor && $addressId !== null) {
             $address = Address::find($addressId);
 
             if ($address === null || $address->user_id !== $user->id) {
@@ -45,11 +46,11 @@ class CounterProposeController extends Controller
         }
 
         // Receptors cannot change the address
-        if ($user->role === 'receptor') {
+        if ($user->role === UserRole::Receptor) {
             $addressId = null;
         }
 
-        $proposedBy = $user->role === 'doctor' ? 'doctor' : 'receptor';
+        $proposedBy = $user->role === UserRole::Doctor ? 'doctor' : 'receptor';
 
         $appointment = $action->execute(
             $medicationAppointment,

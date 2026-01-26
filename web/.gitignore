@@ -24,3 +24,7 @@ yarn-error.log
 
 # Custom
 commit-helper.sh
+
+# Filament assets (published via artisan command)
+/public/js/filament
+/public/css/filament

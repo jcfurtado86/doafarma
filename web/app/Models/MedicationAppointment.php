@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Models;
 
+use App\Enums\UserRole;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -117,10 +118,10 @@ class MedicationAppointment extends Model
             return false;
         }
 
-        $isReceptor = $user->role === 'receptor'
+        $isReceptor = $user->role === UserRole::Receptor
             && $this->medicationRequest->receptor_id === $user->id;
 
-        $isDoctor = $user->role === 'doctor'
+        $isDoctor = $user->role === UserRole::Doctor
             && $user->doctor !== null
             && $this->medicationRequest->medicationOffering->doctor_id === $user->doctor->id;
 

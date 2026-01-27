@@ -9,11 +9,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class MedicationRequest extends Model
 {
     /** @use HasFactory<\Database\Factories\MedicationRequestFactory> */
     use HasFactory;
+    use LogsActivity;
 
     protected $table = 'medication_requests';
 
@@ -84,5 +87,22 @@ class MedicationRequest extends Model
     public function scopeRejected(Builder $query): Builder
     {
         return $query->where('status', 'rejected');
+    }
+
+    /**
+     * Configure activity logging options.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['receptor_id', 'medication_offering_id', 'status'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn (string $eventName): string => match ($eventName) {
+                'created' => "Solicitação de medicamento #{$this->id} criada",
+                'updated' => "Solicitação de medicamento #{$this->id} atualizada",
+                'deleted' => "Solicitação de medicamento #{$this->id} removida",
+                default   => "Solicitação #{$this->id}: {$eventName}",
+            });
     }
 }

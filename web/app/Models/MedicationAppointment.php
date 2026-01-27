@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property Carbon $scheduled_date
@@ -19,6 +21,7 @@ class MedicationAppointment extends Model
 {
     /** @use HasFactory<\Database\Factories\MedicationAppointmentFactory> */
     use HasFactory;
+    use LogsActivity;
 
     protected $table = 'medication_appointments';
 
@@ -142,5 +145,22 @@ class MedicationAppointment extends Model
     {
         return $query->orderBy('scheduled_date')
             ->orderBy('scheduled_time');
+    }
+
+    /**
+     * Configure activity logging options.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['medication_request_id', 'address_id', 'scheduled_date', 'scheduled_time', 'status', 'receptor_confirmed', 'doctor_confirmed'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn (string $eventName): string => match ($eventName) {
+                'created' => "Agendamento #{$this->id} criado",
+                'updated' => "Agendamento #{$this->id} atualizado",
+                'deleted' => "Agendamento #{$this->id} removido",
+                default   => "Agendamento #{$this->id}: {$eventName}",
+            });
     }
 }

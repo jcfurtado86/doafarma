@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property \Carbon\Carbon $expires_at
@@ -18,6 +20,7 @@ class MedicationOffering extends Model
 {
     /** @use HasFactory<\Database\Factories\MedicationOfferingFactory> */
     use HasFactory;
+    use LogsActivity;
 
     protected $table = 'medication_offerings';
 
@@ -112,5 +115,22 @@ class MedicationOffering extends Model
     public function scopeCompleted(Builder $query): Builder
     {
         return $query->where('status', 'completed');
+    }
+
+    /**
+     * Configure activity logging options.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['doctor_id', 'drug_id', 'lot_number', 'expires_at', 'quantity', 'status'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn (string $eventName): string => match ($eventName) {
+                'created' => "Oferta de medicamento #{$this->id} criada",
+                'updated' => "Oferta de medicamento #{$this->id} atualizada",
+                'deleted' => "Oferta de medicamento #{$this->id} removida",
+                default   => "Oferta #{$this->id}: {$eventName}",
+            });
     }
 }

@@ -8,14 +8,15 @@ use App\Models\MedicationAppointment;
 use App\Models\MedicationRequest;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Override;
 
 class RequestStatsWidget extends BaseWidget
 {
     protected static ?int $sort = 2;
 
-    protected static ?string $pollingInterval = '30s';
+    protected ?string $pollingInterval = '30s';
 
-    #[\Override]
+    #[Override]
     protected function getStats(): array
     {
         $pendingRequests   = MedicationRequest::pending()->count();

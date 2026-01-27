@@ -7,8 +7,11 @@ namespace App\Http\Requests\Auth;
 use App\Models\User;
 use App\Rules\UniqueCpfHash;
 use App\Rules\ValidCPF;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\Rules\Password;
+use Override;
 
 class ReceptorRegistrationRequest extends FormRequest
 {
@@ -23,7 +26,7 @@ class ReceptorRegistrationRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -32,7 +35,7 @@ class ReceptorRegistrationRequest extends FormRequest
             'email'          => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'cpf'            => ['required', 'string', new ValidCPF(), new UniqueCpfHash()],
             'phone_number'   => ['required', 'string', 'min:10', 'max:11', 'unique:' . User::class . ',phone_number'],
-            'password'       => ['required', 'confirmed', Rules\Password::defaults()],
+            'password'       => ['required', 'confirmed', Password::defaults()],
             'device_name'    => ['required', 'string', 'max:255'],
             'terms_accepted' => ['required', 'accepted'],
         ];
@@ -55,7 +58,7 @@ class ReceptorRegistrationRequest extends FormRequest
      *
      * @return array<string, string>
      */
-    #[\Override]
+    #[Override]
     public function messages(): array
     {
         return [

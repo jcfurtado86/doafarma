@@ -6,6 +6,7 @@ namespace App\Jobs;
 
 use App\Models\MedicationOffering;
 use App\Models\PushToken;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Http;
@@ -142,7 +143,7 @@ class NotifyDoctorExpiringMedicationJob implements ShouldQueue
                     'response'               => $response->json(),
                 ]);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Exception sending expiration notification to doctor', [
                 'medication_offering_id' => $data['medication_offering_id'],
                 'error'                  => $e->getMessage(),

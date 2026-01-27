@@ -5,7 +5,9 @@ declare(strict_types = 1);
 namespace App\Http\Requests\Api\V1\MedicationRequest;
 
 use App\Models\MedicationRequest;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Override;
 
 class StoreMedicationRequestRequest extends FormRequest
 {
@@ -20,7 +22,7 @@ class StoreMedicationRequestRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -34,7 +36,7 @@ class StoreMedicationRequestRequest extends FormRequest
      *
      * @return array<string, string>
      */
-    #[\Override]
+    #[Override]
     public function messages(): array
     {
         return [

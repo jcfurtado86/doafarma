@@ -4,60 +4,65 @@ declare(strict_types = 1);
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\MedicationOfferingResource\Pages;
+use App\Filament\Resources\MedicationOfferingResource\Pages\ListMedicationOfferings;
+use App\Filament\Resources\MedicationOfferingResource\Pages\ViewMedicationOffering;
 use App\Models\MedicationOffering;
-use Filament\Infolists\Components\Section;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
 class MedicationOfferingResource extends Resource
 {
     protected static ?string $model = MedicationOffering::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-archive-box';
 
     protected static ?string $modelLabel = 'Oferta de Medicamento';
 
     protected static ?string $pluralModelLabel = 'Ofertas de Medicamentos';
 
-    protected static ?string $navigationGroup = 'Doações';
+    protected static string | \UnitEnum | null $navigationGroup = 'Doações';
 
     protected static ?int $navigationSort = 1;
 
-    #[\Override]
+    #[Override]
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                TextColumn::make('id')
                     ->label('ID')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('drug.product_name')
+                TextColumn::make('drug.product_name')
                     ->label('Medicamento')
                     ->limit(30)
                     ->tooltip(fn (MedicationOffering $record): string => $record->drug->product_name ?? '')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('doctor.user.name')
+                TextColumn::make('doctor.user.name')
                     ->label('Médico')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('lot_number')
+                TextColumn::make('lot_number')
                     ->label('Lote')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('expires_at')
+                TextColumn::make('expires_at')
                     ->label('Validade')
                     ->date('d/m/Y')
                     ->sortable()
                     ->color(fn (MedicationOffering $record): string => $record->expires_at->isPast() ? 'danger' : ($record->expires_at->diffInDays(now()) <= 30 ? 'warning' : 'success')),
-                Tables\Columns\TextColumn::make('quantity')
+                TextColumn::make('quantity')
                     ->label('Quantidade')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->label('Status')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => match ($state) {
@@ -72,7 +77,7 @@ class MedicationOfferingResource extends Resource
                         'completed' => 'info',
                         default     => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('Cadastrado em')
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
@@ -80,27 +85,27 @@ class MedicationOfferingResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
-                Tables\Filters\SelectFilter::make('status')
+                SelectFilter::make('status')
                     ->label('Status')
                     ->options([
                         'available' => 'Disponível',
                         'reserved'  => 'Reservado',
                         'completed' => 'Concluído',
                     ]),
-                Tables\Filters\Filter::make('expiring_soon')
+                Filter::make('expiring_soon')
                     ->label('Vencendo em 30 dias')
                     ->query(fn (Builder $query): Builder => $query
                         ->where('expires_at', '<=', now()->addDays(30))
                         ->where('expires_at', '>', now())),
-                Tables\Filters\Filter::make('expired')
+                Filter::make('expired')
                     ->label('Vencidos')
                     ->query(fn (Builder $query): Builder => $query
                         ->where('expires_at', '<', now())),
-                Tables\Filters\Filter::make('created_at')
-                    ->form([
-                        \Filament\Forms\Components\DatePicker::make('from')
+                Filter::make('created_at')
+                    ->schema([
+                        DatePicker::make('from')
                             ->label('De'),
-                        \Filament\Forms\Components\DatePicker::make('until')
+                        DatePicker::make('until')
                             ->label('Até'),
                     ])
                     ->query(fn (Builder $query, array $data): Builder => $query
@@ -113,18 +118,18 @@ class MedicationOfferingResource extends Resource
                             fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                         )),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
+            ->recordActions([
+                ViewAction::make(),
             ])
-            ->bulkActions([]);
+            ->toolbarActions([]);
     }
 
-    #[\Override]
-    public static function infolist(Infolist $infolist): Infolist
+    #[Override]
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
-                Section::make('Informações do Medicamento')
+        return $schema
+            ->components([
+                \Filament\Schemas\Components\Section::make('Informações do Medicamento')
                     ->schema([
                         TextEntry::make('drug.product_name')
                             ->label('Medicamento'),
@@ -136,7 +141,7 @@ class MedicationOfferingResource extends Resource
                             ->label('Apresentação'),
                     ])
                     ->columns(2),
-                Section::make('Informações da Oferta')
+                \Filament\Schemas\Components\Section::make('Informações da Oferta')
                     ->schema([
                         TextEntry::make('lot_number')
                             ->label('Lote'),
@@ -162,7 +167,7 @@ class MedicationOfferingResource extends Resource
                             }),
                     ])
                     ->columns(2),
-                Section::make('Médico Doador')
+                \Filament\Schemas\Components\Section::make('Médico Doador')
                     ->schema([
                         TextEntry::make('doctor.user.name')
                             ->label('Nome'),
@@ -175,7 +180,7 @@ class MedicationOfferingResource extends Resource
                             ->label('Telefone'),
                     ])
                     ->columns(2),
-                Section::make('Registro')
+                \Filament\Schemas\Components\Section::make('Registro')
                     ->schema([
                         TextEntry::make('created_at')
                             ->label('Cadastrado em')
@@ -189,34 +194,34 @@ class MedicationOfferingResource extends Resource
             ]);
     }
 
-    #[\Override]
+    #[Override]
     public static function getRelations(): array
     {
         return [];
     }
 
-    #[\Override]
+    #[Override]
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMedicationOfferings::route('/'),
-            'view'  => Pages\ViewMedicationOffering::route('/{record}'),
+            'index' => ListMedicationOfferings::route('/'),
+            'view'  => ViewMedicationOffering::route('/{record}'),
         ];
     }
 
-    #[\Override]
+    #[Override]
     public static function canCreate(): bool
     {
         return false;
     }
 
-    #[\Override]
+    #[Override]
     public static function canEdit(Model $record): bool
     {
         return false;
     }
 
-    #[\Override]
+    #[Override]
     public static function canDelete(Model $record): bool
     {
         return false;
@@ -224,7 +229,7 @@ class MedicationOfferingResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) static::getModel()::available()->count();
+        return (string) MedicationOffering::available()->count();
     }
 
     public static function getNavigationBadgeColor(): ?string

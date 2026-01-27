@@ -4,13 +4,14 @@ declare(strict_types = 1);
 
 namespace App\Models;
 
+use Database\Factories\DoctorRatingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DoctorRating extends Model
 {
-    /** @use HasFactory<\Database\Factories\DoctorRatingFactory> */
+    /** @use HasFactory<DoctorRatingFactory> */
     use HasFactory;
 
     protected $fillable = [

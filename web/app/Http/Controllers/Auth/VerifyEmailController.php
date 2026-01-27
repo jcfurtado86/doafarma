@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
+use RuntimeException;
 
 class VerifyEmailController extends Controller
 {
@@ -19,7 +20,7 @@ class VerifyEmailController extends Controller
         $frontendUrl = config('app.frontend_url');
 
         if (! is_string($frontendUrl)) {
-            throw new \RuntimeException('Frontend URL is not a string');
+            throw new RuntimeException('Frontend URL is not a string');
         }
 
         if (! $request->user()) {

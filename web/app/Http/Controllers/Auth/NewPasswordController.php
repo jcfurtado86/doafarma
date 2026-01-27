@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
+use RuntimeException;
 
 class NewPasswordController extends Controller
 {
@@ -29,10 +31,10 @@ class NewPasswordController extends Controller
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user) use ($request): void {
                 if (! $user instanceof Authenticatable) {
-                    throw new \RuntimeException('User must be an instance of Authenticatable');
+                    throw new RuntimeException('User must be an instance of Authenticatable');
                 }
 
-                /** @var \App\Models\User $user */
+                /** @var User $user */
                 $user->forceFill([
                     'password'       => Hash::make($request->string('password')->toString()),
                     'remember_token' => Str::random(60),

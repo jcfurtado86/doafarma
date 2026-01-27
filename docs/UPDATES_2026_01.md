@@ -9,7 +9,7 @@ Este documento lista as atualizacoes realizadas no projeto DoaFarma e as novas f
 | Pacote | Versao Anterior | Nova Versao | Tipo |
 |--------|-----------------|-------------|------|
 | Laravel Framework | 12.26.x | 12.48.1 | Patch |
-| Filament | 3.3.x | 3.3.47 | Patch |
+| Filament | 3.3.x | 4.6.1 | **Major** |
 | Larastan | 3.0.x | 3.9.1 | Minor |
 | Laravel Boost | 1.1.x | 2.0.2 | **Major** |
 | Laravel Pint | 1.13.x | 1.27.0 | Minor |
@@ -188,21 +188,39 @@ Plataforma de desenvolvimento mobile:
 
 ---
 
+### 11. Filament v4.6 (Admin Panel)
+
+O Filament foi atualizado da versao 3.3 para 4.6 usando a ferramenta oficial de upgrade:
+
+**Novidades principais:**
+- **Nova arquitetura de Schema**: Metodo `infolist()` agora usa `Schema` em vez de `Infolist`
+- **Propriedades com union types**: `$navigationGroup` aceita `UnitEnum | string | null`, `$navigationIcon` aceita `BackedEnum | string | null`
+- **Componentes refatorados**: `Filament\Schemas\Components\Section` para sections em infolists
+- **Novo sistema de icones**: Usar `<x-filament::icon icon="heroicon-o-name" />` em views Blade
+- **Performance melhorada**: Carregamento mais rapido de recursos
+
+**Ferramenta de upgrade utilizada:**
+```bash
+php artisan filament:upgrade
+```
+
+**Documentacao:** [Filament v4 Documentation](https://filamentphp.com/docs/4.x)
+
+---
+
 ## Pacotes NAO Atualizados (Breaking Changes)
 
 Os seguintes pacotes possuem versoes mais recentes mas NAO foram atualizados devido a breaking changes significativas:
 
 ### Filament v5.x
 
-**Motivo:** Requer reescrita completa dos Resources e Pages.
+**Motivo:** Embora ja esteja disponivel, a migracao de v4 para v5 requer mudancas adicionais.
 
 **Mudancas necessarias para futura migracao:**
-- `$navigationGroup` agora aceita `UnitEnum | string | null`
-- `$navigationIcon` agora aceita `BackedEnum | string | null`
-- Metodo `infolist()` mudou para usar `Schema` em vez de `Infolist`
-- Componentes de UI foram refatorados
+- Refatoracao adicional de componentes
+- Novos padroes de UI
 
-**Recomendacao:** Aguardar versao estavel e criar branch dedicada para migracao.
+**Recomendacao:** Aguardar maturidade da versao 5 e criar branch dedicada para migracao.
 
 ### @hookform/resolvers v5.x
 
@@ -249,7 +267,8 @@ cd mobile && npm test
 ## Referencias
 
 - [Laravel 12 Release Notes](https://laravel.com/docs/12.x/releases)
-- [Filament v3 Documentation](https://filamentphp.com/docs/3.x)
+- [Filament v4 Documentation](https://filamentphp.com/docs/4.x)
+- [Filament v4 Upgrade Guide](https://filamentphp.com/docs/4.x/upgrade-guide)
 - [Expo SDK 54 Changelog](https://expo.dev/changelog)
 - [React Hook Form v7 Documentation](https://react-hook-form.com/)
 - [Zod Documentation](https://zod.dev/)

@@ -40,7 +40,7 @@
         <x-filament::section>
             <x-slot name="heading">
                 <div class="flex items-center gap-2">
-                    <x-heroicon-o-archive-box class="h-5 w-5 text-primary-500" />
+                    <x-filament::icon icon="heroicon-o-archive-box" class="h-5 w-5 text-primary-500" />
                     Ofertas - Últimos 7 dias
                 </div>
             </x-slot>
@@ -53,7 +53,7 @@
         <x-filament::section>
             <x-slot name="heading">
                 <div class="flex items-center gap-2">
-                    <x-heroicon-o-clipboard-document-check class="h-5 w-5 text-warning-500" />
+                    <x-filament::icon icon="heroicon-o-clipboard-document-check" class="h-5 w-5 text-warning-500" />
                     Solicitações - Últimos 7 dias
                 </div>
             </x-slot>
@@ -69,7 +69,7 @@
         <x-filament::section>
             <x-slot name="heading">
                 <div class="flex items-center gap-2">
-                    <x-heroicon-o-chart-pie class="h-5 w-5 text-success-500" />
+                    <x-filament::icon icon="heroicon-o-chart-pie" class="h-5 w-5 text-success-500" />
                     Distribuição por Status
                 </div>
             </x-slot>
@@ -82,7 +82,7 @@
         <x-filament::section>
             <x-slot name="heading">
                 <div class="flex items-center gap-2">
-                    <x-heroicon-o-arrow-trending-up class="h-5 w-5 text-info-500" />
+                    <x-filament::icon icon="heroicon-o-arrow-trending-up" class="h-5 w-5 text-info-500" />
                     Tendência Mensal (6 meses)
                 </div>
             </x-slot>

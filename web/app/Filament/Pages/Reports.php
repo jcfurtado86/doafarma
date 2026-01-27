@@ -8,25 +8,26 @@ use App\Models\MedicationAppointment;
 use App\Models\MedicationOffering;
 use App\Models\MedicationRequest;
 use Filament\Pages\Page;
+use Override;
 
 class Reports extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chart-bar';
 
-    protected static string $view = 'filament.pages.reports';
+    protected string $view = 'filament.pages.reports';
 
     protected static ?string $navigationLabel = 'Relatórios';
 
     protected static ?string $title = 'Relatórios e Métricas';
 
-    protected static ?string $navigationGroup = 'Monitoramento';
+    protected static string | \UnitEnum | null $navigationGroup = 'Monitoramento';
 
     protected static ?int $navigationSort = 2;
 
     /**
      * @return array<string, mixed>
      */
-    #[\Override]
+    #[Override]
     protected function getViewData(): array
     {
         return [

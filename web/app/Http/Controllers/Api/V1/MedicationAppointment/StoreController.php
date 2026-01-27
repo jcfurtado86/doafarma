@@ -11,6 +11,7 @@ use App\Http\Resources\Api\V1\MedicationAppointmentResource;
 use App\Models\MedicationAppointment;
 use App\Models\MedicationRequest;
 use Illuminate\Http\JsonResponse;
+use RuntimeException;
 
 class StoreController extends Controller
 {
@@ -50,7 +51,7 @@ class StoreController extends Controller
                 $request->validated('scheduled_date'),
                 $request->validated('scheduled_time')
             );
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             return response()->json([
                 'message' => $e->getMessage(),
             ], 422);

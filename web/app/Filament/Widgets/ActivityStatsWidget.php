@@ -6,13 +6,14 @@ namespace App\Filament\Widgets;
 
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Override;
 use Spatie\Activitylog\Models\Activity;
 
 class ActivityStatsWidget extends BaseWidget
 {
     protected static ?int $sort = 3;
 
-    #[\Override]
+    #[Override]
     protected function getStats(): array
     {
         $today     = now()->startOfDay();

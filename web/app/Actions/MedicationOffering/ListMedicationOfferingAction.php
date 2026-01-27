@@ -7,6 +7,7 @@ namespace App\Actions\MedicationOffering;
 use App\Models\MedicationOffering;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use RuntimeException;
 
 class ListMedicationOfferingAction
 {
@@ -21,7 +22,7 @@ class ListMedicationOfferingAction
         $doctor = $user->doctor;
 
         if ($doctor === null) {
-            throw new \RuntimeException('User is not a doctor');
+            throw new RuntimeException('User is not a doctor');
         }
 
         return $doctor

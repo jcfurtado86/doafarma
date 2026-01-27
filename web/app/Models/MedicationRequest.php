@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Models;
 
+use Database\Factories\MedicationRequestFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class MedicationRequest extends Model
 {
-    /** @use HasFactory<\Database\Factories\MedicationRequestFactory> */
+    /** @use HasFactory<MedicationRequestFactory> */
     use HasFactory;
     use LogsActivity;
 

@@ -6,12 +6,13 @@ namespace App\Filament\Resources\MedicationAppointmentResource\Pages;
 
 use App\Filament\Resources\MedicationAppointmentResource;
 use Filament\Resources\Pages\ListRecords;
+use Override;
 
 class ListMedicationAppointments extends ListRecords
 {
     protected static string $resource = MedicationAppointmentResource::class;
 
-    #[\Override]
+    #[Override]
     protected function getHeaderActions(): array
     {
         return [];

@@ -53,6 +53,16 @@ class UserResource extends Resource
                         Forms\Components\TextInput::make('cpf')
                             ->label('CPF')
                             ->maxLength(11),
+                        Forms\Components\TextInput::make('password')
+                            ->label('Senha')
+                            ->password()
+                            ->required(fn (string $operation): bool => $operation === 'create')
+                            ->dehydrated(fn (?string $state): bool => filled($state))
+                            ->dehydrateStateUsing(fn (string $state): string => bcrypt($state))
+                            ->maxLength(255)
+                            ->helperText(fn (string $operation): string => $operation === 'edit'
+                                ? 'Deixe em branco para manter a senha atual'
+                                : 'Mínimo de 8 caracteres'),
                     ])
                     ->columns(2),
 

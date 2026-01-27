@@ -83,9 +83,9 @@ class ReceptorResource extends JsonResource
             : str_repeat('*', mb_strlen($local));
 
         $domainParts  = explode('.', $domain);
-        $maskedDomain = array_map(fn ($part): string => mb_strlen((string) $part) > 2
-            ? mb_substr((string) $part, 0, 1) . str_repeat('*', mb_strlen((string) $part) - 2) . mb_substr((string) $part, -1)
-            : str_repeat('*', mb_strlen((string) $part)), $domainParts);
+        $maskedDomain = array_map(fn ($part): string => mb_strlen($part) > 2
+            ? mb_substr($part, 0, 1) . str_repeat('*', mb_strlen($part) - 2) . mb_substr($part, -1)
+            : str_repeat('*', mb_strlen($part)), $domainParts);
 
         return $maskedLocal . '@' . implode('.', $maskedDomain);
     }

@@ -34,6 +34,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'cpf',
+        'cpf_hash',
         'role',
         'status',
         'status_changed_at',
@@ -43,6 +44,22 @@ class User extends Authenticatable implements MustVerifyEmail
         'terms_accepted',
         'terms_accepted_at',
     ];
+
+    /**
+     * Boot the model.
+     */
+    #[\Override]
+    protected static function booted(): void
+    {
+        static::saving(function (User $user): void {
+            // Auto-generate cpf_hash when cpf changes
+            if ($user->isDirty('cpf') && $user->cpf !== null) {
+                $user->cpf_hash = hash('sha256', $user->cpf);
+            } elseif ($user->cpf === null) {
+                $user->cpf_hash = null;
+            }
+        });
+    }
 
     protected $hidden = [
         'password',
@@ -61,6 +78,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'terms_accepted_at' => 'datetime',
             'status_changed_at' => 'datetime',
             'password'          => 'hashed',
+            'cpf'               => 'encrypted',
             'role'              => UserRole::class,
             'status'            => UserStatus::class,
         ];
@@ -168,11 +186,14 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Configure activity logging options.
+     *
+     * Note: CPF and phone_number are NOT logged for LGPD compliance.
+     * These are sensitive personal data that should not be stored in audit logs.
      */
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['name', 'email', 'phone_number', 'cpf', 'role', 'status'])
+            ->logOnly(['name', 'email', 'role', 'status'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
             ->setDescriptionForEvent(fn (string $eventName): string => match ($eventName) {

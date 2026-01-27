@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Http\Requests\Auth;
 
 use App\Models\User;
+use App\Rules\UniqueCpfHash;
 use App\Rules\ValidCPF;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules;
@@ -29,7 +30,7 @@ class ReceptorRegistrationRequest extends FormRequest
         return [
             'name'           => ['required', 'string', 'max:255'],
             'email'          => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-            'cpf'            => ['required', 'string', new ValidCPF(), 'unique:' . User::class . ',cpf'],
+            'cpf'            => ['required', 'string', new ValidCPF(), new UniqueCpfHash()],
             'phone_number'   => ['required', 'string', 'min:10', 'max:11', 'unique:' . User::class . ',phone_number'],
             'password'       => ['required', 'confirmed', Rules\Password::defaults()],
             'device_name'    => ['required', 'string', 'max:255'],
@@ -64,7 +65,6 @@ class ReceptorRegistrationRequest extends FormRequest
             'email.email'             => 'O e-mail deve ser um endereço de e-mail válido.',
             'email.unique'            => 'Este e-mail já está cadastrado.',
             'cpf.required'            => 'O CPF é obrigatório.',
-            'cpf.unique'              => 'Este CPF já está cadastrado.',
             'phone_number.required'   => 'O telefone é obrigatório.',
             'phone_number.min'        => 'O telefone deve ter pelo menos 10 dígitos.',
             'phone_number.max'        => 'O telefone deve ter no máximo 11 dígitos.',

@@ -20,6 +20,16 @@ class MedicationRequestResource extends JsonResource
     #[\Override]
     public function toArray(Request $request): array
     {
+        // Only expose full contact details when the request is confirmed
+        // This protects receptor privacy while allowing necessary communication
+        $isConfirmed      = $this->status === 'confirmed';
+        $receptorData     = $this->whenLoaded('receptor');
+        $receptorResource = $receptorData
+            ? ($isConfirmed
+                ? ReceptorResource::make($receptorData)->withContactDetails()
+                : ReceptorResource::make($receptorData))
+            : null;
+
         return [
             'id'                  => $this->id,
             'status'              => $this->status,
@@ -28,7 +38,7 @@ class MedicationRequestResource extends JsonResource
             'medication_offering' => MedicationOfferingSearchResource::make(
                 $this->whenLoaded('medicationOffering')
             ),
-            'receptor' => ReceptorResource::make($this->whenLoaded('receptor')),
+            'receptor' => $receptorResource,
         ];
     }
 }

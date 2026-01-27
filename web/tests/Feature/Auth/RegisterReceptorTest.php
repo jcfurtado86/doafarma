@@ -42,10 +42,11 @@ describe('Receptor Registration - Success Scenarios', function (): void {
         ]);
 
         // Verify user was created in database
+        // Note: CPF is now encrypted, so we check via cpf_hash
         assertDatabaseHas('users', [
             'name'         => 'Maria Silva',
             'email'        => 'maria@example.com',
-            'cpf'          => '52998224725', // Stored without mask
+            'cpf_hash'     => hash('sha256', '52998224725'), // CPF hash for lookup
             'phone_number' => '11987654321',
             'role'         => 'receptor',
         ]);
@@ -370,9 +371,14 @@ describe('Receptor Registration - Security Tests', function (): void {
             'terms_accepted'        => true,
         ])->assertCreated();
 
+        // CPF is encrypted but hash is deterministic, verifying mask was removed
         assertDatabaseHas('users', [
-            'cpf' => '52998224725', // Stored without mask
+            'cpf_hash' => hash('sha256', '52998224725'), // Hash of CPF without mask
         ]);
+
+        // Also verify via model that decrypted CPF is correct
+        $user = User::whereEmail('security@example.com')->first();
+        expect($user->cpf)->toBe('52998224725');
     });
 
     it('should sanitize phone number input (remove mask)', function (): void {

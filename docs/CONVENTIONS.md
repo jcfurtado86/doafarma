@@ -139,3 +139,66 @@ refactor(web): extract validation to form request
 - feature branches: created per task and merged into develop
 
 All changes are tested locally before merging.
+
+## Activity Logging
+
+### Regra Obrigatória
+
+**Todos os models de domínio importantes DEVEM ter activity logging.**
+
+Isso inclui qualquer model que represente uma entidade de negócio que os administradores precisem auditar.
+
+### Como Adicionar
+
+1. **Adicione a trait `LogsActivity` ao model:**
+
+```php
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+
+class NovoModel extends Model
+{
+    use LogsActivity;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['campo1', 'campo2', 'status'])  // Campos a logar
+            ->logOnlyDirty()                           // Só loga mudanças reais
+            ->dontSubmitEmptyLogs()                    // Não cria log vazio
+            ->setDescriptionForEvent(fn (string $eventName): string => match ($eventName) {
+                'created' => "Registro foi criado",
+                'updated' => "Registro foi atualizado",
+                'deleted' => "Registro foi removido",
+                default   => "Registro: {$eventName}",
+            });
+    }
+}
+```
+
+2. **Atualize o widget de atividades recentes:**
+
+Em `app/Filament/Widgets/RecentActivityWidget.php`, adicione o novo model ao mapeamento de labels.
+
+3. **Crie testes para verificar o logging:**
+
+```php
+it('logs when novo model is created', function (): void {
+    $model = NovoModel::factory()->create();
+    $activity = Activity::where('subject_type', NovoModel::class)
+        ->where('subject_id', $model->id)
+        ->where('event', 'created')
+        ->first();
+    expect($activity)->not->toBeNull();
+});
+```
+
+### O que NÃO Logar
+
+- Campos sensíveis (senhas, tokens, chaves API)
+- Models auxiliares ou de infraestrutura
+- Operações em batch de alto volume
+
+### Documentação Completa
+
+Veja `docs/ACTIVITY_LOGGING.md` para detalhes sobre arquitetura, consultas úteis e boas práticas.

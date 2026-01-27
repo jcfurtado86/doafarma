@@ -190,6 +190,33 @@ Addresses are stored as text. Geocoding, map integration, or proximity search ar
 
 ---
 
+### D13: Spatie Activity Log for Platform Monitoring
+
+**Decision:** Use spatie/laravel-activitylog package for tracking all system activities.
+
+**Rationale:**
+- Battle-tested, widely used in Laravel community
+- Automatic tracking via model traits
+- Tracks before/after values for updates
+- Identifies who made each change (causer)
+- Minimal configuration needed
+- Integrates seamlessly with Filament admin panel
+
+**Implementation:**
+- Models with `LogsActivity` trait: User, MedicationOffering, MedicationRequest, MedicationAppointment
+- Custom events for user approval/rejection actions
+- ActivityLogResource in Filament for admin viewing
+- Dashboard widgets for activity statistics and recent actions
+- Filters by entity type, action, date range, and user
+
+**Benefits:**
+- Admin can monitor all platform activity
+- Audit trail for security and compliance
+- Helps identify misuse or suspicious patterns
+- Historical record of all changes
+
+---
+
 ## Future Considerations
 
 Items explicitly out of scope but documented for awareness:

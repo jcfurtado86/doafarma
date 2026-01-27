@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property UserRole $role
@@ -25,6 +27,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
     use HasApiTokens;
+    use LogsActivity;
     use Notifiable;
 
     protected $fillable = [
@@ -161,5 +164,22 @@ class User extends Authenticatable implements MustVerifyEmail
     public function statusChangedByAdmin(): BelongsTo
     {
         return $this->belongsTo(User::class, 'status_changed_by');
+    }
+
+    /**
+     * Configure activity logging options.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'email', 'phone_number', 'cpf', 'role', 'status'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn (string $eventName): string => match ($eventName) {
+                'created' => "Usuário {$this->name} foi criado",
+                'updated' => "Usuário {$this->name} foi atualizado",
+                'deleted' => "Usuário {$this->name} foi removido",
+                default   => "Usuário {$this->name}: {$eventName}",
+            });
     }
 }

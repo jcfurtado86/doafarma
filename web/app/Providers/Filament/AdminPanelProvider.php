@@ -67,7 +67,9 @@ class AdminPanelProvider extends PanelProvider
     {
         // Restrict Filament access to admin users only
         \Filament\Facades\Filament::serving(function (): void {
-            \Filament\Facades\Filament::auth()->check() && $this->authorizeAdmin();
+            if (\Filament\Facades\Filament::auth()->check()) {
+                $this->authorizeAdmin();
+            }
         });
     }
 

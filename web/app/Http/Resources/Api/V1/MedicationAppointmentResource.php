@@ -4,12 +4,14 @@ declare(strict_types = 1);
 
 namespace App\Http\Resources\Api\V1;
 
+use App\Models\MedicationAppointment;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Override;
 
 /**
- * @mixin \App\Models\MedicationAppointment
+ * @mixin MedicationAppointment
  *
  * @property Carbon $scheduled_date
  */
@@ -20,7 +22,7 @@ class MedicationAppointmentResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    #[\Override]
+    #[Override]
     public function toArray(Request $request): array
     {
         return [

@@ -4,7 +4,11 @@ declare(strict_types = 1);
 
 namespace App\Filament\Widgets;
 
-use Filament\Tables;
+use App\Models\MedicationAppointment;
+use App\Models\MedicationOffering;
+use App\Models\MedicationRequest;
+use App\Models\User;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Spatie\Activitylog\Models\Activity;
@@ -26,14 +30,14 @@ class RecentActivityWidget extends BaseWidget
                     ->limit(10)
             )
             ->columns([
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('Data/Hora')
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('causer.name')
+                TextColumn::make('causer.name')
                     ->label('Usuário')
                     ->placeholder('Sistema'),
-                Tables\Columns\TextColumn::make('event')
+                TextColumn::make('event')
                     ->label('Ação')
                     ->badge()
                     ->formatStateUsing(fn (?string $state): string => match ($state) {
@@ -52,18 +56,18 @@ class RecentActivityWidget extends BaseWidget
                         'rejected' => 'danger',
                         default    => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('subject_type')
+                TextColumn::make('subject_type')
                     ->label('Entidade')
                     ->formatStateUsing(fn (?string $state): string => match ($state) {
-                        \App\Models\User::class                  => 'Usuário',
-                        \App\Models\MedicationOffering::class    => 'Oferta',
-                        \App\Models\MedicationRequest::class     => 'Solicitação',
-                        \App\Models\MedicationAppointment::class => 'Agendamento',
-                        default                                  => 'Outro',
+                        User::class                  => 'Usuário',
+                        MedicationOffering::class    => 'Oferta',
+                        MedicationRequest::class     => 'Solicitação',
+                        MedicationAppointment::class => 'Agendamento',
+                        default                      => 'Outro',
                     })
                     ->badge()
                     ->color('gray'),
-                Tables\Columns\TextColumn::make('description')
+                TextColumn::make('description')
                     ->label('Descrição')
                     ->limit(40),
             ])

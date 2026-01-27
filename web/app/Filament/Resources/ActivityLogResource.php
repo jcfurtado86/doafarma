@@ -4,45 +4,56 @@ declare(strict_types = 1);
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ActivityLogResource\Pages;
-use Filament\Infolists\Components\Section;
+use App\Filament\Resources\ActivityLogResource\Pages\ListActivityLogs;
+use App\Filament\Resources\ActivityLogResource\Pages\ViewActivityLog;
+use App\Models\Doctor;
+use App\Models\DoctorRating;
+use App\Models\MedicationAppointment;
+use App\Models\MedicationOffering;
+use App\Models\MedicationRequest;
+use App\Models\User;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 use Spatie\Activitylog\Models\Activity;
 
 class ActivityLogResource extends Resource
 {
     protected static ?string $model = Activity::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-list';
 
     protected static ?string $modelLabel = 'Registro de Atividade';
 
     protected static ?string $pluralModelLabel = 'Registros de Atividades';
 
-    protected static ?string $navigationGroup = 'Monitoramento';
+    protected static string | \UnitEnum | null $navigationGroup = 'Monitoramento';
 
     protected static ?int $navigationSort = 1;
 
-    #[\Override]
+    #[Override]
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('Data/Hora')
                     ->dateTime('d/m/Y H:i:s')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('causer.name')
+                TextColumn::make('causer.name')
                     ->label('Usuário')
                     ->placeholder('Sistema')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('event')
+                TextColumn::make('event')
                     ->label('Ação')
                     ->badge()
                     ->formatStateUsing(fn (?string $state): string => match ($state) {
@@ -61,30 +72,30 @@ class ActivityLogResource extends Resource
                         'rejected' => 'danger',
                         default    => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('subject_type')
+                TextColumn::make('subject_type')
                     ->label('Entidade')
                     ->formatStateUsing(fn (?string $state): string => match ($state) {
-                        \App\Models\User::class                  => 'Usuário',
-                        \App\Models\MedicationOffering::class    => 'Oferta de Medicamento',
-                        \App\Models\MedicationRequest::class     => 'Solicitação',
-                        \App\Models\MedicationAppointment::class => 'Agendamento',
-                        \App\Models\Doctor::class                => 'Médico',
-                        \App\Models\DoctorRating::class          => 'Avaliação',
-                        default                                  => $state ?? 'N/A',
+                        User::class                  => 'Usuário',
+                        MedicationOffering::class    => 'Oferta de Medicamento',
+                        MedicationRequest::class     => 'Solicitação',
+                        MedicationAppointment::class => 'Agendamento',
+                        Doctor::class                => 'Médico',
+                        DoctorRating::class          => 'Avaliação',
+                        default                      => $state ?? 'N/A',
                     })
                     ->badge()
                     ->color('gray'),
-                Tables\Columns\TextColumn::make('subject_id')
+                TextColumn::make('subject_id')
                     ->label('ID')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('description')
+                TextColumn::make('description')
                     ->label('Descrição')
                     ->limit(50)
                     ->tooltip(fn (Activity $record): string => $record->description ?? ''),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
-                Tables\Filters\SelectFilter::make('event')
+                SelectFilter::make('event')
                     ->label('Ação')
                     ->options([
                         'created'  => 'Criado',
@@ -93,19 +104,19 @@ class ActivityLogResource extends Resource
                         'approved' => 'Aprovado',
                         'rejected' => 'Rejeitado',
                     ]),
-                Tables\Filters\SelectFilter::make('subject_type')
+                SelectFilter::make('subject_type')
                     ->label('Entidade')
                     ->options([
-                        \App\Models\User::class                  => 'Usuário',
-                        \App\Models\MedicationOffering::class    => 'Oferta de Medicamento',
-                        \App\Models\MedicationRequest::class     => 'Solicitação',
-                        \App\Models\MedicationAppointment::class => 'Agendamento',
+                        User::class                  => 'Usuário',
+                        MedicationOffering::class    => 'Oferta de Medicamento',
+                        MedicationRequest::class     => 'Solicitação',
+                        MedicationAppointment::class => 'Agendamento',
                     ]),
-                Tables\Filters\Filter::make('created_at')
-                    ->form([
-                        \Filament\Forms\Components\DatePicker::make('from')
+                Filter::make('created_at')
+                    ->schema([
+                        DatePicker::make('from')
                             ->label('De'),
-                        \Filament\Forms\Components\DatePicker::make('until')
+                        DatePicker::make('until')
                             ->label('Até'),
                     ])
                     ->query(fn (Builder $query, array $data): Builder => $query
@@ -118,18 +129,18 @@ class ActivityLogResource extends Resource
                             fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                         )),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
+            ->recordActions([
+                ViewAction::make(),
             ])
-            ->bulkActions([]);
+            ->toolbarActions([]);
     }
 
-    #[\Override]
-    public static function infolist(Infolist $infolist): Infolist
+    #[Override]
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
-                Section::make('Informações do Registro')
+        return $schema
+            ->components([
+                \Filament\Schemas\Components\Section::make('Informações do Registro')
                     ->schema([
                         TextEntry::make('created_at')
                             ->label('Data/Hora')
@@ -159,13 +170,13 @@ class ActivityLogResource extends Resource
                         TextEntry::make('subject_type')
                             ->label('Tipo de Entidade')
                             ->formatStateUsing(fn (?string $state): string => match ($state) {
-                                \App\Models\User::class                  => 'Usuário',
-                                \App\Models\MedicationOffering::class    => 'Oferta de Medicamento',
-                                \App\Models\MedicationRequest::class     => 'Solicitação',
-                                \App\Models\MedicationAppointment::class => 'Agendamento',
-                                \App\Models\Doctor::class                => 'Médico',
-                                \App\Models\DoctorRating::class          => 'Avaliação',
-                                default                                  => $state ?? 'N/A',
+                                User::class                  => 'Usuário',
+                                MedicationOffering::class    => 'Oferta de Medicamento',
+                                MedicationRequest::class     => 'Solicitação',
+                                MedicationAppointment::class => 'Agendamento',
+                                Doctor::class                => 'Médico',
+                                DoctorRating::class          => 'Avaliação',
+                                default                      => $state ?? 'N/A',
                             }),
                         TextEntry::make('subject_id')
                             ->label('ID da Entidade'),
@@ -174,7 +185,7 @@ class ActivityLogResource extends Resource
                             ->columnSpanFull(),
                     ])
                     ->columns(2),
-                Section::make('Alterações')
+                \Filament\Schemas\Components\Section::make('Alterações')
                     ->schema([
                         TextEntry::make('properties.old')
                             ->label('Valores Anteriores')
@@ -191,34 +202,34 @@ class ActivityLogResource extends Resource
             ]);
     }
 
-    #[\Override]
+    #[Override]
     public static function getRelations(): array
     {
         return [];
     }
 
-    #[\Override]
+    #[Override]
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListActivityLogs::route('/'),
-            'view'  => Pages\ViewActivityLog::route('/{record}'),
+            'index' => ListActivityLogs::route('/'),
+            'view'  => ViewActivityLog::route('/{record}'),
         ];
     }
 
-    #[\Override]
+    #[Override]
     public static function canCreate(): bool
     {
         return false;
     }
 
-    #[\Override]
+    #[Override]
     public static function canEdit(Model $record): bool
     {
         return false;
     }
 
-    #[\Override]
+    #[Override]
     public static function canDelete(Model $record): bool
     {
         return false;

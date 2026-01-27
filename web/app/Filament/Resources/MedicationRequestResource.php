@@ -4,51 +4,56 @@ declare(strict_types = 1);
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\MedicationRequestResource\Pages;
+use App\Filament\Resources\MedicationRequestResource\Pages\ListMedicationRequests;
+use App\Filament\Resources\MedicationRequestResource\Pages\ViewMedicationRequest;
 use App\Models\MedicationRequest;
-use Filament\Infolists\Components\Section;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
 class MedicationRequestResource extends Resource
 {
     protected static ?string $model = MedicationRequest::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-check';
 
     protected static ?string $modelLabel = 'Solicitação';
 
     protected static ?string $pluralModelLabel = 'Solicitações';
 
-    protected static ?string $navigationGroup = 'Doações';
+    protected static string | \UnitEnum | null $navigationGroup = 'Doações';
 
     protected static ?int $navigationSort = 2;
 
-    #[\Override]
+    #[Override]
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                TextColumn::make('id')
                     ->label('ID')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('receptor.name')
+                TextColumn::make('receptor.name')
                     ->label('Receptor')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('medicationOffering.drug.product_name')
+                TextColumn::make('medicationOffering.drug.product_name')
                     ->label('Medicamento')
                     ->limit(25)
                     ->tooltip(fn (MedicationRequest $record): string => $record->medicationOffering->drug->product_name ?? '')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('medicationOffering.doctor.user.name')
+                TextColumn::make('medicationOffering.doctor.user.name')
                     ->label('Médico')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->label('Status')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => match ($state) {
@@ -63,25 +68,25 @@ class MedicationRequestResource extends Resource
                         'rejected'  => 'danger',
                         default     => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('Solicitado em')
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
-                Tables\Filters\SelectFilter::make('status')
+                SelectFilter::make('status')
                     ->label('Status')
                     ->options([
                         'pending'   => 'Pendente',
                         'confirmed' => 'Confirmada',
                         'rejected'  => 'Rejeitada',
                     ]),
-                Tables\Filters\Filter::make('created_at')
-                    ->form([
-                        \Filament\Forms\Components\DatePicker::make('from')
+                Filter::make('created_at')
+                    ->schema([
+                        DatePicker::make('from')
                             ->label('De'),
-                        \Filament\Forms\Components\DatePicker::make('until')
+                        DatePicker::make('until')
                             ->label('Até'),
                     ])
                     ->query(fn (Builder $query, array $data): Builder => $query
@@ -94,18 +99,18 @@ class MedicationRequestResource extends Resource
                             fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                         )),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
+            ->recordActions([
+                ViewAction::make(),
             ])
-            ->bulkActions([]);
+            ->toolbarActions([]);
     }
 
-    #[\Override]
-    public static function infolist(Infolist $infolist): Infolist
+    #[Override]
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
-                Section::make('Informações da Solicitação')
+        return $schema
+            ->components([
+                \Filament\Schemas\Components\Section::make('Informações da Solicitação')
                     ->schema([
                         TextEntry::make('id')
                             ->label('ID'),
@@ -132,7 +137,7 @@ class MedicationRequestResource extends Resource
                             ->dateTime('d/m/Y H:i:s'),
                     ])
                     ->columns(2),
-                Section::make('Receptor')
+                \Filament\Schemas\Components\Section::make('Receptor')
                     ->schema([
                         TextEntry::make('receptor.name')
                             ->label('Nome'),
@@ -144,7 +149,7 @@ class MedicationRequestResource extends Resource
                             ->label('CPF'),
                     ])
                     ->columns(2),
-                Section::make('Oferta de Medicamento')
+                \Filament\Schemas\Components\Section::make('Oferta de Medicamento')
                     ->schema([
                         TextEntry::make('medicationOffering.drug.product_name')
                             ->label('Medicamento'),
@@ -168,7 +173,7 @@ class MedicationRequestResource extends Resource
                             }),
                     ])
                     ->columns(2),
-                Section::make('Médico Doador')
+                \Filament\Schemas\Components\Section::make('Médico Doador')
                     ->schema([
                         TextEntry::make('medicationOffering.doctor.user.name')
                             ->label('Nome'),
@@ -184,34 +189,34 @@ class MedicationRequestResource extends Resource
             ]);
     }
 
-    #[\Override]
+    #[Override]
     public static function getRelations(): array
     {
         return [];
     }
 
-    #[\Override]
+    #[Override]
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMedicationRequests::route('/'),
-            'view'  => Pages\ViewMedicationRequest::route('/{record}'),
+            'index' => ListMedicationRequests::route('/'),
+            'view'  => ViewMedicationRequest::route('/{record}'),
         ];
     }
 
-    #[\Override]
+    #[Override]
     public static function canCreate(): bool
     {
         return false;
     }
 
-    #[\Override]
+    #[Override]
     public static function canEdit(Model $record): bool
     {
         return false;
     }
 
-    #[\Override]
+    #[Override]
     public static function canDelete(Model $record): bool
     {
         return false;
@@ -219,12 +224,12 @@ class MedicationRequestResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) static::getModel()::pending()->count();
+        return (string) MedicationRequest::pending()->count();
     }
 
     public static function getNavigationBadgeColor(): ?string
     {
-        $count = static::getModel()::pending()->count();
+        $count = MedicationRequest::pending()->count();
 
         return $count > 0 ? 'warning' : 'success';
     }

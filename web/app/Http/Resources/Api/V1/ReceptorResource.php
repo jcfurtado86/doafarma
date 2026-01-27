@@ -4,8 +4,10 @@ declare(strict_types = 1);
 
 namespace App\Http\Resources\Api\V1;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Override;
 
 /**
  * Resource for receptor (patient) data in medication request context.
@@ -14,7 +16,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * status allows contact (confirmed status). This protects user privacy
  * while still allowing necessary communication for deliveries.
  *
- * @mixin \App\Models\User
+ * @mixin User
  */
 class ReceptorResource extends JsonResource
 {
@@ -38,7 +40,7 @@ class ReceptorResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    #[\Override]
+    #[Override]
     public function toArray(Request $request): array
     {
         $data = [

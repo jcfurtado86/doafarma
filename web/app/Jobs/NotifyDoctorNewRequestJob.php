@@ -6,6 +6,7 @@ namespace App\Jobs;
 
 use App\Models\MedicationRequest;
 use App\Models\PushToken;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Http;
@@ -123,7 +124,7 @@ class NotifyDoctorNewRequestJob implements ShouldQueue
                     'response' => $response->json(),
                 ]);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Exception sending push notification to doctor', [
                 'error' => $e->getMessage(),
             ]);

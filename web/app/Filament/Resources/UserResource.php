@@ -6,54 +6,67 @@ namespace App\Filament\Resources;
 
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
-use App\Filament\Resources\UserResource\Pages;
+use App\Filament\Resources\UserResource\Pages\CreateUser;
+use App\Filament\Resources\UserResource\Pages\EditUser;
+use App\Filament\Resources\UserResource\Pages\ListUsers;
+use App\Filament\Resources\UserResource\Pages\ViewUser;
 use App\Models\User;
-use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Override;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-users';
 
     protected static ?string $modelLabel = 'Usuário';
 
     protected static ?string $pluralModelLabel = 'Usuários';
 
-    protected static ?string $navigationGroup = 'Gerenciamento';
+    protected static string | \UnitEnum | null $navigationGroup = 'Gerenciamento';
 
-    #[\Override]
-    public static function form(Form $form): Form
+    #[Override]
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make('Informações Pessoais')
+        return $schema
+            ->components([
+                Section::make('Informações Pessoais')
                     ->schema([
-                        Forms\Components\TextInput::make('name')
+                        TextInput::make('name')
                             ->label('Nome')
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('email')
+                        TextInput::make('email')
                             ->label('E-mail')
                             ->email()
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('phone_number')
+                        TextInput::make('phone_number')
                             ->label('Telefone')
                             ->tel()
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('cpf')
+                        TextInput::make('cpf')
                             ->label('CPF')
                             ->maxLength(11),
-                        Forms\Components\TextInput::make('password')
+                        TextInput::make('password')
                             ->label('Senha')
                             ->password()
                             ->required(fn (string $operation): bool => $operation === 'create')
@@ -66,9 +79,9 @@ class UserResource extends Resource
                     ])
                     ->columns(2),
 
-                Forms\Components\Section::make('Status e Permissões')
+                Section::make('Status e Permissões')
                     ->schema([
-                        Forms\Components\Select::make('role')
+                        Select::make('role')
                             ->label('Tipo')
                             ->options([
                                 UserRole::Doctor->value   => UserRole::Doctor->label(),
@@ -77,7 +90,7 @@ class UserResource extends Resource
                             ])
                             ->required()
                             ->native(false),
-                        Forms\Components\Select::make('status')
+                        Select::make('status')
                             ->label('Status')
                             ->options([
                                 UserStatus::Pending->value  => UserStatus::Pending->label(),
@@ -89,14 +102,14 @@ class UserResource extends Resource
                     ])
                     ->columns(2),
 
-                Forms\Components\Section::make('Informações do Sistema')
+                Section::make('Informações do Sistema')
                     ->schema([
-                        Forms\Components\DateTimePicker::make('email_verified_at')
+                        DateTimePicker::make('email_verified_at')
                             ->label('E-mail verificado em'),
-                        Forms\Components\DateTimePicker::make('status_changed_at')
+                        DateTimePicker::make('status_changed_at')
                             ->label('Status alterado em')
                             ->disabled(),
-                        Forms\Components\Select::make('status_changed_by')
+                        Select::make('status_changed_by')
                             ->label('Status alterado por')
                             ->relationship('statusChangedByAdmin', 'name')
                             ->disabled(),
@@ -106,23 +119,23 @@ class UserResource extends Resource
             ]);
     }
 
-    #[\Override]
+    #[Override]
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label('Nome')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('email')
+                TextColumn::make('email')
                     ->label('E-mail')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('phone_number')
+                TextColumn::make('phone_number')
                     ->label('Telefone')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('role')
+                TextColumn::make('role')
                     ->label('Tipo')
                     ->badge()
                     ->formatStateUsing(fn (UserRole $state): string => $state->label())
@@ -131,7 +144,7 @@ class UserResource extends Resource
                         UserRole::Doctor   => 'info',
                         UserRole::Receptor => 'success',
                     }),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->label('Status')
                     ->badge()
                     ->formatStateUsing(fn (UserStatus $state): string => $state->label())
@@ -140,21 +153,21 @@ class UserResource extends Resource
                         UserStatus::Pending  => 'warning',
                         UserStatus::Rejected => 'danger',
                     }),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('Cadastrado em')
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
-                Tables\Filters\SelectFilter::make('status')
+                SelectFilter::make('status')
                     ->label('Status')
                     ->options([
                         UserStatus::Pending->value  => UserStatus::Pending->label(),
                         UserStatus::Approved->value => UserStatus::Approved->label(),
                         UserStatus::Rejected->value => UserStatus::Rejected->label(),
                     ]),
-                Tables\Filters\SelectFilter::make('role')
+                SelectFilter::make('role')
                     ->label('Tipo')
                     ->options([
                         UserRole::Doctor->value   => UserRole::Doctor->label(),
@@ -162,8 +175,8 @@ class UserResource extends Resource
                         UserRole::Admin->value    => UserRole::Admin->label(),
                     ]),
             ])
-            ->actions([
-                Tables\Actions\Action::make('approve')
+            ->recordActions([
+                Action::make('approve')
                     ->label('Aprovar')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
@@ -196,7 +209,7 @@ class UserResource extends Resource
                             ->success()
                             ->send();
                     }),
-                Tables\Actions\Action::make('reject')
+                Action::make('reject')
                     ->label('Rejeitar')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
@@ -229,12 +242,12 @@ class UserResource extends Resource
                             ->warning()
                             ->send();
                     }),
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\BulkAction::make('approve')
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    BulkAction::make('approve')
                         ->label('Aprovar selecionados')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
@@ -269,7 +282,7 @@ class UserResource extends Resource
                                 ->success()
                                 ->send();
                         }),
-                    Tables\Actions\BulkAction::make('reject')
+                    BulkAction::make('reject')
                         ->label('Rejeitar selecionados')
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
@@ -308,7 +321,7 @@ class UserResource extends Resource
             ]);
     }
 
-    #[\Override]
+    #[Override]
     public static function getRelations(): array
     {
         return [
@@ -316,14 +329,14 @@ class UserResource extends Resource
         ];
     }
 
-    #[\Override]
+    #[Override]
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'view'   => Pages\ViewUser::route('/{record}'),
-            'edit'   => Pages\EditUser::route('/{record}/edit'),
+            'index'  => ListUsers::route('/'),
+            'create' => CreateUser::route('/create'),
+            'view'   => ViewUser::route('/{record}'),
+            'edit'   => EditUser::route('/{record}/edit'),
         ];
     }
 
@@ -342,7 +355,7 @@ class UserResource extends Resource
     /**
      * @return Builder<User>
      */
-    #[\Override]
+    #[Override]
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()

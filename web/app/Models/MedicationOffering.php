@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Database\Factories\MedicationOfferingFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,11 +16,11 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
- * @property \Carbon\Carbon $expires_at
+ * @property Carbon $expires_at
  */
 class MedicationOffering extends Model
 {
-    /** @use HasFactory<\Database\Factories\MedicationOfferingFactory> */
+    /** @use HasFactory<MedicationOfferingFactory> */
     use HasFactory;
     use LogsActivity;
 

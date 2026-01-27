@@ -5,9 +5,11 @@ declare(strict_types = 1);
 namespace App\Jobs;
 
 use App\Models\Drug;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
+use InvalidArgumentException;
 use League\Csv\Reader;
 
 class ProcessDrugCsvImportJob implements ShouldQueue
@@ -44,7 +46,7 @@ class ProcessDrugCsvImportJob implements ShouldQueue
             foreach ($records as $record) {
                 $this->processRecord($record);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Fatal error processing CSV file: ' . $this->filepath, [
                 'exception' => $e,
             ]);
@@ -92,7 +94,7 @@ class ProcessDrugCsvImportJob implements ShouldQueue
                     'stripe_color' => $this->normalizeStripeColor($record['TARJA'] ?? ''),
                 ]
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::warning('Failed to process drug record', [
                 'registration_number' => $record['REGISTRO'] ?? 'UNKNOWN',
                 'error'               => $e->getMessage(),
@@ -124,7 +126,7 @@ class ProcessDrugCsvImportJob implements ShouldQueue
                     'expected' => self::REQUIRED_HEADERS,
                 ]);
 
-                throw new \InvalidArgumentException($errorMessage);
+                throw new InvalidArgumentException($errorMessage);
             }
 
             Log::info('CSV headers validated successfully', [
@@ -133,7 +135,7 @@ class ProcessDrugCsvImportJob implements ShouldQueue
             ]);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to read CSV headers', [
                 'file'  => $this->filepath,
                 'error' => $e->getMessage(),
@@ -292,7 +294,7 @@ class ProcessDrugCsvImportJob implements ShouldQueue
             if ($this->containsRequiredHeaders($semicolonHeader)) {
                 return ';';
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::warning('Failed to read CSV with semicolon delimiter', ['error' => $e->getMessage()]);
         }
 
@@ -314,7 +316,7 @@ class ProcessDrugCsvImportJob implements ShouldQueue
             if ($this->containsRequiredHeaders($commaHeader)) {
                 return ',';
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::warning('Failed to read CSV with comma delimiter', ['error' => $e->getMessage()]);
         }
 

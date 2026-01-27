@@ -7,8 +7,10 @@ namespace App\Http\Requests\Auth;
 use App\Models\Doctor;
 use App\Models\User;
 use App\Rules\ValidUF;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\Rules\Password;
 
 class DoctorRegistrationRequest extends FormRequest
 {
@@ -23,7 +25,7 @@ class DoctorRegistrationRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -33,7 +35,7 @@ class DoctorRegistrationRequest extends FormRequest
             'phone_number'              => ['required', 'string', 'min:10', 'max:11'],
             'crm'                       => ['required', 'string', 'size:6', 'regex:/^[0-9]{6}$/', 'unique:' . Doctor::class],
             'crm_uf'                    => ['required', 'string', 'size:2', new ValidUF()],
-            'password'                  => ['required', 'confirmed', Rules\Password::defaults()],
+            'password'                  => ['required', 'confirmed', Password::defaults()],
             'device_name'               => ['required', 'string', 'max:255'],
             'addresses'                 => ['array', 'min:1'],
             'addresses.*.location_name' => ['required', 'string', 'max:255'],

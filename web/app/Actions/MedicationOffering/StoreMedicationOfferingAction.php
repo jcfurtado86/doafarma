@@ -6,6 +6,7 @@ namespace App\Actions\MedicationOffering;
 
 use App\Models\MedicationOffering;
 use App\Models\User;
+use RuntimeException;
 
 class StoreMedicationOfferingAction
 {
@@ -20,7 +21,7 @@ class StoreMedicationOfferingAction
         $doctor = $user->doctor;
 
         if ($doctor === null) {
-            throw new \RuntimeException('User is not a doctor');
+            throw new RuntimeException('User is not a doctor');
         }
 
         return $doctor->medicationOfferings()->create($data);

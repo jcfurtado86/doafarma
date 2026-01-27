@@ -6,7 +6,9 @@ namespace App\Http\Requests\Api\V1\DoctorRating;
 
 use App\Models\DoctorRating;
 use App\Models\MedicationAppointment;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Override;
 
 class StoreRatingRequest extends FormRequest
 {
@@ -27,7 +29,7 @@ class StoreRatingRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -42,7 +44,7 @@ class StoreRatingRequest extends FormRequest
      *
      * @return array<string, string>
      */
-    #[\Override]
+    #[Override]
     public function messages(): array
     {
         return [

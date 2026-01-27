@@ -5,12 +5,14 @@ declare(strict_types = 1);
 namespace App\Http\Requests\Api\V1\Auth;
 
 use Illuminate\Auth\Events\Lockout;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Override;
 
 class LoginRequest extends FormRequest
 {
@@ -25,7 +27,7 @@ class LoginRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -40,7 +42,7 @@ class LoginRequest extends FormRequest
      *
      * @return array<string, string>
      */
-    #[\Override]
+    #[Override]
     public function messages(): array
     {
         return [

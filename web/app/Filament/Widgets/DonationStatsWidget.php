@@ -7,14 +7,15 @@ namespace App\Filament\Widgets;
 use App\Models\MedicationOffering;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Override;
 
 class DonationStatsWidget extends BaseWidget
 {
     protected static ?int $sort = 1;
 
-    protected static ?string $pollingInterval = '30s';
+    protected ?string $pollingInterval = '30s';
 
-    #[\Override]
+    #[Override]
     protected function getStats(): array
     {
         $totalOfferings     = MedicationOffering::count();

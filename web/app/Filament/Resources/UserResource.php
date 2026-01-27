@@ -29,6 +29,7 @@ class UserResource extends Resource
 
     protected static ?string $navigationGroup = 'Gerenciamento';
 
+    #[\Override]
     public static function form(Form $form): Form
     {
         return $form
@@ -95,6 +96,7 @@ class UserResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -161,11 +163,23 @@ class UserResource extends Resource
                     ->modalSubmitActionLabel('Sim, aprovar')
                     ->visible(fn (User $record): bool => $record->status === UserStatus::Pending)
                     ->action(function (User $record): void {
+                        $oldStatus = $record->status;
+
                         $record->update([
                             'status'            => UserStatus::Approved,
                             'status_changed_at' => now(),
                             'status_changed_by' => Auth::id(),
                         ]);
+
+                        activity()
+                            ->performedOn($record)
+                            ->causedBy(Auth::user())
+                            ->withProperties([
+                                'old'        => ['status' => $oldStatus->value],
+                                'attributes' => ['status' => UserStatus::Approved->value],
+                            ])
+                            ->event('approved')
+                            ->log("Usuário {$record->name} foi aprovado");
 
                         Notification::make()
                             ->title('Usuário aprovado com sucesso!')
@@ -182,11 +196,23 @@ class UserResource extends Resource
                     ->modalSubmitActionLabel('Sim, rejeitar')
                     ->visible(fn (User $record): bool => $record->status === UserStatus::Pending)
                     ->action(function (User $record): void {
+                        $oldStatus = $record->status;
+
                         $record->update([
                             'status'            => UserStatus::Rejected,
                             'status_changed_at' => now(),
                             'status_changed_by' => Auth::id(),
                         ]);
+
+                        activity()
+                            ->performedOn($record)
+                            ->causedBy(Auth::user())
+                            ->withProperties([
+                                'old'        => ['status' => $oldStatus->value],
+                                'attributes' => ['status' => UserStatus::Rejected->value],
+                            ])
+                            ->event('rejected')
+                            ->log("Usuário {$record->name} foi rejeitado");
 
                         Notification::make()
                             ->title('Usuário rejeitado.')
@@ -204,18 +230,32 @@ class UserResource extends Resource
                         ->color('success')
                         ->requiresConfirmation()
                         ->action(function ($records): void {
-                            $records->each(function (User $record): void {
+                            $count = 0;
+                            $records->each(function (User $record) use (&$count): void {
                                 if ($record->status === UserStatus::Pending) {
+                                    $oldStatus = $record->status;
                                     $record->update([
                                         'status'            => UserStatus::Approved,
                                         'status_changed_at' => now(),
                                         'status_changed_by' => Auth::id(),
                                     ]);
+
+                                    activity()
+                                        ->performedOn($record)
+                                        ->causedBy(Auth::user())
+                                        ->withProperties([
+                                            'old'        => ['status' => $oldStatus->value],
+                                            'attributes' => ['status' => UserStatus::Approved->value],
+                                        ])
+                                        ->event('approved')
+                                        ->log("Usuário {$record->name} foi aprovado (em lote)");
+
+                                    $count++;
                                 }
                             });
 
                             Notification::make()
-                                ->title('Usuários aprovados com sucesso!')
+                                ->title("$count usuário(s) aprovado(s) com sucesso!")
                                 ->success()
                                 ->send();
                         }),
@@ -225,18 +265,32 @@ class UserResource extends Resource
                         ->color('danger')
                         ->requiresConfirmation()
                         ->action(function ($records): void {
-                            $records->each(function (User $record): void {
+                            $count = 0;
+                            $records->each(function (User $record) use (&$count): void {
                                 if ($record->status === UserStatus::Pending) {
+                                    $oldStatus = $record->status;
                                     $record->update([
                                         'status'            => UserStatus::Rejected,
                                         'status_changed_at' => now(),
                                         'status_changed_by' => Auth::id(),
                                     ]);
+
+                                    activity()
+                                        ->performedOn($record)
+                                        ->causedBy(Auth::user())
+                                        ->withProperties([
+                                            'old'        => ['status' => $oldStatus->value],
+                                            'attributes' => ['status' => UserStatus::Rejected->value],
+                                        ])
+                                        ->event('rejected')
+                                        ->log("Usuário {$record->name} foi rejeitado (em lote)");
+
+                                    $count++;
                                 }
                             });
 
                             Notification::make()
-                                ->title('Usuários rejeitados.')
+                                ->title("$count usuário(s) rejeitado(s).")
                                 ->warning()
                                 ->send();
                         }),
@@ -244,6 +298,7 @@ class UserResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -251,6 +306,7 @@ class UserResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [
@@ -276,6 +332,7 @@ class UserResource extends Resource
     /**
      * @return Builder<User>
      */
+    #[\Override]
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()

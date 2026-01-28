@@ -78,4 +78,19 @@ return [
         //'validate_csrf_token'  => Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Token Expiration (DoaFarma)
+    |--------------------------------------------------------------------------
+    |
+    | These values control the expiration times for access and refresh tokens.
+    | Access tokens are short-lived for security, while refresh tokens allow
+    | users to obtain new access tokens without re-authenticating.
+    |
+    */
+
+    'access_token_expiration_hours' => (int) env('SANCTUM_ACCESS_TOKEN_EXPIRATION_HOURS', 1),
+
+    'refresh_token_expiration_days' => (int) env('SANCTUM_REFRESH_TOKEN_EXPIRATION_DAYS', 30),
+
 ];

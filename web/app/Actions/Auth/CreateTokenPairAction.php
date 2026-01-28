@@ -4,15 +4,12 @@ declare(strict_types = 1);
 
 namespace App\Actions\Auth;
 
+use App\Enums\TokenAbility;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 
 class CreateTokenPairAction
 {
-    public const ACCESS_EXPIRATION_HOURS = 1;
-
-    public const REFRESH_EXPIRATION_DAYS = 30;
-
     /**
      * Create a pair of tokens (access + refresh) for the user.
      *
@@ -20,25 +17,27 @@ class CreateTokenPairAction
      */
     public function execute(User $user, string $deviceName): array
     {
-        $now = CarbonImmutable::now();
+        $now                   = CarbonImmutable::now();
+        $accessExpirationHours = config('sanctum.access_token_expiration_hours');
+        $refreshExpirationDays = config('sanctum.refresh_token_expiration_days');
 
         $accessToken = $user->createToken(
-            name: "{$deviceName}:access",
-            abilities: ['access'],
-            expiresAt: $now->addHours(self::ACCESS_EXPIRATION_HOURS)
+            name: "{$deviceName}:" . TokenAbility::Access->value,
+            abilities: [TokenAbility::Access->value],
+            expiresAt: $now->addHours($accessExpirationHours)
         );
 
         $refreshToken = $user->createToken(
-            name: "{$deviceName}:refresh",
-            abilities: ['refresh'],
-            expiresAt: $now->addDays(self::REFRESH_EXPIRATION_DAYS)
+            name: "{$deviceName}:" . TokenAbility::Refresh->value,
+            abilities: [TokenAbility::Refresh->value],
+            expiresAt: $now->addDays($refreshExpirationDays)
         );
 
         return [
             'access_token'       => $accessToken->plainTextToken,
             'refresh_token'      => $refreshToken->plainTextToken,
-            'expires_in'         => self::ACCESS_EXPIRATION_HOURS * 3600,
-            'refresh_expires_in' => self::REFRESH_EXPIRATION_DAYS * 86400,
+            'expires_in'         => $accessExpirationHours * 3600,
+            'refresh_expires_in' => $refreshExpirationDays * 86400,
         ];
     }
 }

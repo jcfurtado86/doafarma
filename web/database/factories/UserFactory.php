@@ -94,6 +94,16 @@ class UserFactory extends Factory
     }
 
     /**
+     * Indicate that the user is approved.
+     */
+    public function approved(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'status' => UserStatus::Approved,
+        ]);
+    }
+
+    /**
      * Indicate that the user is pending approval.
      */
     public function pending(): static

@@ -17,8 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'verified' => App\Http\Middleware\EnsureEmailIsVerified::class,
-            'approved' => App\Http\Middleware\EnsureUserIsApproved::class,
+            'verified'  => App\Http\Middleware\EnsureEmailIsVerified::class,
+            'approved'  => App\Http\Middleware\EnsureUserIsApproved::class,
+            'abilities' => Laravel\Sanctum\Http\Middleware\CheckAbilities::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

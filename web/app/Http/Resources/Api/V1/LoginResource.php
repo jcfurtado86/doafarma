@@ -20,8 +20,11 @@ class LoginResource extends JsonResource
     {
         return [
             'data' => [
-                'user'  => UserResource::make($this->resource['user']),
-                'token' => $this->resource['token'],
+                'user'               => UserResource::make($this->resource['user']),
+                'access_token'       => $this->resource['access_token'],
+                'refresh_token'      => $this->resource['refresh_token'],
+                'expires_in'         => $this->resource['expires_in'],
+                'refresh_expires_in' => $this->resource['refresh_expires_in'],
             ],
             'message' => 'Login realizado com sucesso',
         ];

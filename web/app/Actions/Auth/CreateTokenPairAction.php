@@ -7,6 +7,7 @@ namespace App\Actions\Auth;
 use App\Enums\TokenAbility;
 use App\Models\User;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterval;
 
 class CreateTokenPairAction
 {
@@ -36,8 +37,8 @@ class CreateTokenPairAction
         return [
             'access_token'       => $accessToken->plainTextToken,
             'refresh_token'      => $refreshToken->plainTextToken,
-            'expires_in'         => $accessExpirationHours * 3600,
-            'refresh_expires_in' => $refreshExpirationDays * 86400,
+            'expires_in'         => (int) CarbonInterval::hours($accessExpirationHours)->totalSeconds,
+            'refresh_expires_in' => (int) CarbonInterval::days($refreshExpirationDays)->totalSeconds,
         ];
     }
 }

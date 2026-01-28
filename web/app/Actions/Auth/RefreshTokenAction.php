@@ -8,7 +8,7 @@ use App\Enums\TokenAbility;
 use App\Enums\UserStatus;
 use App\Models\User;
 use Carbon\CarbonImmutable;
-use Laravel\Sanctum\PersonalAccessToken;
+use Carbon\CarbonInterval;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class RefreshTokenAction
@@ -28,13 +28,7 @@ class RefreshTokenAction
             throw new AccessDeniedHttpException('Seu cadastro não está aprovado.');
         }
 
-        $currentToken = $user->currentAccessToken();
-
-        // @phpstan-ignore instanceof.alwaysTrue (actingAs() in tests returns TransientToken)
-        if (! $currentToken instanceof PersonalAccessToken) {
-            throw new AccessDeniedHttpException('Token de refresh inválido.');
-        }
-
+        $currentToken          = $user->currentAccessToken();
         $deviceName            = str_replace(':' . TokenAbility::Refresh->value, '', $currentToken->name);
         $accessExpirationHours = config('sanctum.access_token_expiration_hours');
 
@@ -46,7 +40,7 @@ class RefreshTokenAction
 
         return [
             'access_token' => $accessToken->plainTextToken,
-            'expires_in'   => $accessExpirationHours * 3600,
+            'expires_in'   => (int) CarbonInterval::hours($accessExpirationHours)->totalSeconds,
         ];
     }
 }

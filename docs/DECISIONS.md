@@ -217,6 +217,36 @@ Addresses are stored as text. Geocoding, map integration, or proximity search ar
 
 ---
 
+### D14: Refresh Token Pattern for Authentication
+
+**Decision:** Implement industry-standard refresh token pattern instead of single long-lived token.
+
+**Rationale:**
+- Access tokens expire in 1 hour (limits exposure if compromised)
+- Refresh tokens expire in 30 days (good UX without re-login)
+- Sanctum abilities (`access`, `refresh`) prevent token misuse
+- Device-specific tokens allow selective logout
+- Follows OAuth 2.0 best practices
+
+**Implementation:**
+- `CreateTokenPairAction`: Creates access + refresh token pair
+- `RefreshTokenAction`: Issues new access token using valid refresh token
+- `LogoutAction`: Revokes all tokens for specific device
+- Middleware `abilities:refresh` protects refresh endpoint
+
+**Security measures:**
+- Rate limiting on login (5 attempts/minute per email+IP)
+- User status validation on refresh (blocks pending/rejected users)
+- Sanctum Guard auto-validates token expiration
+
+**Future improvements identified by code review (see Future Considerations):**
+- Security logging for auth events
+- Rate limiting on refresh endpoint
+- Refresh token rotation
+- Token theft detection
+
+---
+
 ## Future Considerations
 
 Items explicitly out of scope but documented for awareness:
@@ -227,5 +257,13 @@ Items explicitly out of scope but documented for awareness:
 4. **Analytics dashboard** - Usage statistics
 5. **External CRM validation** - API integration with medical councils
 6. **Multi-language support** - Internationalization
+
+### Authentication Improvements (from D14 code review)
+
+7. **Security logging** - Log login attempts, token refreshes, logouts, and failed auth for audit trail (OWASP A09:2021)
+8. **Rate limiting on refresh** - Add throttle middleware to `/auth/refresh` endpoint to prevent token generation abuse
+9. **Refresh token rotation** - Issue new refresh token on each refresh, invalidate the old one (increases security)
+10. **Token theft detection** - Detect when a rotated refresh token is reused (indicates possible compromise)
+11. **Device name sanitization** - Add regex validation to prevent special characters in device names
 
 These may be added post-TCC if the project continues.

@@ -4,6 +4,8 @@ import {
   registerPushTokenWithBackend,
   removePushTokenFromBackend,
 } from '@/services/pushNotificationService';
+import { STORAGE_KEYS } from '@/config/storage';
+import { getErrorMessage } from '@/utils/error';
 import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
@@ -40,6 +42,8 @@ interface AuthStoreState {
   setupPushNotifications: () => Promise<void>;
 }
 
+const MS_PER_SECOND = 1000;
+
 export const useAuthStore = create<AuthStoreState>((set, get) => ({
   user: null,
   token: null,
@@ -52,17 +56,15 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
 
   saveSession: async (user, token, refreshToken?, expiresIn?) => {
     try {
-      await SecureStore.setItemAsync('auth_token', token);
+      await SecureStore.setItemAsync(STORAGE_KEYS.AUTH_TOKEN, token);
 
-      // Only save refresh token if provided (login has it, register may not)
       if (refreshToken) {
-        await SecureStore.setItemAsync('refresh_token', refreshToken);
+        await SecureStore.setItemAsync(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
       }
 
-      await AsyncStorage.setItem('user', JSON.stringify(user));
+      await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
 
-      // Calculate expiration if expiresIn is provided
-      const expiresAt = expiresIn ? Date.now() + expiresIn * 1000 : null;
+      const expiresAt = expiresIn ? Date.now() + expiresIn * MS_PER_SECOND : null;
 
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
@@ -74,40 +76,31 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
         isAuthenticated: true,
       });
     } catch (error) {
-      console.error(
-        'Error saving session:',
-        error instanceof Error ? error.message : 'Unknown error'
-      );
+      console.error('Error saving session:', getErrorMessage(error));
       set({ error: 'Failed to save session' });
     }
   },
 
   updateAccessToken: async (token, expiresIn) => {
     try {
-      await SecureStore.setItemAsync('auth_token', token);
+      await SecureStore.setItemAsync(STORAGE_KEYS.AUTH_TOKEN, token);
 
-      const expiresAt = Date.now() + expiresIn * 1000;
+      const expiresAt = Date.now() + expiresIn * MS_PER_SECOND;
 
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
       set({ token, expiresAt });
     } catch (error) {
-      console.error(
-        'Error updating access token:',
-        error instanceof Error ? error.message : 'Unknown error'
-      );
+      console.error('Error updating access token:', getErrorMessage(error));
       set({ error: 'Failed to update access token' });
     }
   },
 
   getRefreshToken: async () => {
     try {
-      return await SecureStore.getItemAsync('refresh_token');
+      return await SecureStore.getItemAsync(STORAGE_KEYS.REFRESH_TOKEN);
     } catch (error) {
-      console.error(
-        'Error getting refresh token:',
-        error instanceof Error ? error.message : 'Unknown error'
-      );
+      console.error('Error getting refresh token:', getErrorMessage(error));
       return null;
     }
   },
@@ -116,15 +109,14 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
     try {
       const { pushToken } = get();
 
-      // Remove push token from backend before logging out
       if (pushToken) {
         await removePushTokenFromBackend(pushToken);
       }
 
-      await SecureStore.deleteItemAsync('auth_token');
-      await SecureStore.deleteItemAsync('refresh_token');
-      await AsyncStorage.removeItem('user');
-      await AsyncStorage.removeItem('push_token');
+      await SecureStore.deleteItemAsync(STORAGE_KEYS.AUTH_TOKEN);
+      await SecureStore.deleteItemAsync(STORAGE_KEYS.REFRESH_TOKEN);
+      await AsyncStorage.removeItem(STORAGE_KEYS.USER);
+      await AsyncStorage.removeItem(STORAGE_KEYS.PUSH_TOKEN);
 
       delete api.defaults.headers.common['Authorization'];
 
@@ -137,7 +129,7 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
         isAuthenticated: false,
       });
     } catch (error) {
-      console.error('Error logging out:', error instanceof Error ? error.message : 'Unknown error');
+      console.error('Error logging out:', getErrorMessage(error));
       set({ error: 'Failed to log out' });
     }
   },
@@ -146,30 +138,27 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
     try {
       set({ isLoading: true });
 
-      const token = await SecureStore.getItemAsync('auth_token');
+      const token = await SecureStore.getItemAsync(STORAGE_KEYS.AUTH_TOKEN);
       if (!token) {
         set({ isLoading: false });
         return false;
       }
 
-      const userJson = await AsyncStorage.getItem('user');
+      const userJson = await AsyncStorage.getItem(STORAGE_KEYS.USER);
       if (!userJson) {
         set({ isLoading: false });
         return false;
       }
 
       const user = JSON.parse(userJson);
-      const refreshToken = await SecureStore.getItemAsync('refresh_token');
+      const refreshToken = await SecureStore.getItemAsync(STORAGE_KEYS.REFRESH_TOKEN);
 
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
       set({ user, token, refreshToken, isAuthenticated: true, isLoading: false });
       return true;
     } catch (error) {
-      console.error(
-        'Error checking authentication:',
-        error instanceof Error ? error.message : 'Unknown error'
-      );
+      console.error('Error checking authentication:', getErrorMessage(error));
       set({ isLoading: false, error: 'Failed to check authentication' });
       return false;
     }
@@ -179,21 +168,15 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
 
   setupPushNotifications: async () => {
     try {
-      // Get push token from device
       const expoPushToken = await registerForPushNotificationsAsync();
 
       if (expoPushToken) {
-        // Register with backend
         await registerPushTokenWithBackend(expoPushToken);
-
-        // Save locally
-        await AsyncStorage.setItem('push_token', expoPushToken);
+        await AsyncStorage.setItem(STORAGE_KEYS.PUSH_TOKEN, expoPushToken);
         set({ pushToken: expoPushToken });
-
-        console.log('Push notifications configured:', expoPushToken);
       }
     } catch (error) {
-      console.error('Error setting up push notifications:', error);
+      console.error('Error setting up push notifications:', getErrorMessage(error));
     }
   },
 }));

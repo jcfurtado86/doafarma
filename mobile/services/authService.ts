@@ -1,6 +1,8 @@
 import api from './api';
 import axios, { AxiosError } from 'axios';
 import { User } from '@/stores/authStore';
+import { API_ENDPOINTS } from '@/config/endpoints';
+import { getErrorMessage } from '@/utils/error';
 
 export interface LoginCredentials {
   email: string;
@@ -65,17 +67,14 @@ export class AuthServiceError extends Error {
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<LoginResponse> => {
     try {
-      const response = await api.post<LoginResponse>('/login', credentials);
+      const response = await api.post<LoginResponse>(API_ENDPOINTS.AUTH.LOGIN, credentials);
       return response.data;
     } catch (error) {
-      // Log only safe information, never credentials or tokens
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      console.error('Erro ao fazer login:', errorMessage);
+      console.error('Erro ao fazer login:', getErrorMessage(error));
 
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<ApiValidationError>;
 
-        // Erro de rede (sem conexão)
         if (!axiosError.response) {
           throw new AuthServiceError(
             'Sem conexão com a internet. Verifique sua conexão e tente novamente.',
@@ -85,7 +84,6 @@ export const authService = {
 
         const { status, data: responseData } = axiosError.response;
 
-        // Rate limiting (429 ou mensagem específica no 422)
         if (status === 429 || responseData?.errors?.email?.[0]?.includes('Too many')) {
           throw new AuthServiceError(
             'Muitas tentativas de login. Aguarde alguns minutos e tente novamente.',
@@ -93,9 +91,7 @@ export const authService = {
           );
         }
 
-        // Erro de validação (422)
         if (status === 422 && responseData?.errors) {
-          // Traduzir mensagens comuns
           const translatedErrors = translateValidationErrors(responseData.errors);
 
           throw new AuthServiceError(responseData.message || 'Credenciais inválidas.', {
@@ -105,7 +101,6 @@ export const authService = {
           });
         }
 
-        // Erro de servidor (500+)
         if (status >= 500) {
           throw new AuthServiceError('Erro no servidor. Tente novamente em alguns instantes.', {
             isServerError: true,
@@ -113,13 +108,11 @@ export const authService = {
           });
         }
 
-        // Outros erros HTTP
         throw new AuthServiceError(responseData?.message || 'Ocorreu um erro. Tente novamente.', {
           statusCode: status,
         });
       }
 
-      // Erro desconhecido
       throw new AuthServiceError('Erro inesperado. Tente novamente.');
     }
   },
@@ -127,7 +120,7 @@ export const authService = {
   refreshToken: async (refreshToken: string): Promise<RefreshTokenResponse> => {
     try {
       const response = await api.post<RefreshTokenResponse>(
-        '/v1/auth/refresh',
+        API_ENDPOINTS.AUTH.REFRESH,
         {},
         {
           headers: {
@@ -137,14 +130,11 @@ export const authService = {
       );
       return response.data;
     } catch (error) {
-      // Log only safe information, never tokens
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      console.error('Erro ao renovar token:', errorMessage);
+      console.error('Erro ao renovar token:', getErrorMessage(error));
 
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<ApiValidationError>;
 
-        // Erro de rede
         if (!axiosError.response) {
           throw new AuthServiceError(
             'Sem conexão com a internet. Verifique sua conexão e tente novamente.',
@@ -154,14 +144,12 @@ export const authService = {
 
         const { status, data: responseData } = axiosError.response;
 
-        // Token expirado ou inválido
         if (status === 401) {
           throw new AuthServiceError('Sessão expirada. Faça login novamente.', {
             statusCode: status,
           });
         }
 
-        // Usuário não aprovado
         if (status === 403) {
           throw new AuthServiceError(
             responseData?.message || 'Acesso negado. Sua conta pode estar pendente de aprovação.',
@@ -169,7 +157,6 @@ export const authService = {
           );
         }
 
-        // Erro de servidor
         if (status >= 500) {
           throw new AuthServiceError('Erro no servidor. Tente novamente em alguns instantes.', {
             isServerError: true,
@@ -188,19 +175,13 @@ export const authService = {
 
   logout: async (): Promise<void> => {
     try {
-      await api.post('/logout');
+      await api.post(API_ENDPOINTS.AUTH.LOGOUT);
     } catch (error) {
-      // Mesmo se der erro, limpa local
-      // Log only safe information, never tokens
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      console.error('Erro ao fazer logout:', errorMessage);
+      console.error('Erro ao fazer logout:', getErrorMessage(error));
     }
   },
 };
 
-/**
- * Traduz mensagens de erro da API para português
- */
 function translateValidationErrors(errors: Record<string, string[]>): Record<string, string[]> {
   const translations: Record<string, string> = {
     'These credentials do not match our records.': 'E-mail ou senha incorretos.',

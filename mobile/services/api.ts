@@ -1,11 +1,13 @@
 import { useAuthStore } from '@/stores/authStore';
+import { STORAGE_KEYS } from '@/config/storage';
+import { API_ENDPOINTS } from '@/config/endpoints';
 import * as SecureStore from 'expo-secure-store';
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { router } from 'expo-router';
 import { Platform } from 'react-native';
 import Toast from 'react-native-toast-message';
 
-const API_HOST = process.env.EXPO_PUBLIC_API_HOST || '192.168.0.1'; // Substitua pelo IP correto do seu servidor
+const API_HOST = process.env.EXPO_PUBLIC_API_HOST || '192.168.0.1';
 
 const getBaseUrl = () => {
   if (Platform.OS === 'web') {
@@ -23,9 +25,6 @@ const api = axios.create({
   baseURL: getBaseUrl(),
 });
 
-// ============================================
-// REFRESH TOKEN STATE
-// ============================================
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
 
@@ -42,12 +41,9 @@ function onRefreshFailed(): void {
   refreshSubscribers = [];
 }
 
-// ============================================
-// REQUEST INTERCEPTOR
-// ============================================
 api.interceptors.request.use(
   async (config) => {
-    const token = await SecureStore.getItemAsync('auth_token');
+    const token = await SecureStore.getItemAsync(STORAGE_KEYS.AUTH_TOKEN);
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -58,44 +54,35 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ============================================
-// RESPONSE INTERCEPTOR
-// ============================================
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-    // 401 Unauthorized (token expirado ou inválido)
     if (error.response?.status === 401) {
-      // Don't retry if this is already the refresh endpoint (avoid infinite loop)
       if (originalRequest.url?.includes('/auth/refresh')) {
         await handleLogout('Sessão expirada', 'Faça login novamente para continuar.');
         return Promise.reject(error);
       }
 
-      // Don't retry if we already tried
       if (originalRequest._retry) {
         return Promise.reject(error);
       }
 
-      // If already refreshing, queue this request
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           subscribeTokenRefresh((newToken: string) => {
             originalRequest.headers.Authorization = `Bearer ${newToken}`;
             resolve(api.request(originalRequest));
           });
-          // If refresh fails, reject queued requests
           setTimeout(() => {
             if (!isRefreshing) {
               reject(error);
             }
-          }, 10000); // 10s timeout
+          }, 10000);
         });
       }
 
-      // Start refresh process
       originalRequest._retry = true;
       isRefreshing = true;
 
@@ -106,9 +93,9 @@ api.interceptors.response.use(
           throw new Error('No refresh token available');
         }
 
-        // Call refresh endpoint directly (not through authService to avoid circular dependency)
+        // Calls refresh endpoint directly to avoid circular dependency with authService
         const response = await api.post(
-          '/v1/auth/refresh',
+          API_ENDPOINTS.AUTH.REFRESH,
           {},
           {
             headers: {
@@ -119,17 +106,12 @@ api.interceptors.response.use(
 
         const { access_token, expires_in } = response.data.data;
 
-        // Update token in store
         await useAuthStore.getState().updateAccessToken(access_token, expires_in);
-
-        // Notify queued requests
         onTokenRefreshed(access_token);
 
-        // Retry original request with new token
         originalRequest.headers.Authorization = `Bearer ${access_token}`;
         return api.request(originalRequest);
       } catch (refreshError) {
-        // Refresh failed - logout user
         onRefreshFailed();
         await handleLogout('Sessão expirada', 'Faça login novamente para continuar.');
         return Promise.reject(refreshError);
@@ -138,12 +120,10 @@ api.interceptors.response.use(
       }
     }
 
-    // 403 Forbidden (sem permissão)
     if (error.response?.status === 403) {
       await handleLogout('Acesso negado', 'Você não tem permissão para esta ação.');
     }
 
-    // 422 Unprocessable Entity (erros de validação)
     if (error.response?.status === 422) {
       const responseData = error.response.data as { errors?: object; message?: string };
       return Promise.reject({
@@ -154,7 +134,6 @@ api.interceptors.response.use(
       });
     }
 
-    // 500 Internal Server Error
     if (error.response?.status === 500) {
       Toast.show({
         type: 'error',
@@ -169,9 +148,6 @@ api.interceptors.response.use(
   }
 );
 
-// ============================================
-// HELPER FUNCTIONS
-// ============================================
 async function handleLogout(title: string, message: string): Promise<void> {
   await useAuthStore.getState().logout();
 

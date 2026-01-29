@@ -19,12 +19,21 @@ export interface User {
 interface AuthStoreState {
   user: User | null;
   token: string | null;
+  refreshToken: string | null;
+  expiresAt: number | null;
   pushToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
 
-  saveSession: (user: User, token: string) => Promise<void>;
+  saveSession: (
+    user: User,
+    token: string,
+    refreshToken?: string,
+    expiresIn?: number
+  ) => Promise<void>;
+  updateAccessToken: (token: string, expiresIn: number) => Promise<void>;
+  getRefreshToken: () => Promise<string | null>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<boolean>;
   clearError: () => void;
@@ -34,22 +43,72 @@ interface AuthStoreState {
 export const useAuthStore = create<AuthStoreState>((set, get) => ({
   user: null,
   token: null,
+  refreshToken: null,
+  expiresAt: null,
   pushToken: null,
   isAuthenticated: false,
   isLoading: false,
   error: null,
 
-  saveSession: async (user, token) => {
+  saveSession: async (user, token, refreshToken?, expiresIn?) => {
     try {
       await SecureStore.setItemAsync('auth_token', token);
+
+      // Only save refresh token if provided (login has it, register may not)
+      if (refreshToken) {
+        await SecureStore.setItemAsync('refresh_token', refreshToken);
+      }
+
       await AsyncStorage.setItem('user', JSON.stringify(user));
+
+      // Calculate expiration if expiresIn is provided
+      const expiresAt = expiresIn ? Date.now() + expiresIn * 1000 : null;
 
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-      set({ user, token, isAuthenticated: true });
+      set({
+        user,
+        token,
+        refreshToken: refreshToken || null,
+        expiresAt,
+        isAuthenticated: true,
+      });
     } catch (error) {
-      console.error('Error saving session:', error);
+      console.error(
+        'Error saving session:',
+        error instanceof Error ? error.message : 'Unknown error'
+      );
       set({ error: 'Failed to save session' });
+    }
+  },
+
+  updateAccessToken: async (token, expiresIn) => {
+    try {
+      await SecureStore.setItemAsync('auth_token', token);
+
+      const expiresAt = Date.now() + expiresIn * 1000;
+
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      set({ token, expiresAt });
+    } catch (error) {
+      console.error(
+        'Error updating access token:',
+        error instanceof Error ? error.message : 'Unknown error'
+      );
+      set({ error: 'Failed to update access token' });
+    }
+  },
+
+  getRefreshToken: async () => {
+    try {
+      return await SecureStore.getItemAsync('refresh_token');
+    } catch (error) {
+      console.error(
+        'Error getting refresh token:',
+        error instanceof Error ? error.message : 'Unknown error'
+      );
+      return null;
     }
   },
 
@@ -63,14 +122,22 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
       }
 
       await SecureStore.deleteItemAsync('auth_token');
+      await SecureStore.deleteItemAsync('refresh_token');
       await AsyncStorage.removeItem('user');
       await AsyncStorage.removeItem('push_token');
 
       delete api.defaults.headers.common['Authorization'];
 
-      set({ user: null, token: null, pushToken: null, isAuthenticated: false });
+      set({
+        user: null,
+        token: null,
+        refreshToken: null,
+        expiresAt: null,
+        pushToken: null,
+        isAuthenticated: false,
+      });
     } catch (error) {
-      console.error('Error logging out:', error);
+      console.error('Error logging out:', error instanceof Error ? error.message : 'Unknown error');
       set({ error: 'Failed to log out' });
     }
   },
@@ -92,13 +159,17 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
       }
 
       const user = JSON.parse(userJson);
+      const refreshToken = await SecureStore.getItemAsync('refresh_token');
 
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-      set({ user, token, isAuthenticated: true, isLoading: false });
+      set({ user, token, refreshToken, isAuthenticated: true, isLoading: false });
       return true;
     } catch (error) {
-      console.error('Error checking authentication:', error);
+      console.error(
+        'Error checking authentication:',
+        error instanceof Error ? error.message : 'Unknown error'
+      );
       set({ isLoading: false, error: 'Failed to check authentication' });
       return false;
     }

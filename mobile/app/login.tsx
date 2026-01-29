@@ -79,9 +79,9 @@ export default function LoginScreen() {
         device_name: deviceName,
       });
 
-      const { user, token } = response.data;
+      const { user, access_token, refresh_token, expires_in } = response.data;
 
-      await saveSession(user, token);
+      await saveSession(user, access_token, refresh_token, expires_in);
 
       // Configure push notifications in background
       setupPushNotifications();

@@ -10,9 +10,21 @@ export interface LoginCredentials {
 
 export interface LoginResponse {
   data: {
-    token: string;
     user: User;
+    access_token: string;
+    refresh_token: string;
+    expires_in: number;
+    refresh_expires_in: number;
   };
+  message: string;
+}
+
+export interface RefreshTokenResponse {
+  data: {
+    access_token: string;
+    expires_in: number;
+  };
+  message: string;
 }
 
 export interface ApiValidationError {
@@ -56,7 +68,9 @@ export const authService = {
       const response = await api.post<LoginResponse>('/login', credentials);
       return response.data;
     } catch (error) {
-      console.error('Erro ao fazer login:', error);
+      // Log only safe information, never credentials or tokens
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Erro ao fazer login:', errorMessage);
 
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<ApiValidationError>;
@@ -110,12 +124,76 @@ export const authService = {
     }
   },
 
+  refreshToken: async (refreshToken: string): Promise<RefreshTokenResponse> => {
+    try {
+      const response = await api.post<RefreshTokenResponse>(
+        '/v1/auth/refresh',
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${refreshToken}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      // Log only safe information, never tokens
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Erro ao renovar token:', errorMessage);
+
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<ApiValidationError>;
+
+        // Erro de rede
+        if (!axiosError.response) {
+          throw new AuthServiceError(
+            'Sem conexão com a internet. Verifique sua conexão e tente novamente.',
+            { isNetworkError: true }
+          );
+        }
+
+        const { status, data: responseData } = axiosError.response;
+
+        // Token expirado ou inválido
+        if (status === 401) {
+          throw new AuthServiceError('Sessão expirada. Faça login novamente.', {
+            statusCode: status,
+          });
+        }
+
+        // Usuário não aprovado
+        if (status === 403) {
+          throw new AuthServiceError(
+            responseData?.message || 'Acesso negado. Sua conta pode estar pendente de aprovação.',
+            { statusCode: status }
+          );
+        }
+
+        // Erro de servidor
+        if (status >= 500) {
+          throw new AuthServiceError('Erro no servidor. Tente novamente em alguns instantes.', {
+            isServerError: true,
+            statusCode: status,
+          });
+        }
+
+        throw new AuthServiceError(responseData?.message || 'Erro ao renovar sessão.', {
+          statusCode: status,
+        });
+      }
+
+      throw new AuthServiceError('Erro inesperado ao renovar sessão.');
+    }
+  },
+
   logout: async (): Promise<void> => {
     try {
       await api.post('/logout');
     } catch (error) {
       // Mesmo se der erro, limpa local
-      console.error('Erro ao fazer logout:', error);
+      // Log only safe information, never tokens
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Erro ao fazer logout:', errorMessage);
     }
   },
 };

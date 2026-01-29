@@ -31,7 +31,7 @@ it('should be accessible via POST /api/v1/medication-offerings', function (): vo
         'quantity'   => 20,
     ];
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
     postJson('/api/v1/medication-offerings', $payload1)
         ->assertCreated();
 
@@ -52,7 +52,7 @@ it('should return 201, create the offering and associate it with the authenticat
         'quantity'   => 10,
     ];
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = postJson(route('api.v1.medication-offerings.post'), $payload);
 
@@ -89,7 +89,7 @@ it('should return the correct Content-Type header', function (): void {
         'quantity'   => 1,
     ];
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $response = postJson(route('api.v1.medication-offerings.post'), $payload);
     $response->assertCreated();
@@ -100,7 +100,7 @@ it('should return the correct Content-Type header', function (): void {
 
 it('should return a validation error if required fields are missing', function (): void {
     $user = User::factory()->doctor()->create();
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $response = postJson(route('api.v1.medication-offerings.post'), []);
     $response->assertUnprocessable()
@@ -116,7 +116,7 @@ it('should return a validation error if required fields are missing', function (
 
 it('should return a validation error if drug_id does not exist', function (): void {
     $user = User::factory()->doctor()->create();
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $payload = [
         'drug_id'    => 9999999, // non-existent
@@ -135,7 +135,7 @@ it('should return a validation error for invalid data types or formats', functio
     $user = User::factory()->doctor()->create();
     $drug = Drug::factory()->create();
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $payload = [
         'drug_id'    => 'not-an-integer',
@@ -160,7 +160,7 @@ it('should return a validation error if quantity is not a positive integer', fun
     $user = User::factory()->doctor()->create();
     $drug = Drug::factory()->create();
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     // zero
     $payloadZero = [
@@ -189,7 +189,7 @@ it('should return a validation error if expiration_date is in the past', functio
     $user = User::factory()->doctor()->create();
     $drug = Drug::factory()->create();
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $payload = [
         'drug_id'    => $drug->id,
@@ -222,7 +222,7 @@ it('should return 403 forbidden if an authenticated user is not a doctor', funct
     $user = User::factory()->create(); // regular user (not doctor)
     $drug = Drug::factory()->create();
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $payload = [
         'drug_id'    => $drug->id,

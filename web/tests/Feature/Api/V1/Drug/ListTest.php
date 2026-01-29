@@ -11,7 +11,7 @@ use function Pest\Laravel\getJson;
 it('should be accessible via GET /api/v1/drugs', function (): void {
     $user = User::factory()->create();
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     getJson('/api/v1/drugs')
         ->assertOk();
@@ -33,7 +33,7 @@ it('should return 200 and correct JSON structure for valid query', function (): 
         'laboratory'   => 'EMS',
     ]);
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $response = getJson('/api/v1/drugs');
 

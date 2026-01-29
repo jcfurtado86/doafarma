@@ -25,7 +25,7 @@ it('rejects invalid token with 401', function (): void {
 it('allows authenticated receptor to access search', function (): void {
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     getJson('/api/v1/medication-offerings/search?q=test')
         ->assertOk();
@@ -34,7 +34,7 @@ it('allows authenticated receptor to access search', function (): void {
 it('rejects authenticated doctor with 403', function (): void {
     $doctor = User::factory()->doctor()->create();
 
-    actingAs($doctor);
+    actingAs($doctor, 'sanctum');
 
     getJson('/api/v1/medication-offerings/search?q=aspirin')
         ->assertForbidden();
@@ -43,7 +43,7 @@ it('rejects authenticated doctor with 403', function (): void {
 it('rejects user without receptor role with 403', function (): void {
     $doctor = User::factory()->doctor()->create();
 
-    actingAs($doctor);
+    actingAs($doctor, 'sanctum');
 
     getJson('/api/v1/medication-offerings/search?q=aspirin')
         ->assertForbidden();
@@ -60,7 +60,7 @@ it('returns all offerings when q parameter is missing', function (): void {
         'quantity'  => 5,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     getJson('/api/v1/medication-offerings/search')
         ->assertOk()
@@ -78,7 +78,7 @@ it('returns all offerings when q parameter is empty', function (): void {
         'quantity'  => 10,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     getJson('/api/v1/medication-offerings/search?q=')
         ->assertOk()
@@ -88,7 +88,7 @@ it('returns all offerings when q parameter is empty', function (): void {
 it('accepts valid search query', function (): void {
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     getJson('/api/v1/medication-offerings/search?q=aspirin')
         ->assertOk();
@@ -97,7 +97,7 @@ it('accepts valid search query', function (): void {
 it('accepts single character query', function (): void {
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     getJson('/api/v1/medication-offerings/search?q=a')
         ->assertOk();
@@ -111,7 +111,7 @@ it('matches product_name', function (): void {
         'quantity' => 10,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-offerings/search?q=Aspirina');
 
@@ -128,7 +128,7 @@ it('matches substance', function (): void {
         'quantity' => 10,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-offerings/search?q=Ácido Acetilsalicílico');
 
@@ -145,7 +145,7 @@ it('matches partial product_name', function (): void {
         'quantity' => 10,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-offerings/search?q=Aspir');
 
@@ -161,7 +161,7 @@ it('matches partial substance', function (): void {
         'quantity' => 10,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-offerings/search?q=Dipirona');
 
@@ -177,7 +177,7 @@ it('search is case-insensitive for product_name', function (): void {
         'quantity' => 10,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-offerings/search?q=aspirina');
 
@@ -193,7 +193,7 @@ it('search is case-insensitive for substance', function (): void {
         'quantity' => 10,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-offerings/search?q=paracetamol');
 
@@ -209,7 +209,7 @@ it('returns multiple matching offerings', function (): void {
     MedicationOffering::factory()->create(['drug_id' => $drug1->id, 'quantity' => 10]);
     MedicationOffering::factory()->create(['drug_id' => $drug2->id, 'quantity' => 5]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-offerings/search?q=para');
 
@@ -225,7 +225,7 @@ it('includes offerings with quantity greater than zero', function (): void {
         'quantity' => 5,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-offerings/search?q=TestMed');
 
@@ -241,7 +241,7 @@ it('excludes offerings with quantity equal to zero', function (): void {
         'quantity' => 0,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-offerings/search?q=EmptyMed');
 
@@ -256,7 +256,7 @@ it('returns only available offerings when mixed availability', function (): void
     MedicationOffering::factory()->create(['drug_id' => $drug->id, 'quantity' => 10]);
     MedicationOffering::factory()->create(['drug_id' => $drug->id, 'quantity' => 0]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-offerings/search?q=MixedMed');
 
@@ -273,7 +273,7 @@ it('results contain required offering fields', function (): void {
         'quantity' => 10,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-offerings/search?q=FieldTest');
 
@@ -298,7 +298,7 @@ it('results contain nested drug information', function (): void {
         'quantity' => 10,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-offerings/search?q=DrugInfoTest');
 
@@ -328,7 +328,7 @@ it('results contain nested doctor information', function (): void {
         'quantity'  => 10,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-offerings/search?q=DoctorInfoTest');
 
@@ -348,7 +348,7 @@ it('results contain nested doctor information', function (): void {
 it('returns empty array when no matches found', function (): void {
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-offerings/search?q=nonexistentmedication12345');
 
@@ -364,7 +364,7 @@ it('handles query with special characters', function (): void {
         'quantity' => 10,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-offerings/search?q=' . urlencode('vitamina B12'));
 
@@ -379,7 +379,7 @@ it('handles query with accented characters', function (): void {
         'quantity' => 10,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-offerings/search?q=Ácido');
 
@@ -395,7 +395,7 @@ it('handles query with numeric content', function (): void {
         'quantity' => 10,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-offerings/search?q=B12');
 
@@ -412,7 +412,7 @@ it('returns all matching offerings for large result set', function (): void {
         'quantity' => 5,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-offerings/search?q=CommonMed');
 
@@ -431,7 +431,7 @@ it('does not return offering when drug does not match query', function (): void 
         'quantity' => 10,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-offerings/search?q=Paracetamol');
 

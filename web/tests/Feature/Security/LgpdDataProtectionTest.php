@@ -145,7 +145,7 @@ describe('API Data Masking', function (): void {
             'status'                 => 'pending',
         ]);
 
-        $response = actingAs($doctor)
+        $response = actingAs($doctor, 'sanctum')
             ->getJson(route('api.v1.medication-requests.received'));
 
         $response->assertOk();
@@ -175,7 +175,7 @@ describe('API Data Masking', function (): void {
             'status'                 => 'pending',
         ]);
 
-        $response = actingAs($doctor)
+        $response = actingAs($doctor, 'sanctum')
             ->getJson(route('api.v1.medication-requests.received'));
 
         $response->assertOk();
@@ -206,7 +206,7 @@ describe('API Data Masking', function (): void {
             'status'                 => 'confirmed',
         ]);
 
-        $response = actingAs($doctor)
+        $response = actingAs($doctor, 'sanctum')
             ->getJson(route('api.v1.medication-requests.received'));
 
         $response->assertOk();

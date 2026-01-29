@@ -24,7 +24,7 @@ it('should allow doctor to reject a pending request for their offering', functio
         ->pending()
         ->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = patchJson("/api/v1/medication-requests/{$request->id}/reject");
 
@@ -46,7 +46,7 @@ it('should return offering status to available after rejection', function (): vo
         ->pending()
         ->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-requests/{$request->id}/reject")
         ->assertOk();
@@ -66,7 +66,7 @@ it('should return updated request data after rejection', function (): void {
         ->pending()
         ->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = patchJson("/api/v1/medication-requests/{$request->id}/reject");
 
@@ -98,12 +98,12 @@ it('should allow another receptor to request after rejection', function (): void
         ->create();
 
     // Doctor rejects
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
     patchJson("/api/v1/medication-requests/{$request->id}/reject")
         ->assertOk();
 
     // Another receptor can now request
-    actingAs($receptor2);
+    actingAs($receptor2, 'sanctum');
     postJson('/api/v1/medication-requests', [
         'medication_offering_id' => $offering->id,
     ])->assertCreated();
@@ -132,7 +132,7 @@ it('should return 403 forbidden when receptor tries to reject a request', functi
         ->pending()
         ->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     patchJson("/api/v1/medication-requests/{$request->id}/reject")
         ->assertForbidden();
@@ -150,7 +150,7 @@ it('should return 403 forbidden when doctor tries to reject another doctor\'s re
         ->pending()
         ->create();
 
-    actingAs($doctorA->user);
+    actingAs($doctorA->user, 'sanctum');
 
     patchJson("/api/v1/medication-requests/{$request->id}/reject")
         ->assertForbidden();
@@ -169,7 +169,7 @@ it('should return 422 when trying to reject an already confirmed request', funct
         ->confirmed()
         ->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-requests/{$request->id}/reject")
         ->assertStatus(422)
@@ -189,7 +189,7 @@ it('should return 422 when trying to reject an already rejected request', functi
         ->rejected()
         ->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-requests/{$request->id}/reject")
         ->assertStatus(422)
@@ -203,7 +203,7 @@ it('should return 422 when trying to reject an already rejected request', functi
 it('should return 404 for non-existent request', function (): void {
     $doctor = Doctor::factory()->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson('/api/v1/medication-requests/99999/reject')
         ->assertNotFound();

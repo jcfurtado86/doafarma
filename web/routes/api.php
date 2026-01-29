@@ -15,7 +15,7 @@ use App\Http\Controllers\Auth\ReceptorRegistrationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:sanctum'])->get('/user', fn (Request $request) => $request->user());
+Route::middleware(['auth:sanctum', 'abilities:access'])->get('/user', fn (Request $request) => $request->user());
 
 Route::post('/login', ApiLoginController::class)
     ->middleware('guest')
@@ -44,12 +44,8 @@ Route::prefix('v1')->group(function (): void {
             ->name('api.v1.auth.logout');
     });
 
-    // Routes that require authentication AND approval
-    // Note: abilities:access is NOT required here because:
-    // 1. Refresh tokens can only be used at /auth/refresh (which requires abilities:refresh)
-    // 2. The 'approved' middleware provides additional authorization
-    // 3. Tests use actingAs() which creates TransientToken without specific abilities
-    Route::middleware(['auth:sanctum', 'approved'])->group(function (): void {
+    // Routes that require authentication, approval, AND access token ability
+    Route::middleware(['auth:sanctum', 'abilities:access', 'approved'])->group(function (): void {
         Route::prefix('drugs')->group(function (): void {
             Route::get('search', Drug\SearchController::class)
                 ->name('api.v1.drugs.search');

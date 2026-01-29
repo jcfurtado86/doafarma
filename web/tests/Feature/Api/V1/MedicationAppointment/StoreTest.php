@@ -26,7 +26,7 @@ it('should allow receptor to create appointment for confirmed request', function
         ->confirmed()
         ->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = postJson('/api/v1/medication-appointments', [
         'medication_request_id' => $request->id,
@@ -57,7 +57,7 @@ it('should return 201 with appointment data including request and address', func
         ->confirmed()
         ->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = postJson('/api/v1/medication-appointments', [
         'medication_request_id' => $request->id,
@@ -104,7 +104,7 @@ it('should use doctors first address automatically', function (): void {
         ->confirmed()
         ->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = postJson('/api/v1/medication-appointments', [
         'medication_request_id' => $request->id,
@@ -127,7 +127,7 @@ it('should allow scheduling for today', function (): void {
         ->confirmed()
         ->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = postJson('/api/v1/medication-appointments', [
         'medication_request_id' => $request->id,
@@ -143,7 +143,7 @@ it('should allow scheduling for today', function (): void {
 it('should return validation error when medication_request_id is missing', function (): void {
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson('/api/v1/medication-appointments', [
         'scheduled_date' => now()->addDays(3)->toDateString(),
@@ -156,7 +156,7 @@ it('should return validation error when medication_request_id is missing', funct
 it('should return validation error when medication_request_id does not exist', function (): void {
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson('/api/v1/medication-appointments', [
         'medication_request_id' => 99999,
@@ -174,7 +174,7 @@ it('should return validation error when scheduled_date is missing', function ():
         ->confirmed()
         ->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson('/api/v1/medication-appointments', [
         'medication_request_id' => $request->id,
@@ -195,7 +195,7 @@ it('should return validation error when scheduled_date is in the past', function
         ->confirmed()
         ->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson('/api/v1/medication-appointments', [
         'medication_request_id' => $request->id,
@@ -213,7 +213,7 @@ it('should return validation error when scheduled_time is missing', function ():
         ->confirmed()
         ->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson('/api/v1/medication-appointments', [
         'medication_request_id' => $request->id,
@@ -230,7 +230,7 @@ it('should return validation error when scheduled_time has invalid format', func
         ->confirmed()
         ->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson('/api/v1/medication-appointments', [
         'medication_request_id' => $request->id,
@@ -263,7 +263,7 @@ it('should return 403 forbidden when doctor tries to create appointment', functi
         ->confirmed()
         ->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     postJson('/api/v1/medication-appointments', [
         'medication_request_id' => $request->id,
@@ -280,7 +280,7 @@ it('should return 403 when receptor tries to create appointment for another rece
         ->confirmed()
         ->create();
 
-    actingAs($receptor2);
+    actingAs($receptor2, 'sanctum');
 
     postJson('/api/v1/medication-appointments', [
         'medication_request_id' => $request->id,
@@ -298,7 +298,7 @@ it('should return 422 when request is not confirmed (pending)', function (): voi
         ->pending()
         ->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson('/api/v1/medication-appointments', [
         'medication_request_id' => $request->id,
@@ -316,7 +316,7 @@ it('should return 422 when request is rejected', function (): void {
         ->rejected()
         ->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson('/api/v1/medication-appointments', [
         'medication_request_id' => $request->id,
@@ -344,7 +344,7 @@ it('should return 409 conflict when appointment already exists for request', fun
         'address_id'            => $address->id,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson('/api/v1/medication-appointments', [
         'medication_request_id' => $request->id,
@@ -366,7 +366,7 @@ it('should return 422 when doctor has no registered addresses', function (): voi
         ->confirmed()
         ->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson('/api/v1/medication-appointments', [
         'medication_request_id' => $request->id,

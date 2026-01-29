@@ -43,7 +43,7 @@ it('should list all ratings for a doctor', function (): void {
         ]));
     }
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson("/api/v1/doctor-ratings/doctor/{$doctor->id}");
 
@@ -55,7 +55,7 @@ it('should return empty array when doctor has no ratings', function (): void {
     $doctor   = Doctor::factory()->create();
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson("/api/v1/doctor-ratings/doctor/{$doctor->id}");
 
@@ -99,7 +99,7 @@ it('should return ratings ordered by most recent first', function (): void {
         'created_at'                => now(),
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson("/api/v1/doctor-ratings/doctor/{$doctor->id}");
 
@@ -127,7 +127,7 @@ it('should include receptor name in response', function (): void {
         'receptor_id'               => $receptor->id,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson("/api/v1/doctor-ratings/doctor/{$doctor->id}");
 
@@ -147,7 +147,7 @@ it('should return 401 for unauthenticated users', function (): void {
 it('should allow doctors to view their own ratings', function (): void {
     $doctor = Doctor::factory()->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     getJson("/api/v1/doctor-ratings/doctor/{$doctor->id}")
         ->assertOk();
@@ -157,7 +157,7 @@ it('should allow receptors to view doctor ratings', function (): void {
     $doctor   = Doctor::factory()->create();
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     getJson("/api/v1/doctor-ratings/doctor/{$doctor->id}")
         ->assertOk();
@@ -168,7 +168,7 @@ it('should allow receptors to view doctor ratings', function (): void {
 it('should return 404 for non-existent doctor', function (): void {
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     getJson('/api/v1/doctor-ratings/doctor/99999')
         ->assertNotFound();
@@ -207,7 +207,7 @@ it('should only show ratings for the specified doctor', function (): void {
         'receptor_id'               => $receptor->id,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson("/api/v1/doctor-ratings/doctor/{$doctor1->id}");
 

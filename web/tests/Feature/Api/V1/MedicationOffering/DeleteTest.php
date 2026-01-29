@@ -14,7 +14,7 @@ it('should delete the offering and return 204 No Content for the owner', functio
     $doctor   = Doctor::factory()->create();
     $offering = MedicationOffering::factory()->create(['doctor_id' => $doctor->id]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     deleteJson("/api/v1/medication-offerings/{$offering->id}")
         ->assertNoContent();
@@ -29,7 +29,7 @@ it('should return 403 Forbidden when trying to delete another doctor\'s offering
     $otherDoctor   = Doctor::factory()->create();
     $otherOffering = MedicationOffering::factory()->create(['doctor_id' => $otherDoctor->id]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     deleteJson("/api/v1/medication-offerings/{$otherOffering->id}")
         ->assertForbidden();
@@ -40,7 +40,7 @@ it('should return 403 Forbidden when trying to delete another doctor\'s offering
 it('should return 404 Not Found for a non-existent offering', function (): void {
     $doctor = Doctor::factory()->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     deleteJson('/api/v1/medication-offerings/99999')
         ->assertNotFound();
@@ -57,7 +57,7 @@ it('should return 403 Forbidden for authenticated users who are not doctors', fu
     $user     = User::factory()->create();
     $offering = MedicationOffering::factory()->create();
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     deleteJson("/api/v1/medication-offerings/{$offering->id}")
         ->assertForbidden();

@@ -11,7 +11,7 @@ test('authenticated users can view their own medication offering', function (): 
         'doctor_id' => $user->doctor->id,
     ]);
 
-    $response = $this->actingAs($user)
+    $response = $this->actingAs($user, 'sanctum')
         ->getJson("/api/v1/medication-offerings/{$medicationOffering->id}");
 
     $response->assertSuccessful();
@@ -38,7 +38,7 @@ test('authenticated users cannot view other users medication offerings', functio
         'doctor_id' => $otherUser->doctor->id,
     ]);
 
-    $response = $this->actingAs($user)
+    $response = $this->actingAs($user, 'sanctum')
         ->getJson("/api/v1/medication-offerings/{$medicationOffering->id}");
 
     $response->assertForbidden();
@@ -55,7 +55,7 @@ test('unauthenticated users cannot view medication offerings', function (): void
 test('returns 404 for non-existent medication offering', function (): void {
     $user = User::factory()->doctor()->create();
 
-    $response = $this->actingAs($user)
+    $response = $this->actingAs($user, 'sanctum')
         ->getJson('/api/v1/medication-offerings/999999');
 
     $response->assertNotFound();

@@ -30,7 +30,7 @@ it('should allow doctor to confirm delivery', function (): void {
         'scheduled_date'        => now()->subDays(1)->toDateString(),
     ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = patchJson("/api/v1/medication-appointments/{$appointment->id}/confirm-delivery-doctor");
 
@@ -56,7 +56,7 @@ it('should complete appointment and offering when both confirm', function (): vo
         'receptor_confirmed'    => true,
     ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/confirm-delivery-doctor")
         ->assertOk()
@@ -93,7 +93,7 @@ it('should return 403 when receptor tries to confirm as doctor', function (): vo
         'scheduled_date'        => now()->subDays(1)->toDateString(),
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/confirm-delivery-doctor")
         ->assertForbidden();
@@ -116,7 +116,7 @@ it('should return 403 when doctor confirms another doctors appointment', functio
         'scheduled_date'        => now()->subDays(1)->toDateString(),
     ]);
 
-    actingAs($doctorB->user);
+    actingAs($doctorB->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/confirm-delivery-doctor")
         ->assertForbidden();
@@ -139,7 +139,7 @@ it('should return 422 when appointment is already completed', function (): void 
         'address_id'            => $address->id,
     ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/confirm-delivery-doctor")
         ->assertStatus(422)
@@ -162,7 +162,7 @@ it('should return 422 when confirming before scheduled date', function (): void 
         'scheduled_date'        => now()->addDays(5)->toDateString(),
     ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/confirm-delivery-doctor")
         ->assertStatus(422)
@@ -186,7 +186,7 @@ it('should return 422 when doctor already confirmed', function (): void {
         'doctor_confirmed'      => true,
     ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/confirm-delivery-doctor")
         ->assertStatus(422)

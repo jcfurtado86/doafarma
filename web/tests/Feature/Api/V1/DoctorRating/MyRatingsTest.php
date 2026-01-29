@@ -42,7 +42,7 @@ it('should return ratings for authenticated doctor', function (): void {
     createRatingForDoctor($doctor, $receptor, 4);
     createRatingForDoctor($doctor, $receptor, 5);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/doctor-ratings/my-ratings');
 
@@ -77,7 +77,7 @@ it('should calculate correct summary statistics', function (): void {
     createRatingForDoctor($doctor, $receptor, 3);
     createRatingForDoctor($doctor, $receptor, 2);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/doctor-ratings/my-ratings');
 
@@ -94,7 +94,7 @@ it('should calculate correct summary statistics', function (): void {
 it('should return empty ratings for doctor with no ratings', function (): void {
     $doctor = Doctor::factory()->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/doctor-ratings/my-ratings');
 
@@ -140,7 +140,7 @@ it('should return ratings ordered by most recent first', function (): void {
         'created_at'                => now(),
     ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/doctor-ratings/my-ratings');
 
@@ -155,7 +155,7 @@ it('should include receptor information', function (): void {
 
     createRatingForDoctor($doctor, $receptor, 5);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/doctor-ratings/my-ratings');
 
@@ -169,7 +169,7 @@ it('should include medication appointment information', function (): void {
 
     createRatingForDoctor($doctor, $receptor, 5);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/doctor-ratings/my-ratings');
 
@@ -193,7 +193,7 @@ it('should return 401 for unauthenticated users', function (): void {
 it('should return 403 for receptor users', function (): void {
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     getJson('/api/v1/doctor-ratings/my-ratings')
         ->assertForbidden()
@@ -212,7 +212,7 @@ it('should only return ratings for the authenticated doctor', function (): void 
     // Create rating for doctor2
     createRatingForDoctor($doctor2, $receptor, 3);
 
-    actingAs($doctor1->user);
+    actingAs($doctor1->user, 'sanctum');
 
     $response = getJson('/api/v1/doctor-ratings/my-ratings');
 
@@ -242,7 +242,7 @@ it('should handle ratings with null comments', function (): void {
         'rating'                    => 5,
     ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/doctor-ratings/my-ratings');
 
@@ -260,7 +260,7 @@ it('should correctly round average to one decimal place', function (): void {
     createRatingForDoctor($doctor, $receptor, 4);
     createRatingForDoctor($doctor, $receptor, 3);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/doctor-ratings/my-ratings');
 

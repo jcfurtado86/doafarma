@@ -37,7 +37,7 @@ it('should allow doctor to counter-propose with new date and time', function ():
 
     $newDate = Carbon::now()->addDays(7)->toDateString();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
         'scheduled_date' => $newDate,
@@ -71,7 +71,7 @@ it('should allow doctor to counter-propose with new address', function (): void 
 
     $newDate = Carbon::now()->addDays(3)->toDateString();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
         'scheduled_date' => $newDate,
@@ -102,7 +102,7 @@ it('should allow receptor to counter-propose after doctor', function (): void {
 
     $newDate = Carbon::now()->addDays(10)->toDateString();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
         'scheduled_date' => $newDate,
@@ -135,7 +135,7 @@ it('should preserve address if not sent in counter-proposal', function (): void 
 
     $newDate = Carbon::now()->addDays(3)->toDateString();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
         'scheduled_date' => $newDate,
@@ -164,21 +164,21 @@ it('should allow multiple counter-proposals in sequence', function (): void {
         ]);
 
     // Doctor counter-proposes
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
         'scheduled_date' => Carbon::now()->addDays(5)->toDateString(),
         'scheduled_time' => '10:00',
     ])->assertOk()->assertJsonPath('data.proposed_by', 'doctor');
 
     // Receptor counter-proposes
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
         'scheduled_date' => Carbon::now()->addDays(6)->toDateString(),
         'scheduled_time' => '11:00',
     ])->assertOk()->assertJsonPath('data.proposed_by', 'receptor');
 
     // Doctor counter-proposes again
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
         'scheduled_date' => Carbon::now()->addDays(7)->toDateString(),
         'scheduled_time' => '12:00',
@@ -214,7 +214,7 @@ it('should return 403 when receptor tries to counter-propose own proposal', func
             'address_id'            => $address->id,
         ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
         'scheduled_date' => Carbon::now()->addDays(5)->toDateString(),
@@ -240,7 +240,7 @@ it('should return 403 when doctor tries to counter-propose own counter-proposal'
             'address_id'            => $address->id,
         ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
         'scheduled_date' => Carbon::now()->addDays(5)->toDateString(),
@@ -267,7 +267,7 @@ it('should return 403 when doctor tries to counter-propose another doctors appoi
             'address_id'            => $address->id,
         ]);
 
-    actingAs($doctorB->user);
+    actingAs($doctorB->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
         'scheduled_date' => Carbon::now()->addDays(5)->toDateString(),
@@ -295,7 +295,7 @@ it('should return 422 when scheduled_date is missing', function (): void {
             'address_id'            => $address->id,
         ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
         'scheduled_time' => '10:00',
@@ -322,7 +322,7 @@ it('should return 422 when scheduled_time is missing', function (): void {
             'address_id'            => $address->id,
         ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
         'scheduled_date' => Carbon::now()->addDays(5)->toDateString(),
@@ -349,7 +349,7 @@ it('should return 422 when scheduled_date is in the past', function (): void {
             'address_id'            => $address->id,
         ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
         'scheduled_date' => Carbon::now()->subDays(1)->toDateString(),
@@ -377,7 +377,7 @@ it('should return 422 when scheduled_time has invalid format', function (): void
             'address_id'            => $address->id,
         ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
         'scheduled_date' => Carbon::now()->addDays(5)->toDateString(),
@@ -405,7 +405,7 @@ it('should return 422 when address_id does not exist', function (): void {
             'address_id'            => $address->id,
         ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
         'scheduled_date' => Carbon::now()->addDays(5)->toDateString(),
@@ -436,7 +436,7 @@ it('should return 422 when doctor uses another doctors address', function (): vo
             'address_id'            => $addressA->id,
         ]);
 
-    actingAs($doctorA->user);
+    actingAs($doctorA->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
         'scheduled_date' => Carbon::now()->addDays(5)->toDateString(),
@@ -467,7 +467,7 @@ it('should return 422 when trying to counter-propose confirmed appointment', fun
             'address_id'            => $address->id,
         ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
         'scheduled_date' => Carbon::now()->addDays(5)->toDateString(),
@@ -494,7 +494,7 @@ it('should return 422 when trying to counter-propose completed appointment', fun
             'address_id'            => $address->id,
         ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
         'scheduled_date' => Carbon::now()->addDays(5)->toDateString(),
@@ -522,7 +522,7 @@ it('should ignore address_id when receptor counter-proposes', function (): void 
             'address_id'            => $address1->id,
         ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     // Receptor tries to set address_id but it should be ignored
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
@@ -554,7 +554,7 @@ it('should accept counter-proposal with today date', function (): void {
             'address_id'            => $address->id,
         ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/counter-propose", [
         'scheduled_date' => Carbon::today()->toDateString(),

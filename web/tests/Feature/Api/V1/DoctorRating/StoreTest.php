@@ -38,7 +38,7 @@ it('should allow receptor to rate a doctor after completed appointment', functio
     $receptor    = User::factory()->receptor()->create();
     $appointment = createCompletedAppointment($receptor);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = postJson("/api/v1/doctor-ratings/{$appointment->id}", [
         'rating'  => 5,
@@ -60,7 +60,7 @@ it('should allow rating without comment', function (): void {
     $receptor    = User::factory()->receptor()->create();
     $appointment = createCompletedAppointment($receptor);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = postJson("/api/v1/doctor-ratings/{$appointment->id}", [
         'rating' => 4,
@@ -76,7 +76,7 @@ it('should return correct doctor and receptor info in response', function (): vo
     $doctor      = Doctor::factory()->create();
     $appointment = createCompletedAppointment($receptor, $doctor);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = postJson("/api/v1/doctor-ratings/{$appointment->id}", [
         'rating' => 5,
@@ -93,7 +93,7 @@ it('should return 422 when rating is missing', function (): void {
     $receptor    = User::factory()->receptor()->create();
     $appointment = createCompletedAppointment($receptor);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson("/api/v1/doctor-ratings/{$appointment->id}", [])
         ->assertStatus(422)
@@ -104,7 +104,7 @@ it('should return 422 when rating is below 1', function (): void {
     $receptor    = User::factory()->receptor()->create();
     $appointment = createCompletedAppointment($receptor);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson("/api/v1/doctor-ratings/{$appointment->id}", [
         'rating' => 0,
@@ -117,7 +117,7 @@ it('should return 422 when rating is above 5', function (): void {
     $receptor    = User::factory()->receptor()->create();
     $appointment = createCompletedAppointment($receptor);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson("/api/v1/doctor-ratings/{$appointment->id}", [
         'rating' => 6,
@@ -130,7 +130,7 @@ it('should return 422 when comment exceeds max length', function (): void {
     $receptor    = User::factory()->receptor()->create();
     $appointment = createCompletedAppointment($receptor);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson("/api/v1/doctor-ratings/{$appointment->id}", [
         'rating'  => 5,
@@ -157,7 +157,7 @@ it('should return 403 when doctor tries to rate themselves', function (): void {
     $doctor      = Doctor::factory()->create();
     $appointment = createCompletedAppointment($receptor, $doctor);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     postJson("/api/v1/doctor-ratings/{$appointment->id}", [
         'rating' => 5,
@@ -170,7 +170,7 @@ it('should return 403 when receptor tries to rate another receptors appointment'
     $receptor2   = User::factory()->receptor()->create();
     $appointment = createCompletedAppointment($receptor1);
 
-    actingAs($receptor2);
+    actingAs($receptor2, 'sanctum');
 
     postJson("/api/v1/doctor-ratings/{$appointment->id}", [
         'rating' => 5,
@@ -195,7 +195,7 @@ it('should return 422 when appointment is not completed', function (): void {
         'address_id'            => $address->id,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson("/api/v1/doctor-ratings/{$appointment->id}", [
         'rating' => 5,
@@ -217,7 +217,7 @@ it('should return 409 when rating already exists for appointment', function (): 
         'rating'                    => 4,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson("/api/v1/doctor-ratings/{$appointment->id}", [
         'rating' => 5,
@@ -231,7 +231,7 @@ it('should return 409 when rating already exists for appointment', function (): 
 it('should return 404 for non-existent appointment', function (): void {
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson('/api/v1/doctor-ratings/99999', [
         'rating' => 5,
@@ -244,7 +244,7 @@ it('should accept all valid ratings from 1 to 5', function (): void {
         $receptor    = User::factory()->receptor()->create();
         $appointment = createCompletedAppointment($receptor);
 
-        actingAs($receptor);
+        actingAs($receptor, 'sanctum');
 
         postJson("/api/v1/doctor-ratings/{$appointment->id}", [
             'rating' => $rating,

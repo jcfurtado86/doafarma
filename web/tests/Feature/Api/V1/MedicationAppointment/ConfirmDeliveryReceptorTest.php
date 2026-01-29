@@ -30,7 +30,7 @@ it('should allow receptor to confirm delivery', function (): void {
         'scheduled_date'        => now()->subDays(1)->toDateString(),
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = patchJson("/api/v1/medication-appointments/{$appointment->id}/confirm-delivery-receptor");
 
@@ -56,7 +56,7 @@ it('should complete appointment when both parties confirm', function (): void {
         'doctor_confirmed'      => true,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = patchJson("/api/v1/medication-appointments/{$appointment->id}/confirm-delivery-receptor");
 
@@ -86,7 +86,7 @@ it('should allow confirmation on scheduled date', function (): void {
         'scheduled_date'        => now()->toDateString(),
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/confirm-delivery-receptor")
         ->assertOk();
@@ -119,7 +119,7 @@ it('should return 403 when doctor tries to confirm as receptor', function (): vo
         'scheduled_date'        => now()->subDays(1)->toDateString(),
     ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/confirm-delivery-receptor")
         ->assertForbidden();
@@ -142,7 +142,7 @@ it('should return 403 when receptor confirms another receptors appointment', fun
         'scheduled_date'        => now()->subDays(1)->toDateString(),
     ]);
 
-    actingAs($receptor2);
+    actingAs($receptor2, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/confirm-delivery-receptor")
         ->assertForbidden();
@@ -165,7 +165,7 @@ it('should return 422 when appointment is already completed', function (): void 
         'address_id'            => $address->id,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/confirm-delivery-receptor")
         ->assertStatus(422)
@@ -188,7 +188,7 @@ it('should return 422 when confirming before scheduled date', function (): void 
         'scheduled_date'        => now()->addDays(5)->toDateString(),
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/confirm-delivery-receptor")
         ->assertStatus(422)
@@ -212,7 +212,7 @@ it('should return 422 when receptor already confirmed', function (): void {
         'receptor_confirmed'    => true,
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/confirm-delivery-receptor")
         ->assertStatus(422)
@@ -224,7 +224,7 @@ it('should return 422 when receptor already confirmed', function (): void {
 it('should return 404 for non-existent appointment', function (): void {
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     patchJson('/api/v1/medication-appointments/99999/confirm-delivery-receptor')
         ->assertNotFound();

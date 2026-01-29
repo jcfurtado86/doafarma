@@ -23,7 +23,7 @@ it('should allow doctor to confirm a pending request for their offering', functi
         ->pending()
         ->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = patchJson("/api/v1/medication-requests/{$request->id}/confirm");
 
@@ -45,7 +45,7 @@ it('should keep offering status as reserved after confirmation', function (): vo
         ->pending()
         ->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-requests/{$request->id}/confirm")
         ->assertOk();
@@ -65,7 +65,7 @@ it('should return updated request data after confirmation', function (): void {
         ->pending()
         ->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = patchJson("/api/v1/medication-requests/{$request->id}/confirm");
 
@@ -104,7 +104,7 @@ it('should return 403 forbidden when receptor tries to confirm a request', funct
         ->pending()
         ->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     patchJson("/api/v1/medication-requests/{$request->id}/confirm")
         ->assertForbidden();
@@ -122,7 +122,7 @@ it('should return 403 forbidden when doctor tries to confirm another doctor\'s r
         ->pending()
         ->create();
 
-    actingAs($doctorA->user);
+    actingAs($doctorA->user, 'sanctum');
 
     patchJson("/api/v1/medication-requests/{$request->id}/confirm")
         ->assertForbidden();
@@ -141,7 +141,7 @@ it('should return 422 when trying to confirm an already confirmed request', func
         ->confirmed()
         ->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-requests/{$request->id}/confirm")
         ->assertStatus(422)
@@ -161,7 +161,7 @@ it('should return 422 when trying to confirm a rejected request', function (): v
         ->rejected()
         ->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-requests/{$request->id}/confirm")
         ->assertStatus(422)
@@ -175,7 +175,7 @@ it('should return 422 when trying to confirm a rejected request', function (): v
 it('should return 404 for non-existent request', function (): void {
     $doctor = Doctor::factory()->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson('/api/v1/medication-requests/99999/confirm')
         ->assertNotFound();

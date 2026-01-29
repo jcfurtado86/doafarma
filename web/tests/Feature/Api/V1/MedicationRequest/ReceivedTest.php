@@ -23,7 +23,7 @@ it('should allow a doctor to list requests for their offerings', function (): vo
         ->pending()
         ->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/medication-requests/received');
 
@@ -46,7 +46,7 @@ it('should allow a doctor to list requests for their offerings', function (): vo
 it('should return empty array when doctor has no received requests', function (): void {
     $doctor = Doctor::factory()->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/medication-requests/received');
 
@@ -65,7 +65,7 @@ it('should include receptor details in response', function (): void {
         ->pending()
         ->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/medication-requests/received');
 
@@ -95,7 +95,7 @@ it('should include offering and drug details in response', function (): void {
         ->pending()
         ->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/medication-requests/received');
 
@@ -129,7 +129,7 @@ it('should return requests ordered by created_at descending', function (): void 
         ->forOffering($offering2)
         ->create(['created_at' => now()]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/medication-requests/received');
 
@@ -159,7 +159,7 @@ it('should filter requests by status=pending', function (): void {
         ->confirmed()
         ->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/medication-requests/received?status=pending');
 
@@ -186,7 +186,7 @@ it('should filter requests by status=confirmed', function (): void {
         ->confirmed()
         ->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/medication-requests/received?status=confirmed');
 
@@ -213,7 +213,7 @@ it('should filter requests by status=rejected', function (): void {
         ->rejected()
         ->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/medication-requests/received?status=rejected');
 
@@ -233,7 +233,7 @@ it('should return all statuses when no filter is provided', function (): void {
     MedicationRequest::factory()->forReceptor($receptor)->forOffering($offering2)->confirmed()->create();
     MedicationRequest::factory()->forReceptor($receptor)->forOffering($offering3)->rejected()->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/medication-requests/received');
 
@@ -251,7 +251,7 @@ it('should return 401 unauthorized for unauthenticated users', function (): void
 it('should return 403 forbidden when receptor tries to access received endpoint', function (): void {
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     getJson('/api/v1/medication-requests/received')
         ->assertForbidden();
@@ -271,7 +271,7 @@ it('should not allow doctor A to see doctor B\'s received requests', function ()
         ->pending()
         ->create();
 
-    actingAs($doctorA->user);
+    actingAs($doctorA->user, 'sanctum');
 
     $response = getJson('/api/v1/medication-requests/received');
 

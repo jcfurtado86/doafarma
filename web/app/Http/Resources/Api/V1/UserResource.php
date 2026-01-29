@@ -28,6 +28,7 @@ class UserResource extends JsonResource
         $data = [
             'id'   => $this->id,
             'name' => $this->name,
+            'role' => $this->role->value,
 
             'doctor_profile' => DoctorResource::make($this->whenLoaded('doctor')),
             'addresses'      => AddressResource::collection($this->whenLoaded('addresses')),

@@ -26,23 +26,29 @@ const api = axios.create({
 });
 
 let isRefreshing = false;
-let refreshSubscribers: ((token: string) => void)[] = [];
+let failedQueue: {
+  resolve: (token: string) => void;
+  reject: (error: unknown) => void;
+}[] = [];
 
-function subscribeTokenRefresh(callback: (token: string) => void): void {
-  refreshSubscribers.push(callback);
-}
-
-function onTokenRefreshed(newToken: string): void {
-  refreshSubscribers.forEach((callback) => callback(newToken));
-  refreshSubscribers = [];
-}
-
-function onRefreshFailed(): void {
-  refreshSubscribers = [];
+function processQueue(error: unknown, token: string | null = null): void {
+  failedQueue.forEach((promise) => {
+    if (error) {
+      promise.reject(error);
+    } else if (token) {
+      promise.resolve(token);
+    }
+  });
+  failedQueue = [];
 }
 
 api.interceptors.request.use(
   async (config) => {
+    // Don't override if Authorization header is already set (e.g., refresh token call)
+    if (config.headers.Authorization) {
+      return config;
+    }
+
     const token = await SecureStore.getItemAsync(STORAGE_KEYS.AUTH_TOKEN);
 
     if (token) {
@@ -60,26 +66,29 @@ api.interceptors.response.use(
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
     if (error.response?.status === 401) {
+      // Don't retry the refresh endpoint itself
       if (originalRequest.url?.includes('/auth/refresh')) {
         await handleLogout('Sessão expirada', 'Faça login novamente para continuar.');
         return Promise.reject(error);
       }
 
+      // Don't retry if we already tried
       if (originalRequest._retry) {
         return Promise.reject(error);
       }
 
+      // If already refreshing, queue this request
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
-          subscribeTokenRefresh((newToken: string) => {
-            originalRequest.headers.Authorization = `Bearer ${newToken}`;
-            resolve(api.request(originalRequest));
+          failedQueue.push({
+            resolve: (token: string) => {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+              resolve(api.request(originalRequest));
+            },
+            reject: (err: unknown) => {
+              reject(err);
+            },
           });
-          setTimeout(() => {
-            if (!isRefreshing) {
-              reject(error);
-            }
-          }, 10000);
         });
       }
 
@@ -87,7 +96,7 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const refreshToken = await useAuthStore.getState().getRefreshToken();
+        const refreshToken = await SecureStore.getItemAsync(STORAGE_KEYS.REFRESH_TOKEN);
 
         if (!refreshToken) {
           throw new Error('No refresh token available');
@@ -107,12 +116,16 @@ api.interceptors.response.use(
         const { access_token, expires_in } = response.data.data;
 
         await useAuthStore.getState().updateAccessToken(access_token, expires_in);
-        onTokenRefreshed(access_token);
 
+        // Process queued requests with new token
+        processQueue(null, access_token);
+
+        // Retry original request with new token
         originalRequest.headers.Authorization = `Bearer ${access_token}`;
         return api.request(originalRequest);
       } catch (refreshError) {
-        onRefreshFailed();
+        // Process queued requests with error
+        processQueue(refreshError, null);
         await handleLogout('Sessão expirada', 'Faça login novamente para continuar.');
         return Promise.reject(refreshError);
       } finally {

@@ -13,6 +13,7 @@
 import axios from 'axios';
 import api from '@/services/api';
 import { authService, AuthServiceError } from '@/services/authService';
+import { API_ENDPOINTS } from '@/config/endpoints';
 
 // Mock the api module
 jest.mock('@/services/api', () => ({
@@ -314,7 +315,7 @@ describe('authService', () => {
 
       await authService.logout();
 
-      expect(api.post).toHaveBeenCalledWith('/logout');
+      expect(api.post).toHaveBeenCalledWith(API_ENDPOINTS.AUTH.LOGOUT);
     });
 
     it('should not throw even if backend returns error', async () => {

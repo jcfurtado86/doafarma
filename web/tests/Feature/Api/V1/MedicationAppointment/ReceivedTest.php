@@ -29,7 +29,7 @@ it('should return list of doctor received appointments', function (): void {
         'address_id'            => $address->id,
     ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/medication-appointments/received');
 
@@ -53,7 +53,7 @@ it('should include receptor details in response', function (): void {
         'address_id'            => $address->id,
     ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/medication-appointments/received');
 
@@ -99,7 +99,7 @@ it('should only return appointments for doctors offerings', function (): void {
         'address_id'            => $addressB->id,
     ]);
 
-    actingAs($doctorA->user);
+    actingAs($doctorA->user, 'sanctum');
 
     getJson('/api/v1/medication-appointments/received')
         ->assertOk()
@@ -133,7 +133,7 @@ it('should filter by status', function (): void {
         'address_id'            => $address->id,
     ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     getJson('/api/v1/medication-appointments/received?status=proposed')
         ->assertOk()
@@ -150,7 +150,7 @@ it('should return 401 for unauthenticated users', function (): void {
 it('should return 403 when receptor tries to access doctor list', function (): void {
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     getJson('/api/v1/medication-appointments/received')
         ->assertForbidden();

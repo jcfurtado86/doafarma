@@ -37,7 +37,7 @@ it('should return null when appointment has no rating', function (): void {
     $receptor    = User::factory()->receptor()->create();
     $appointment = createCompletedAppointmentForShow($receptor);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson("/api/v1/doctor-ratings/appointment/{$appointment->id}");
 
@@ -58,7 +58,7 @@ it('should return existing rating when appointment has been rated', function ():
         'comment'                   => 'Excelente!',
     ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson("/api/v1/doctor-ratings/appointment/{$appointment->id}");
 
@@ -83,7 +83,7 @@ it('should return 403 when receptor checks another receptors appointment', funct
     $receptor2   = User::factory()->receptor()->create();
     $appointment = createCompletedAppointmentForShow($receptor1);
 
-    actingAs($receptor2);
+    actingAs($receptor2, 'sanctum');
 
     getJson("/api/v1/doctor-ratings/appointment/{$appointment->id}")
         ->assertForbidden();
@@ -94,7 +94,7 @@ it('should return 403 when receptor checks another receptors appointment', funct
 it('should return 404 for non-existent appointment', function (): void {
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     getJson('/api/v1/doctor-ratings/appointment/99999')
         ->assertNotFound();

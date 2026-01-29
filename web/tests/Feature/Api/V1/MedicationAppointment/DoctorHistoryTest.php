@@ -29,7 +29,7 @@ it('should return list of completed donations (doctor history)', function (): vo
         'address_id'            => $address->id,
     ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/medication-appointments/doctor-history');
 
@@ -54,7 +54,7 @@ it('should return doctor history with correct structure including drug and recep
         'address_id'            => $address->id,
     ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/medication-appointments/doctor-history');
 
@@ -99,7 +99,7 @@ it('should return doctor history with correct structure including drug and recep
 it('should return empty list when doctor has no completed donations', function (): void {
     $doctor = Doctor::factory()->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     getJson('/api/v1/medication-appointments/doctor-history')
         ->assertOk()
@@ -146,7 +146,7 @@ it('should only return completed appointments, not proposed or confirmed', funct
         'address_id'            => $address->id,
     ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/medication-appointments/doctor-history');
 
@@ -184,7 +184,7 @@ it('should only return own completed donations', function (): void {
         'address_id'            => $address2->id,
     ]);
 
-    actingAs($doctor1->user);
+    actingAs($doctor1->user, 'sanctum');
 
     $response = getJson('/api/v1/medication-appointments/doctor-history');
 
@@ -224,7 +224,7 @@ it('should return history sorted by completion date (most recent first)', functi
         'updated_at'            => now()->subDays(2),
     ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/medication-appointments/doctor-history');
 
@@ -243,7 +243,7 @@ it('should return 401 for unauthenticated users', function (): void {
 it('should return 403 when receptor tries to access doctor history', function (): void {
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     getJson('/api/v1/medication-appointments/doctor-history')
         ->assertForbidden();

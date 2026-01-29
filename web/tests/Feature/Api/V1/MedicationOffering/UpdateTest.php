@@ -30,7 +30,7 @@ it('updates the medication offering when requested by the owning doctor', functi
         'quantity'   => 20,
     ];
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = putJson(
         '/api/v1/medication-offerings/' . $offering->id,
@@ -66,7 +66,7 @@ it('allows partial updates (only provided fields are changed)', function (): voi
         'quantity'   => 10,
     ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $payload = ['quantity' => 1];
 
@@ -88,7 +88,7 @@ it('returns a validation error for various invalid data payloads', function (arr
     $doctor   = Doctor::factory()->create();
     $offering = MedicationOffering::factory()->create(['doctor_id' => $doctor->id]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $payload = array_merge([
         'lot_number' => 'VALID-LOT',
@@ -123,7 +123,7 @@ it('returns 403 if an authenticated user is not a doctor', function (): void {
     $user     = User::factory()->create();
     $offering = MedicationOffering::factory()->create();
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     putJson(
         route('api.v1.medication-offerings.put', ['medicationOffering' => $offering->id]),
@@ -140,7 +140,7 @@ it('returns 403 if an authenticated doctor is not the owner of the offering', fu
         'quantity'  => 5,
     ]);
 
-    actingAs($otherDoctor->user);
+    actingAs($otherDoctor->user, 'sanctum');
 
     putJson(
         route('api.v1.medication-offerings.put', ['medicationOffering' => $offering->id]),

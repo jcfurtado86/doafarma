@@ -19,7 +19,7 @@ it('should allow a receptor to create a request for an available offering', func
     $receptor = User::factory()->receptor()->create();
     $offering = MedicationOffering::factory()->available()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = postJson('/api/v1/medication-requests', [
         'medication_offering_id' => $offering->id,
@@ -38,7 +38,7 @@ it('should return 201 with request data including offering details', function ()
     $receptor = User::factory()->receptor()->create();
     $offering = MedicationOffering::factory()->available()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = postJson('/api/v1/medication-requests', [
         'medication_offering_id' => $offering->id,
@@ -69,7 +69,7 @@ it('should change the offering status to reserved after request creation', funct
     $receptor = User::factory()->receptor()->create();
     $offering = MedicationOffering::factory()->available()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson('/api/v1/medication-requests', [
         'medication_offering_id' => $offering->id,
@@ -83,7 +83,7 @@ it('should return the correct Content-Type header', function (): void {
     $receptor = User::factory()->receptor()->create();
     $offering = MedicationOffering::factory()->available()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = postJson('/api/v1/medication-requests', [
         'medication_offering_id' => $offering->id,
@@ -99,7 +99,7 @@ it('should return the correct Content-Type header', function (): void {
 it('should return validation error when medication_offering_id is missing', function (): void {
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson('/api/v1/medication-requests', [])
         ->assertUnprocessable()
@@ -109,7 +109,7 @@ it('should return validation error when medication_offering_id is missing', func
 it('should return validation error when medication_offering_id does not exist', function (): void {
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson('/api/v1/medication-requests', [
         'medication_offering_id' => 99999,
@@ -121,7 +121,7 @@ it('should return validation error when medication_offering_id does not exist', 
 it('should return validation error when medication_offering_id is not an integer', function (): void {
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson('/api/v1/medication-requests', [
         'medication_offering_id' => 'not-an-integer',
@@ -144,7 +144,7 @@ it('should return 403 forbidden when a doctor tries to create a request', functi
     $doctor   = Doctor::factory()->create();
     $offering = MedicationOffering::factory()->available()->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     postJson('/api/v1/medication-requests', [
         'medication_offering_id' => $offering->id,
@@ -157,7 +157,7 @@ it('should return 409 conflict when requesting an already reserved offering', fu
     $receptor = User::factory()->receptor()->create();
     $offering = MedicationOffering::factory()->reserved()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson('/api/v1/medication-requests', [
         'medication_offering_id' => $offering->id,
@@ -172,7 +172,7 @@ it('should return 409 conflict when same receptor tries to request same offering
     $receptor = User::factory()->receptor()->create();
     $offering = MedicationOffering::factory()->available()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     // First request succeeds
     postJson('/api/v1/medication-requests', [
@@ -193,7 +193,7 @@ it('should allow requesting an offering that was previously rejected', function 
     $offering  = MedicationOffering::factory()->available()->create();
 
     // First receptor requests
-    actingAs($receptor1);
+    actingAs($receptor1, 'sanctum');
     postJson('/api/v1/medication-requests', [
         'medication_offering_id' => $offering->id,
     ])->assertCreated();
@@ -211,7 +211,7 @@ it('should allow requesting an offering that was previously rejected', function 
     expect($offering->status)->toBe('available');
 
     // Second receptor can now request
-    actingAs($receptor2);
+    actingAs($receptor2, 'sanctum');
     postJson('/api/v1/medication-requests', [
         'medication_offering_id' => $offering->id,
     ])->assertCreated();
@@ -227,7 +227,7 @@ it('should dispatch NotifyDoctorNewRequestJob when creating a request', function
     $receptor = User::factory()->receptor()->create();
     $offering = MedicationOffering::factory()->available()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson('/api/v1/medication-requests', [
         'medication_offering_id' => $offering->id,
@@ -242,7 +242,7 @@ it('should dispatch notification with correct request id', function (): void {
     $receptor = User::factory()->receptor()->create();
     $offering = MedicationOffering::factory()->available()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     postJson('/api/v1/medication-requests', [
         'medication_offering_id' => $offering->id,

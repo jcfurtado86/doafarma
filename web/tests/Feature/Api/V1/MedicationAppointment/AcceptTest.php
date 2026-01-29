@@ -32,7 +32,7 @@ it('should allow doctor to accept receptor proposal', function (): void {
             'address_id'            => $address->id,
         ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/accept")
         ->assertOk()
@@ -58,7 +58,7 @@ it('should allow receptor to accept doctor counter-proposal', function (): void 
             'address_id'            => $address->id,
         ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/accept")
         ->assertOk()
@@ -84,7 +84,7 @@ it('should return appointment with all related data after accept', function (): 
             'address_id'            => $address->id,
         ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/accept")
         ->assertOk()
@@ -130,7 +130,7 @@ it('should return 403 when receptor tries to accept own proposal', function (): 
             'address_id'            => $address->id,
         ]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/accept")
         ->assertForbidden();
@@ -154,7 +154,7 @@ it('should return 403 when doctor tries to accept own counter-proposal', functio
             'address_id'            => $address->id,
         ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/accept")
         ->assertForbidden();
@@ -179,7 +179,7 @@ it('should return 403 when doctor tries to accept another doctors appointment', 
             'address_id'            => $address->id,
         ]);
 
-    actingAs($doctorB->user);
+    actingAs($doctorB->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/accept")
         ->assertForbidden();
@@ -204,7 +204,7 @@ it('should return 403 when receptor tries to accept another receptors appointmen
             'address_id'            => $address->id,
         ]);
 
-    actingAs($receptorB);
+    actingAs($receptorB, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/accept")
         ->assertForbidden();
@@ -230,7 +230,7 @@ it('should return 422 when trying to accept already confirmed appointment', func
             'address_id'            => $address->id,
         ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/accept")
         ->assertStatus(422)
@@ -254,7 +254,7 @@ it('should return 422 when trying to accept completed appointment', function ():
             'address_id'            => $address->id,
         ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/medication-appointments/{$appointment->id}/accept")
         ->assertStatus(422);
@@ -263,7 +263,7 @@ it('should return 422 when trying to accept completed appointment', function ():
 it('should return 404 when trying to accept non-existent appointment', function (): void {
     $doctor = Doctor::factory()->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson('/api/v1/medication-appointments/99999/accept')
         ->assertNotFound();

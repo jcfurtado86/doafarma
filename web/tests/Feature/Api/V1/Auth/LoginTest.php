@@ -25,7 +25,10 @@ it('should authenticate users via API v1 login', function (): void {
                 'name',
                 'email',
             ],
-            'token',
+            'access_token',
+            'refresh_token',
+            'expires_in',
+            'refresh_expires_in',
         ],
         'message',
     ]);
@@ -39,9 +42,10 @@ it('should authenticate users via API v1 login', function (): void {
     expect($responseData['user']['id'])->toBe($user->id);
     expect($responseData['user']['email'])->toBe($user->email);
     expect($responseData['user']['name'])->toBe($user->name);
-    expect($responseData['token'])->toBeString();
+    expect($responseData['access_token'])->toBeString();
+    expect($responseData['refresh_token'])->toBeString();
 
-    $token                 = $responseData['token'];
+    $token                 = $responseData['access_token'];
     $authenticatedResponse = $this->withHeaders([
         'Authorization' => 'Bearer ' . $token,
     ])->getJson(route('api.v1.drugs.search'));
@@ -142,7 +146,7 @@ it('should return proper error message for invalid credentials via API v1', func
     ]);
 });
 
-it('should create token with correct abilities via API v1', function (): void {
+it('should create tokens with correct abilities via API v1', function (): void {
     $user = User::factory()->create();
 
     $response = $this->postJson('/api/v1/auth/login', [
@@ -152,9 +156,17 @@ it('should create token with correct abilities via API v1', function (): void {
 
     $response->assertSuccessful();
 
-    $token = $user->tokens()->first();
-    expect($token)->not->toBeNull();
-    expect($token->abilities)->toBe(['*']);
+    // Deve criar 2 tokens: access e refresh
+    expect($user->tokens()->count())->toBe(2);
+
+    $accessToken  = $user->tokens()->where('name', 'like', '%:access')->first();
+    $refreshToken = $user->tokens()->where('name', 'like', '%:refresh')->first();
+
+    expect($accessToken)->not->toBeNull();
+    expect($accessToken->abilities)->toBe(['access']);
+
+    expect($refreshToken)->not->toBeNull();
+    expect($refreshToken->abilities)->toBe(['refresh']);
 });
 
 it('should rate limit login attempts via API v1', function (): void {

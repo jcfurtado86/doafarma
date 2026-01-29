@@ -15,12 +15,19 @@ Production:  https://api.doafarma.com/api
 
 ## Authentication
 
-DoaFarma uses Laravel Sanctum for token-based authentication.
+DoaFarma uses Laravel Sanctum for token-based authentication with refresh tokens.
 
-### Getting a Token
+### Token Types
+
+| Token | Expiration | Ability | Usage |
+|-------|-----------|---------|-------|
+| Access Token | 1 hour | `access` | API requests |
+| Refresh Token | 30 days | `refresh` | Get new access token |
+
+### Login (Getting Tokens)
 
 ```http
-POST /login
+POST /v1/auth/login
 Content-Type: application/json
 
 {
@@ -33,30 +40,74 @@ Content-Type: application/json
 **Response (200):**
 ```json
 {
-    "token": "1|abc123...",
-    "user": {
-        "id": 1,
-        "name": "Dr. João Silva",
-        "email": "doctor@example.com",
-        "role": "doctor",
-        "status": "approved"
-    }
+    "data": {
+        "user": {
+            "id": 1,
+            "name": "Dr. João Silva",
+            "email": "doctor@example.com",
+            "role": "doctor",
+            "status": "approved"
+        },
+        "access_token": "1|abc123...",
+        "refresh_token": "2|xyz789...",
+        "expires_in": 3600,
+        "refresh_expires_in": 2592000
+    },
+    "message": "Login realizado com sucesso"
 }
 ```
 
-### Using the Token
+### Using the Access Token
 
-Include the token in the `Authorization` header:
+Include the access token in the `Authorization` header:
 
 ```http
 Authorization: Bearer 1|abc123...
 ```
 
+### Refreshing the Access Token
+
+When the access token expires, use the refresh token to get a new one:
+
+```http
+POST /v1/auth/refresh
+Authorization: Bearer 2|xyz789...
+```
+
+**Response (200):**
+```json
+{
+    "data": {
+        "access_token": "3|newtoken...",
+        "expires_in": 3600
+    },
+    "message": "Token renovado com sucesso"
+}
+```
+
+### Logout
+
+Revokes all tokens for the current device:
+
+```http
+POST /v1/auth/logout
+Authorization: Bearer 1|abc123...
+```
+
+**Response (200):**
+```json
+{
+    "message": "Logout realizado com sucesso"
+}
+```
+
 ### Token Lifecycle
 
-- Tokens do not expire automatically
-- Token is invalidated on logout
-- Multiple tokens per user allowed (multi-device)
+- **Access token expires after 1 hour** - use refresh token to renew
+- **Refresh token expires after 30 days** - user must login again
+- Logout revokes all tokens for the device (access + refresh)
+- Multiple devices allowed (each device has its own token pair)
+- Rate limiting: 5 login attempts per minute per email+IP
 
 ---
 

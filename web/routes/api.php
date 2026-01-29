@@ -15,7 +15,7 @@ use App\Http\Controllers\Auth\ReceptorRegistrationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:sanctum'])->get('/user', fn (Request $request) => $request->user());
+Route::middleware(['auth:sanctum', 'abilities:access'])->get('/user', fn (Request $request) => $request->user());
 
 Route::post('/login', ApiLoginController::class)
     ->middleware('guest')
@@ -34,10 +34,18 @@ Route::prefix('v1')->group(function (): void {
         Route::post('login', Auth\LoginController::class)
             ->middleware('guest')
             ->name('api.v1.auth.login');
+
+        Route::post('refresh', Auth\RefreshController::class)
+            ->middleware(['auth:sanctum', 'abilities:refresh'])
+            ->name('api.v1.auth.refresh');
+
+        Route::post('logout', Auth\LogoutController::class)
+            ->middleware(['auth:sanctum', 'abilities:access'])
+            ->name('api.v1.auth.logout');
     });
 
-    // Routes that require authentication AND approval
-    Route::middleware(['auth:sanctum', 'approved'])->group(function (): void {
+    // Routes that require authentication, approval, AND access token ability
+    Route::middleware(['auth:sanctum', 'abilities:access', 'approved'])->group(function (): void {
         Route::prefix('drugs')->group(function (): void {
             Route::get('search', Drug\SearchController::class)
                 ->name('api.v1.drugs.search');

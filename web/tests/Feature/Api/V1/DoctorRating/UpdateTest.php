@@ -45,7 +45,7 @@ it('should allow receptor to update rating', function (): void {
     $receptor = User::factory()->receptor()->create();
     $rating   = createRatingForUpdate($receptor);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = patchJson("/api/v1/doctor-ratings/{$rating->id}", [
         'rating' => 5,
@@ -64,7 +64,7 @@ it('should allow receptor to update comment', function (): void {
     $receptor = User::factory()->receptor()->create();
     $rating   = createRatingForUpdate($receptor);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = patchJson("/api/v1/doctor-ratings/{$rating->id}", [
         'comment' => 'Updated comment',
@@ -83,7 +83,7 @@ it('should allow receptor to update both rating and comment', function (): void 
     $receptor = User::factory()->receptor()->create();
     $rating   = createRatingForUpdate($receptor);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = patchJson("/api/v1/doctor-ratings/{$rating->id}", [
         'rating'  => 4,
@@ -99,7 +99,7 @@ it('should allow removing comment by setting to null', function (): void {
     $receptor = User::factory()->receptor()->create();
     $rating   = createRatingForUpdate($receptor);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = patchJson("/api/v1/doctor-ratings/{$rating->id}", [
         'comment' => null,
@@ -120,7 +120,7 @@ it('should return 422 when rating is below 1', function (): void {
     $receptor = User::factory()->receptor()->create();
     $rating   = createRatingForUpdate($receptor);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     patchJson("/api/v1/doctor-ratings/{$rating->id}", [
         'rating' => 0,
@@ -133,7 +133,7 @@ it('should return 422 when rating is above 5', function (): void {
     $receptor = User::factory()->receptor()->create();
     $rating   = createRatingForUpdate($receptor);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     patchJson("/api/v1/doctor-ratings/{$rating->id}", [
         'rating' => 6,
@@ -146,7 +146,7 @@ it('should return 422 when comment exceeds max length', function (): void {
     $receptor = User::factory()->receptor()->create();
     $rating   = createRatingForUpdate($receptor);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     patchJson("/api/v1/doctor-ratings/{$rating->id}", [
         'comment' => str_repeat('a', 1001),
@@ -172,7 +172,7 @@ it('should return 403 when receptor tries to update another receptors rating', f
     $receptor2 = User::factory()->receptor()->create();
     $rating    = createRatingForUpdate($receptor1);
 
-    actingAs($receptor2);
+    actingAs($receptor2, 'sanctum');
 
     patchJson("/api/v1/doctor-ratings/{$rating->id}", [
         'rating' => 5,
@@ -185,7 +185,7 @@ it('should return 403 when doctor tries to update rating', function (): void {
     $doctor   = Doctor::factory()->create();
     $rating   = createRatingForUpdate($receptor, $doctor);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     patchJson("/api/v1/doctor-ratings/{$rating->id}", [
         'rating' => 5,
@@ -198,7 +198,7 @@ it('should return 403 when doctor tries to update rating', function (): void {
 it('should return 404 for non-existent rating', function (): void {
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     patchJson('/api/v1/doctor-ratings/99999', [
         'rating' => 5,
@@ -210,7 +210,7 @@ it('should keep original values when updating with empty payload', function (): 
     $receptor = User::factory()->receptor()->create();
     $rating   = createRatingForUpdate($receptor);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = patchJson("/api/v1/doctor-ratings/{$rating->id}", []);
 

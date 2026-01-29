@@ -8,7 +8,7 @@ describe('EnsureUserIsApproved Middleware', function (): void {
     it('allows approved users to access protected routes', function (): void {
         $user = User::factory()->receptor()->create();
 
-        $this->actingAs($user)
+        $this->actingAs($user, 'sanctum')
             ->getJson(route('api.v1.drugs.list'))
             ->assertStatus(200);
     });
@@ -16,7 +16,7 @@ describe('EnsureUserIsApproved Middleware', function (): void {
     it('blocks pending users from accessing protected routes', function (): void {
         $user = User::factory()->receptor()->pending()->create();
 
-        $this->actingAs($user)
+        $this->actingAs($user, 'sanctum')
             ->getJson(route('api.v1.drugs.list'))
             ->assertStatus(403)
             ->assertJson([
@@ -28,7 +28,7 @@ describe('EnsureUserIsApproved Middleware', function (): void {
     it('blocks rejected users from accessing protected routes', function (): void {
         $user = User::factory()->receptor()->rejected()->create();
 
-        $this->actingAs($user)
+        $this->actingAs($user, 'sanctum')
             ->getJson(route('api.v1.drugs.list'))
             ->assertStatus(403)
             ->assertJson([

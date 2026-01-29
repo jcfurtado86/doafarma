@@ -17,7 +17,7 @@ it('returns only the medication offerings belonging to the authenticated doctor'
     $myOfferings    = MedicationOffering::factory()->count(3)->create(['doctor_id' => $doctor->id]);
     $otherOfferings = MedicationOffering::factory()->count(2)->create(['doctor_id' => $otherDoctor->id]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     // ACT
     $response = getJson('/api/v1/medication-offerings');
@@ -46,7 +46,7 @@ it('should return 401 Unauthorized for unauthenticated users', function (): void
 it('should return 403 Forbidden for authenticated users who are not doctors', function (): void {
     $user = User::factory()->create();
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     getJson(route('api.v1.medication-offerings.list'))
         ->assertForbidden();
@@ -55,7 +55,7 @@ it('should return 403 Forbidden for authenticated users who are not doctors', fu
 it('should return an empty paginated collection when the doctor has no offerings', function (): void {
     $doctor = Doctor::factory()->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson(route('api.v1.medication-offerings.list'));
 
@@ -69,7 +69,7 @@ it('should respect the per_page pagination parameter', function (): void {
 
     MedicationOffering::factory()->count(5)->create(['doctor_id' => $doctor->id]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson(route('api.v1.medication-offerings.list') . '?per_page=2');
 
@@ -84,7 +84,7 @@ it('should return correct pagination metadata (total, current_page, etc.)', func
 
     MedicationOffering::factory()->count(7)->create(['doctor_id' => $doctor->id]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson(route('api.v1.medication-offerings.list') . '?per_page=3&page=2');
 
@@ -110,7 +110,7 @@ it('should optionally include related drug information when requested', function
         'doctor_id' => $doctor->id,
     ]);
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson(route('api.v1.medication-offerings.list') . '?include=drug');
 

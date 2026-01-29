@@ -1,0 +1,863 @@
+{
+  "info": {
+    "name": "DoaFarma - Complete API",
+    "_postman_id": "doafarma-complete-api",
+    "description": "Collection completa da API DoaFarma.\n\n## Usuários de teste (seeders)\n- **Doctor**: doctor@example.com / password\n- **Receptor**: receptor@example.com / password\n\n## Fluxo de autenticação\n1. Execute 'Login (Doctor)' ou 'Login (Receptor)'\n2. Os tokens são salvos automaticamente nas variáveis\n3. Use as outras requisições normalmente",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "doctor_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "offering_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "request_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "appointment_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login (Doctor)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('access_token', jsonData.data.access_token);",
+                  "    pm.collectionVariables.set('refresh_token', jsonData.data.refresh_token);",
+                  "    pm.collectionVariables.set('user_id', jsonData.data.user.id);",
+                  "    if (jsonData.data.user.doctor) {",
+                  "        pm.collectionVariables.set('doctor_id', jsonData.data.user.doctor.id);",
+                  "    }",
+                  "    pm.test('Login successful', () => pm.expect(jsonData.data.access_token).to.be.a('string'));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"doctor@example.com\",\n    \"password\": \"password\",\n    \"device_name\": \"postman\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login (Receptor)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('access_token', jsonData.data.access_token);",
+                  "    pm.collectionVariables.set('refresh_token', jsonData.data.refresh_token);",
+                  "    pm.collectionVariables.set('user_id', jsonData.data.user.id);",
+                  "    pm.test('Login successful', () => pm.expect(jsonData.data.access_token).to.be.a('string'));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"receptor@example.com\",\n    \"password\": \"password\",\n    \"device_name\": \"postman\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('access_token', jsonData.data.access_token);",
+                  "    pm.test('Refresh successful', () => pm.expect(jsonData.data.access_token).to.be.a('string'));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{refresh_token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "auth", "refresh"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    pm.collectionVariables.set('access_token', '');",
+                  "    pm.collectionVariables.set('refresh_token', '');",
+                  "    pm.test('Logout successful', () => pm.response.to.have.status(200));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "auth", "logout"]
+            }
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/user",
+              "host": ["{{base_url}}"],
+              "path": ["user"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Registration",
+      "item": [
+        {
+          "name": "Register Doctor",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Dr. Novo Médico\",\n    \"email\": \"novo.medico@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"cpf\": \"529.982.247-25\",\n    \"phone_number\": \"(11) 99999-9999\",\n    \"crm\": \"123456\",\n    \"crm_uf\": \"SP\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/register/doctor",
+              "host": ["{{base_url}}"],
+              "path": ["register", "doctor"]
+            }
+          }
+        },
+        {
+          "name": "Register Receptor",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Novo Receptor\",\n    \"email\": \"novo.receptor@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"cpf\": \"987.654.321-00\",\n    \"phone_number\": \"(11) 88888-8888\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/register/receptor",
+              "host": ["{{base_url}}"],
+              "path": ["register", "receptor"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Drugs",
+      "item": [
+        {
+          "name": "List Drugs",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/drugs?page=1&per_page=15",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "drugs"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "per_page", "value": "15" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Drugs",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/drugs/search?q=dipirona",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "drugs", "search"],
+              "query": [
+                { "key": "q", "value": "dipirona" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Medication Offerings",
+      "item": [
+        {
+          "name": "List Offerings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/medication-offerings?page=1",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-offerings"],
+              "query": [
+                { "key": "page", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Offerings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/medication-offerings/search?q=&city=&state=",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-offerings", "search"],
+              "query": [
+                { "key": "q", "value": "", "description": "Nome do medicamento" },
+                { "key": "city", "value": "", "description": "Cidade" },
+                { "key": "state", "value": "", "description": "Estado (UF)" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Offering",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('offering_id', jsonData.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/medication-offerings/{{offering_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-offerings", "{{offering_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Offering (Doctor only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('offering_id', jsonData.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"drug_id\": 1,\n    \"quantity\": 10,\n    \"expiration_date\": \"2025-12-31\",\n    \"notes\": \"Medicamento em bom estado\",\n    \"city\": \"São Paulo\",\n    \"state\": \"SP\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/medication-offerings",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-offerings"]
+            }
+          }
+        },
+        {
+          "name": "Update Offering (Doctor only)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"quantity\": 5,\n    \"notes\": \"Quantidade atualizada\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/medication-offerings/{{offering_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-offerings", "{{offering_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Offering (Doctor only)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/medication-offerings/{{offering_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-offerings", "{{offering_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Medication Requests",
+      "item": [
+        {
+          "name": "List My Requests",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/medication-requests",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-requests"]
+            }
+          }
+        },
+        {
+          "name": "List Received Requests (Doctor)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/medication-requests/received",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-requests", "received"]
+            }
+          }
+        },
+        {
+          "name": "Create Request (Receptor only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('request_id', jsonData.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"medication_offering_id\": {{offering_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/medication-requests",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-requests"]
+            }
+          }
+        },
+        {
+          "name": "Confirm Request (Doctor only)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/medication-requests/{{request_id}}/confirm",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-requests", "{{request_id}}", "confirm"]
+            }
+          }
+        },
+        {
+          "name": "Reject Request (Doctor only)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"rejection_reason\": \"Medicamento já foi reservado para outro paciente\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/medication-requests/{{request_id}}/reject",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-requests", "{{request_id}}", "reject"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Medication Appointments",
+      "item": [
+        {
+          "name": "List My Appointments",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/medication-appointments",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-appointments"]
+            }
+          }
+        },
+        {
+          "name": "List Received Appointments (Doctor)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/medication-appointments/received",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-appointments", "received"]
+            }
+          }
+        },
+        {
+          "name": "My History (Receptor)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/medication-appointments/history",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-appointments", "history"]
+            }
+          }
+        },
+        {
+          "name": "Doctor History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/medication-appointments/doctor-history",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-appointments", "doctor-history"]
+            }
+          }
+        },
+        {
+          "name": "Create Appointment (Receptor only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('appointment_id', jsonData.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"medication_request_id\": {{request_id}},\n    \"proposed_datetime\": \"2025-02-15 14:00:00\",\n    \"location\": \"Consultório - Av. Paulista, 1000\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/medication-appointments",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-appointments"]
+            }
+          }
+        },
+        {
+          "name": "Accept Appointment (Doctor)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/medication-appointments/{{appointment_id}}/accept",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-appointments", "{{appointment_id}}", "accept"]
+            }
+          }
+        },
+        {
+          "name": "Counter-Propose (Doctor)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"proposed_datetime\": \"2025-02-16 10:00:00\",\n    \"location\": \"Novo local - Rua Augusta, 500\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/medication-appointments/{{appointment_id}}/counter-propose",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-appointments", "{{appointment_id}}", "counter-propose"]
+            }
+          }
+        },
+        {
+          "name": "Confirm Delivery (Receptor)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/medication-appointments/{{appointment_id}}/confirm-delivery-receptor",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-appointments", "{{appointment_id}}", "confirm-delivery-receptor"]
+            }
+          }
+        },
+        {
+          "name": "Confirm Delivery (Doctor)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/medication-appointments/{{appointment_id}}/confirm-delivery-doctor",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "medication-appointments", "{{appointment_id}}", "confirm-delivery-doctor"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Doctor Ratings",
+      "item": [
+        {
+          "name": "My Ratings (Doctor)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/doctor-ratings/my-ratings",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "doctor-ratings", "my-ratings"]
+            }
+          }
+        },
+        {
+          "name": "List Doctor Ratings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/doctor-ratings/doctor/{{doctor_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "doctor-ratings", "doctor", "{{doctor_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Rating by Appointment",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/doctor-ratings/appointment/{{appointment_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "doctor-ratings", "appointment", "{{appointment_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Rating (Receptor only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"rating\": 5,\n    \"comment\": \"Excelente atendimento, muito atencioso!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/doctor-ratings/{{appointment_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "doctor-ratings", "{{appointment_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Rating",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"rating\": 4,\n    \"comment\": \"Bom atendimento\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/doctor-ratings/1",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "doctor-ratings", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Push Tokens",
+      "item": [
+        {
+          "name": "Register Push Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"token\": \"ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/push-tokens",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "push-tokens"]
+            }
+          }
+        },
+        {
+          "name": "Delete Push Token",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"token\": \"ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/push-tokens",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "push-tokens"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Error Cases",
+      "item": [
+        {
+          "name": "❌ Refresh token em rota normal (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Refresh token bloqueado em rota normal', () => {",
+                  "    pm.expect(pm.response.code).to.eql(403);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{refresh_token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/user",
+              "host": ["{{base_url}}"],
+              "path": ["user"]
+            }
+          }
+        },
+        {
+          "name": "❌ Access token para refresh (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Access token bloqueado no refresh', () => {",
+                  "    pm.expect(pm.response.code).to.eql(403);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/v1/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "auth", "refresh"]
+            }
+          }
+        },
+        {
+          "name": "❌ Sem token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Requisição sem token retorna 401', () => {",
+                  "    pm.expect(pm.response.code).to.eql(401);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/user",
+              "host": ["{{base_url}}"],
+              "path": ["user"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

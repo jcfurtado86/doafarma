@@ -22,7 +22,7 @@ it('should allow a receptor to list their own requests', function (): void {
         ->pending()
         ->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-requests');
 
@@ -44,7 +44,7 @@ it('should allow a receptor to list their own requests', function (): void {
 it('should return empty array when receptor has no requests', function (): void {
     $receptor = User::factory()->receptor()->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-requests');
 
@@ -62,7 +62,7 @@ it('should include offering and drug details in response', function (): void {
         ->pending()
         ->create();
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-requests');
 
@@ -106,7 +106,7 @@ it('should return requests ordered by created_at descending', function (): void 
         ->forOffering($offering2)
         ->create(['created_at' => now()]);
 
-    actingAs($receptor);
+    actingAs($receptor, 'sanctum');
 
     $response = getJson('/api/v1/medication-requests');
 
@@ -134,7 +134,7 @@ it('should only return the authenticated receptor\'s requests', function (): voi
         ->forOffering($offering2)
         ->create();
 
-    actingAs($receptor1);
+    actingAs($receptor1, 'sanctum');
 
     $response = getJson('/api/v1/medication-requests');
 
@@ -152,7 +152,7 @@ it('should return 401 unauthorized for unauthenticated users', function (): void
 it('should return empty array when doctor tries to list (no requests as receptor)', function (): void {
     $doctor = Doctor::factory()->create();
 
-    actingAs($doctor->user);
+    actingAs($doctor->user, 'sanctum');
 
     $response = getJson('/api/v1/medication-requests');
 
@@ -172,7 +172,7 @@ it('should not allow receptor A to see receptor B\'s requests', function (): voi
         ->forOffering($offering)
         ->create();
 
-    actingAs($receptorA);
+    actingAs($receptorA, 'sanctum');
 
     $response = getJson('/api/v1/medication-requests');
 

@@ -10,7 +10,7 @@ use function Pest\Laravel\getJson;
 
 it('should be accessible via GET /api/v1/drugs/search', function (): void {
     $user = User::factory()->create();
-    actingAs($user);
+    actingAs($user, 'sanctum');
     getJson('/api/v1/drugs/search')
         ->assertOk();
 
@@ -23,7 +23,7 @@ it('should require authentication', function (): void {
         ->assertUnauthorized();
 
     $user = User::factory()->create();
-    actingAs($user);
+    actingAs($user, 'sanctum');
     getJson('/api/v1/drugs/search')
         ->assertOk();
 });
@@ -49,7 +49,7 @@ it('should return 200 and correct JSON structure for valid query', function (): 
         'laboratory'   => 'Ache',
     ]);
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $q        = 'Paracetamol';
     $response = getJson('/api/v1/drugs/search?q=' . urlencode($q));
@@ -77,7 +77,7 @@ it('should return paginated results', function (): void {
     $total = 25;
     Drug::factory()->count($total)->create();
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $perPage  = 10;
     $response = getJson('/api/v1/drugs/search?per_page=' . $perPage);
@@ -108,7 +108,7 @@ it('should support sorting results', function (): void {
     $c = Drug::factory()->create(['product_name' => 'Cataflam', 'substance' => 'Diclofenaco', 'laboratory' => 'Lab C']);
     $b = Drug::factory()->create(['product_name' => 'Ben-u-ron', 'substance' => 'Paracetamol', 'laboratory' => 'Lab B']);
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     // ascending
     $respAsc = getJson('/api/v1/drugs/search?sort=product_name&order=asc');
@@ -132,7 +132,7 @@ it('should return empty data if no matches found', function (): void {
     Drug::factory()->create(['product_name' => 'Ibuprofeno 400mg', 'substance' => 'Ibuprofeno', 'laboratory' => 'Ache']);
     Drug::factory()->create(['product_name' => 'Cetirizina', 'substance' => 'Cetirizina', 'laboratory' => 'LabX']);
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $response = getJson('/api/v1/drugs/search?q=' . urlencode('TermoInexistente'));
 
@@ -152,7 +152,7 @@ it('should return empty data if no matches found', function (): void {
 
 it('should return validation error for invalid query params', function (): void {
     $user = User::factory()->create();
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $response = getJson('/api/v1/drugs/search?per_page=0&sort=unknown');
 
@@ -162,7 +162,7 @@ it('should return validation error for invalid query params', function (): void 
 
 it('should return correct Content-Type header', function (): void {
     $user = User::factory()->create();
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $response = getJson('/api/v1/drugs/search');
     $response->assertOk();
@@ -186,7 +186,7 @@ it('should support partial matches in drug name', function (): void {
         'laboratory'   => 'Ache',
     ]);
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $response = getJson('/api/v1/drugs/search?q=' . urlencode('acetamol'));
     $response->assertOk();
@@ -219,7 +219,7 @@ it('should support multiple filters combined', function (): void {
         'laboratory'   => 'Lab3',
     ]);
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $perPage   = 1;
     $baseQuery = http_build_query([
@@ -259,7 +259,7 @@ it('should support multiple filters combined', function (): void {
 
 it('should respect per_page pagination parameter', function (): void {
     $user = User::factory()->create();
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $total = 12;
     Drug::factory()->count($total)->create();
@@ -280,7 +280,7 @@ it('should respect per_page pagination parameter', function (): void {
 
 it('should return correct total count in pagination meta', function (): void {
     $user = User::factory()->create();
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     // matching records
     Drug::factory()->count(12)->create(['product_name' => 'MatchMe', 'substance' => 'S', 'laboratory' => 'L']);
@@ -300,7 +300,7 @@ it('should return correct total count in pagination meta', function (): void {
 
 it('should not leak sensitive fields', function (): void {
     $user = User::factory()->create();
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $drug = Drug::factory()->create([
         'product_name' => 'SecretDrug',
@@ -340,7 +340,7 @@ it('should support searching by active ingredient', function (): void {
         'laboratory'   => 'LabB',
     ]);
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $resp = getJson('/api/v1/drugs/search?q=' . urlencode('dipirona'));
     $resp->assertOk();
@@ -362,7 +362,7 @@ it('should support searching by manufacturer', function (): void {
 
     // NOTE: controller currently searches product_name and substance only.
     // This test documents desired behavior (will fail until controller is extended to include laboratory).
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $resp = getJson('/api/v1/drugs/search?q=' . urlencode('ACME'));
     $resp->assertOk();
@@ -382,7 +382,7 @@ it('should support case-insensitive search', function (): void {
         'laboratory'   => 'LabCI',
     ]);
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $resp = getJson('/api/v1/drugs/search?q=' . urlencode('paracetamol'));
     $resp->assertOk();

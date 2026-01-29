@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginAction
 {
+    public function __construct(
+        private CreateTokenPairAction $createTokenPair
+    ) {
+    }
+
     /**
      * Execute the login action.
      *
@@ -18,12 +23,14 @@ class LoginAction
     {
         $request->authenticate();
 
-        $user  = Auth::user();
-        $token = $user->createToken('mobile-app')->plainTextToken;
+        $user       = Auth::user();
+        $deviceName = $request->input('device_name', 'mobile-app');
+
+        $tokens = $this->createTokenPair->execute($user, $deviceName);
 
         return [
-            'user'  => $user,
-            'token' => $token,
+            'user' => $user,
+            ...$tokens,
         ];
     }
 }

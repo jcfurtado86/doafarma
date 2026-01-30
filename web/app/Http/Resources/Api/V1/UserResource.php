@@ -34,9 +34,11 @@ class UserResource extends JsonResource
             'addresses'      => AddressResource::collection($this->whenLoaded('addresses')),
         ];
 
+        // Sensitive fields only visible to the user themselves
         if ($request->user()?->id === $this->id) {
             $data['email']             = $this->email;
             $data['phone_number']      = $this->phone_number;
+            $data['status']            = $this->status->value;
             $data['email_verified']    = $this->hasVerifiedEmail();
             $data['terms_accepted']    = (bool) $this->terms_accepted;
             $data['terms_accepted_at'] = $this->when(

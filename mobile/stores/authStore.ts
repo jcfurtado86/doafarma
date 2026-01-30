@@ -1,4 +1,4 @@
-import api from '@/services/api';
+import api, { resetApiState } from '@/services/api';
 import {
   registerForPushNotificationsAsync,
   registerPushTokenWithBackend,
@@ -56,6 +56,8 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
 
   saveSession: async (user, token, refreshToken?, expiresIn?) => {
     try {
+      resetApiState();
+
       await SecureStore.setItemAsync(STORAGE_KEYS.AUTH_TOKEN, token);
 
       if (refreshToken) {
@@ -109,8 +111,9 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
     try {
       const { pushToken } = get();
 
+      // Fire-and-forget to avoid blocking logout when tokens are invalid
       if (pushToken) {
-        await removePushTokenFromBackend(pushToken);
+        removePushTokenFromBackend(pushToken).catch(() => {});
       }
 
       await SecureStore.deleteItemAsync(STORAGE_KEYS.AUTH_TOKEN);
@@ -130,7 +133,16 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
       });
     } catch (error) {
       console.error('Error logging out:', getErrorMessage(error));
-      set({ error: 'Failed to log out' });
+      delete api.defaults.headers.common['Authorization'];
+      set({
+        user: null,
+        token: null,
+        refreshToken: null,
+        expiresAt: null,
+        pushToken: null,
+        isAuthenticated: false,
+        error: 'Failed to log out',
+      });
     }
   },
 

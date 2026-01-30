@@ -11,22 +11,36 @@
  */
 
 import axios from 'axios';
-import api from '@/services/api';
 import { authService, AuthServiceError } from '@/services/authService';
 import { API_ENDPOINTS } from '@/config/endpoints';
 
-// Mock the api module
-jest.mock('@/services/api', () => ({
-  __esModule: true,
-  default: {
-    post: jest.fn(),
-    defaults: {
-      headers: {
-        common: {},
+// Mock the api module - using jest.fn() inside factory to avoid hoisting issues
+jest.mock('@/services/api', () => {
+  const mockPost = jest.fn();
+  return {
+    __esModule: true,
+    default: {
+      post: mockPost,
+      defaults: {
+        headers: {
+          common: {},
+        },
       },
     },
-  },
-}));
+    apiClient: {
+      post: mockPost,
+      defaults: {
+        headers: {
+          common: {},
+        },
+      },
+    },
+  };
+});
+
+// Get reference to the mocked apiClient for use in tests
+// eslint-disable-next-line import/first
+import { apiClient } from '@/services/api';
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -42,7 +56,7 @@ describe('authService', () => {
     const mockExpiresIn = 3600;
 
     it('should call POST /v1/auth/refresh endpoint', async () => {
-      (api.post as jest.Mock).mockResolvedValueOnce({
+      (apiClient.post as jest.Mock).mockResolvedValueOnce({
         data: {
           data: {
             access_token: mockNewAccessToken,
@@ -54,7 +68,7 @@ describe('authService', () => {
 
       await authService.refreshToken(mockRefreshToken);
 
-      expect(api.post).toHaveBeenCalledWith(
+      expect(apiClient.post).toHaveBeenCalledWith(
         '/v1/auth/refresh',
         {},
         {
@@ -66,7 +80,7 @@ describe('authService', () => {
     });
 
     it('should return new access token on success', async () => {
-      (api.post as jest.Mock).mockResolvedValueOnce({
+      (apiClient.post as jest.Mock).mockResolvedValueOnce({
         data: {
           data: {
             access_token: mockNewAccessToken,
@@ -82,7 +96,7 @@ describe('authService', () => {
     });
 
     it('should return expires_in on success', async () => {
-      (api.post as jest.Mock).mockResolvedValueOnce({
+      (apiClient.post as jest.Mock).mockResolvedValueOnce({
         data: {
           data: {
             access_token: mockNewAccessToken,
@@ -105,7 +119,7 @@ describe('authService', () => {
           data: { message: 'Unauthenticated' },
         },
       };
-      (api.post as jest.Mock).mockRejectedValueOnce(axiosError);
+      (apiClient.post as jest.Mock).mockRejectedValueOnce(axiosError);
 
       // Mock axios.isAxiosError to return true for our error
       jest.spyOn(axios, 'isAxiosError').mockReturnValue(true);
@@ -121,7 +135,7 @@ describe('authService', () => {
           data: { message: 'Unauthenticated' },
         },
       };
-      (api.post as jest.Mock).mockRejectedValueOnce(axiosError);
+      (apiClient.post as jest.Mock).mockRejectedValueOnce(axiosError);
       jest.spyOn(axios, 'isAxiosError').mockReturnValue(true);
 
       try {
@@ -139,7 +153,7 @@ describe('authService', () => {
         response: undefined,
         message: 'Network Error',
       };
-      (api.post as jest.Mock).mockRejectedValueOnce(networkError);
+      (apiClient.post as jest.Mock).mockRejectedValueOnce(networkError);
       jest.spyOn(axios, 'isAxiosError').mockReturnValue(true);
 
       try {
@@ -159,7 +173,7 @@ describe('authService', () => {
           data: { message: 'Internal Server Error' },
         },
       };
-      (api.post as jest.Mock).mockRejectedValueOnce(serverError);
+      (apiClient.post as jest.Mock).mockRejectedValueOnce(serverError);
       jest.spyOn(axios, 'isAxiosError').mockReturnValue(true);
 
       try {
@@ -180,7 +194,7 @@ describe('authService', () => {
           data: { message: 'Your account is pending approval' },
         },
       };
-      (api.post as jest.Mock).mockRejectedValueOnce(forbiddenError);
+      (apiClient.post as jest.Mock).mockRejectedValueOnce(forbiddenError);
       jest.spyOn(axios, 'isAxiosError').mockReturnValue(true);
 
       try {
@@ -211,7 +225,7 @@ describe('authService', () => {
     };
 
     it('should return access_token from login response', async () => {
-      (api.post as jest.Mock).mockResolvedValueOnce({
+      (apiClient.post as jest.Mock).mockResolvedValueOnce({
         data: {
           data: {
             user: mockUser,
@@ -230,7 +244,7 @@ describe('authService', () => {
     });
 
     it('should return refresh_token from login response', async () => {
-      (api.post as jest.Mock).mockResolvedValueOnce({
+      (apiClient.post as jest.Mock).mockResolvedValueOnce({
         data: {
           data: {
             user: mockUser,
@@ -249,7 +263,7 @@ describe('authService', () => {
     });
 
     it('should return expires_in from login response', async () => {
-      (api.post as jest.Mock).mockResolvedValueOnce({
+      (apiClient.post as jest.Mock).mockResolvedValueOnce({
         data: {
           data: {
             user: mockUser,
@@ -268,7 +282,7 @@ describe('authService', () => {
     });
 
     it('should return refresh_expires_in from login response', async () => {
-      (api.post as jest.Mock).mockResolvedValueOnce({
+      (apiClient.post as jest.Mock).mockResolvedValueOnce({
         data: {
           data: {
             user: mockUser,
@@ -287,7 +301,7 @@ describe('authService', () => {
     });
 
     it('should return user from login response', async () => {
-      (api.post as jest.Mock).mockResolvedValueOnce({
+      (apiClient.post as jest.Mock).mockResolvedValueOnce({
         data: {
           data: {
             user: mockUser,
@@ -311,15 +325,15 @@ describe('authService', () => {
   // ============================================
   describe('logout', () => {
     it('should call POST /logout endpoint', async () => {
-      (api.post as jest.Mock).mockResolvedValueOnce({ data: {} });
+      (apiClient.post as jest.Mock).mockResolvedValueOnce({ data: {} });
 
       await authService.logout();
 
-      expect(api.post).toHaveBeenCalledWith(API_ENDPOINTS.AUTH.LOGOUT);
+      expect(apiClient.post).toHaveBeenCalledWith(API_ENDPOINTS.AUTH.LOGOUT);
     });
 
     it('should not throw even if backend returns error', async () => {
-      (api.post as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+      (apiClient.post as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
 
       // Should not throw
       await expect(authService.logout()).resolves.not.toThrow();

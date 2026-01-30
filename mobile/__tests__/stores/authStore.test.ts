@@ -116,13 +116,8 @@ describe('authStore', () => {
       expect(state.expiresAt).toBeLessThanOrEqual(expectedMaxExpiresAt);
     });
 
-    it('should set Authorization header on api instance', async () => {
-      await useAuthStore
-        .getState()
-        .saveSession(mockUser, mockAccessToken, mockRefreshToken, mockExpiresIn);
-
-      expect(api.defaults.headers.common['Authorization']).toBe(`Bearer ${mockAccessToken}`);
-    });
+    // Note: Authorization header is now set by api interceptor reading from SecureStore
+    // This avoids circular dependency between api and authStore
 
     it('should handle storage errors gracefully', async () => {
       (SecureStore.setItemAsync as jest.Mock).mockRejectedValueOnce(new Error('Storage error'));

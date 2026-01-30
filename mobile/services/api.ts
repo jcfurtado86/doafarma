@@ -2,7 +2,12 @@ import { useAuthStore } from '@/stores/authStore';
 import { STORAGE_KEYS } from '@/config/storage';
 import { API_ENDPOINTS } from '@/config/endpoints';
 import * as SecureStore from 'expo-secure-store';
-import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import axios, {
+  AxiosError,
+  AxiosRequestConfig,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from 'axios';
 import { router } from 'expo-router';
 import { Platform } from 'react-native';
 import Toast from 'react-native-toast-message';
@@ -25,7 +30,17 @@ const api = axios.create({
   baseURL: getBaseUrl(),
 });
 
+// Axios bug workaround: async error interceptors return config instead of return value.
+// We store the retry response on config and extract it via apiClient wrapper.
+// See: mobile/docs/AXIOS_BUG_INVESTIGATION.md
+
+interface ConfigWithRetryResponse extends InternalAxiosRequestConfig {
+  _retry?: boolean;
+  __retryResponse?: AxiosResponse;
+}
+
 let isRefreshing = false;
+let isLoggingOut = false;
 let failedQueue: {
   resolve: (token: string) => void;
   reject: (error: unknown) => void;
@@ -44,13 +59,11 @@ function processQueue(error: unknown, token: string | null = null): void {
 
 api.interceptors.request.use(
   async (config) => {
-    // Don't override if Authorization header is already set (e.g., refresh token call)
     if (config.headers.Authorization) {
       return config;
     }
 
     const token = await SecureStore.getItemAsync(STORAGE_KEYS.AUTH_TOKEN);
-
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -61,33 +74,48 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const configWithResponse = response as unknown as ConfigWithRetryResponse;
+    if (
+      configWithResponse &&
+      configWithResponse.__retryResponse &&
+      !('status' in response && typeof response.status === 'number')
+    ) {
+      return configWithResponse.__retryResponse;
+    }
+    return response;
+  },
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    const originalRequest = error.config as ConfigWithRetryResponse;
 
     if (error.response?.status === 401) {
-      // Don't retry the refresh endpoint itself
+      if (isLoggingOut) {
+        return Promise.reject(error);
+      }
+
       if (originalRequest.url?.includes('/auth/refresh')) {
+        isRefreshing = false;
         await handleLogout('Sessão expirada', 'Faça login novamente para continuar.');
         return Promise.reject(error);
       }
 
-      // Don't retry if we already tried
       if (originalRequest._retry) {
         return Promise.reject(error);
       }
 
-      // If already refreshing, queue this request
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({
-            resolve: (token: string) => {
+            resolve: async (token: string) => {
               originalRequest.headers.Authorization = `Bearer ${token}`;
-              resolve(api.request(originalRequest));
+              try {
+                const result = await api.request(originalRequest);
+                resolve(result);
+              } catch (err) {
+                reject(err);
+              }
             },
-            reject: (err: unknown) => {
-              reject(err);
-            },
+            reject: (err: unknown) => reject(err),
           });
         });
       }
@@ -102,8 +130,7 @@ api.interceptors.response.use(
           throw new Error('No refresh token available');
         }
 
-        // Calls refresh endpoint directly to avoid circular dependency with authService
-        const response = await api.post(
+        const refreshResponse = await api.post(
           API_ENDPOINTS.AUTH.REFRESH,
           {},
           {
@@ -113,18 +140,18 @@ api.interceptors.response.use(
           }
         );
 
-        const { access_token, expires_in } = response.data.data;
+        const { access_token, expires_in } = refreshResponse.data.data;
 
         await useAuthStore.getState().updateAccessToken(access_token, expires_in);
-
-        // Process queued requests with new token
         processQueue(null, access_token);
 
-        // Retry original request with new token
         originalRequest.headers.Authorization = `Bearer ${access_token}`;
-        return api.request(originalRequest);
+        const retryResult = await api.request(originalRequest);
+
+        originalRequest.__retryResponse = retryResult;
+        return originalRequest as unknown as AxiosResponse;
       } catch (refreshError) {
-        // Process queued requests with error
+        isRefreshing = false;
         processQueue(refreshError, null);
         await handleLogout('Sessão expirada', 'Faça login novamente para continuar.');
         return Promise.reject(refreshError);
@@ -162,6 +189,12 @@ api.interceptors.response.use(
 );
 
 async function handleLogout(title: string, message: string): Promise<void> {
+  if (isLoggingOut) {
+    return;
+  }
+
+  isLoggingOut = true;
+
   await useAuthStore.getState().logout();
 
   if (router) {
@@ -176,5 +209,91 @@ async function handleLogout(title: string, message: string): Promise<void> {
     autoHide: true,
   });
 }
+
+export function resetApiState(): void {
+  isLoggingOut = false;
+  isRefreshing = false;
+  failedQueue = [];
+}
+
+function isConfigWithRetryResponse(obj: unknown): obj is ConfigWithRetryResponse {
+  if (!obj || typeof obj !== 'object') {
+    return false;
+  }
+
+  const config = obj as ConfigWithRetryResponse;
+
+  if (!config.__retryResponse) {
+    return false;
+  }
+
+  if ('status' in config && typeof config.status === 'number') {
+    return false;
+  }
+
+  if (!('method' in config) || !('url' in config)) {
+    return false;
+  }
+
+  return true;
+}
+
+function extractResponse<T>(result: unknown): AxiosResponse<T> {
+  if (isConfigWithRetryResponse(result)) {
+    return result.__retryResponse as AxiosResponse<T>;
+  }
+  return result as AxiosResponse<T>;
+}
+
+/**
+ * Wrapper that extracts __retryResponse from config objects due to axios bug.
+ * Use this instead of raw `api` in all services.
+ * @see mobile/docs/AXIOS_BUG_INVESTIGATION.md
+ */
+export const apiClient = {
+  async get<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+    const result = await api.get<T>(url, config);
+    return extractResponse<T>(result);
+  },
+
+  async post<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse<T>> {
+    const result = await api.post<T>(url, data, config);
+    return extractResponse<T>(result);
+  },
+
+  async put<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse<T>> {
+    const result = await api.put<T>(url, data, config);
+    return extractResponse<T>(result);
+  },
+
+  async patch<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse<T>> {
+    const result = await api.patch<T>(url, data, config);
+    return extractResponse<T>(result);
+  },
+
+  async delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+    const result = await api.delete<T>(url, config);
+    return extractResponse<T>(result);
+  },
+
+  async request<T = any>(config: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+    const result = await api.request<T>(config);
+    return extractResponse<T>(result);
+  },
+
+  defaults: api.defaults,
+};
 
 export default api;

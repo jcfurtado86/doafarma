@@ -1,4 +1,4 @@
-import api from './api';
+import { apiClient } from './api';
 import axios, { AxiosError } from 'axios';
 
 export interface ReceptorRegistrationData {
@@ -60,7 +60,10 @@ export class ReceptorServiceError extends Error {
 export const receptorService = {
   register: async (data: ReceptorRegistrationData): Promise<ReceptorRegistrationResponse> => {
     try {
-      const response = await api.post<ReceptorRegistrationResponse>('/register/receptor', data);
+      const response = await apiClient.post<ReceptorRegistrationResponse>(
+        '/register/receptor',
+        data
+      );
       return response.data;
     } catch (error) {
       console.error('Erro ao registrar receptor:', error);
@@ -68,7 +71,6 @@ export const receptorService = {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<ApiValidationError>;
 
-        // Erro de rede (sem conexão)
         if (!axiosError.response) {
           throw new ReceptorServiceError(
             'Sem conexão com a internet. Verifique sua conexão e tente novamente.',
@@ -78,7 +80,6 @@ export const receptorService = {
 
         const { status, data: responseData } = axiosError.response;
 
-        // Erro de validação (422)
         if (status === 422 && responseData?.errors) {
           throw new ReceptorServiceError(responseData.message || 'Dados inválidos.', {
             isValidationError: true,
@@ -87,7 +88,6 @@ export const receptorService = {
           });
         }
 
-        // Erro de servidor (500+)
         if (status >= 500) {
           throw new ReceptorServiceError('Erro no servidor. Tente novamente em alguns instantes.', {
             isServerError: true,
@@ -95,14 +95,12 @@ export const receptorService = {
           });
         }
 
-        // Outros erros HTTP
         throw new ReceptorServiceError(
           responseData?.message || 'Ocorreu um erro. Tente novamente.',
           { statusCode: status }
         );
       }
 
-      // Erro desconhecido
       throw new ReceptorServiceError('Erro inesperado. Tente novamente.');
     }
   },

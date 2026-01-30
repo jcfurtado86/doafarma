@@ -2,7 +2,7 @@ import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
-import api from './api';
+import { apiClient } from './api';
 
 // Configure how notifications are handled when app is in foreground
 Notifications.setNotificationHandler({
@@ -19,13 +19,10 @@ Notifications.setNotificationHandler({
  * Register for push notifications and get the Expo Push Token
  */
 export async function registerForPushNotificationsAsync(): Promise<string | null> {
-  // Check if running on a physical device
   if (!Device.isDevice) {
-    console.log('Push notifications require a physical device');
     return null;
   }
 
-  // Check and request permissions
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
   let finalStatus = existingStatus;
 
@@ -35,16 +32,13 @@ export async function registerForPushNotificationsAsync(): Promise<string | null
   }
 
   if (finalStatus !== 'granted') {
-    console.log('Push notification permission denied');
     return null;
   }
 
-  // Get the Expo Push Token
   try {
     const projectId = Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
 
     if (!projectId) {
-      console.error('No project ID found in app config');
       return null;
     }
 
@@ -54,7 +48,6 @@ export async function registerForPushNotificationsAsync(): Promise<string | null
 
     const token = tokenData.data;
 
-    // Configure notification channel for Android
     if (Platform.OS === 'android') {
       await Notifications.setNotificationChannelAsync('default', {
         name: 'DoaFarma',
@@ -65,8 +58,7 @@ export async function registerForPushNotificationsAsync(): Promise<string | null
     }
 
     return token;
-  } catch (error) {
-    console.error('Error getting push token:', error);
+  } catch {
     return null;
   }
 }
@@ -76,13 +68,12 @@ export async function registerForPushNotificationsAsync(): Promise<string | null
  */
 export async function registerPushTokenWithBackend(token: string): Promise<void> {
   try {
-    await api.post('/v1/push-tokens', {
+    await apiClient.post('/v1/push-tokens', {
       token,
       device_type: Platform.OS,
     });
-    console.log('Push token registered with backend');
-  } catch (error) {
-    console.error('Error registering push token with backend:', error);
+  } catch {
+    // Silently fail - push notifications are not critical
   }
 }
 
@@ -91,12 +82,11 @@ export async function registerPushTokenWithBackend(token: string): Promise<void>
  */
 export async function removePushTokenFromBackend(token: string): Promise<void> {
   try {
-    await api.delete('/v1/push-tokens', {
+    await apiClient.delete('/v1/push-tokens', {
       data: { token },
     });
-    console.log('Push token removed from backend');
-  } catch (error) {
-    console.error('Error removing push token from backend:', error);
+  } catch {
+    // Silently fail - expected during logout when tokens are invalid
   }
 }
 

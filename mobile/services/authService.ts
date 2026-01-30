@@ -1,6 +1,8 @@
-import api from './api';
+import { apiClient } from './api';
 import axios, { AxiosError } from 'axios';
 import { User } from '@/stores/authStore';
+import { API_ENDPOINTS } from '@/config/endpoints';
+import { getErrorMessage } from '@/utils/error';
 
 export interface LoginCredentials {
   email: string;
@@ -10,9 +12,21 @@ export interface LoginCredentials {
 
 export interface LoginResponse {
   data: {
-    token: string;
     user: User;
+    access_token: string;
+    refresh_token: string;
+    expires_in: number;
+    refresh_expires_in: number;
   };
+  message: string;
+}
+
+export interface RefreshTokenResponse {
+  data: {
+    access_token: string;
+    expires_in: number;
+  };
+  message: string;
 }
 
 export interface ApiValidationError {
@@ -53,15 +67,14 @@ export class AuthServiceError extends Error {
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<LoginResponse> => {
     try {
-      const response = await api.post<LoginResponse>('/login', credentials);
+      const response = await apiClient.post<LoginResponse>(API_ENDPOINTS.AUTH.LOGIN, credentials);
       return response.data;
     } catch (error) {
-      console.error('Erro ao fazer login:', error);
+      console.error('Erro ao fazer login:', getErrorMessage(error));
 
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<ApiValidationError>;
 
-        // Erro de rede (sem conexão)
         if (!axiosError.response) {
           throw new AuthServiceError(
             'Sem conexão com a internet. Verifique sua conexão e tente novamente.',
@@ -71,7 +84,6 @@ export const authService = {
 
         const { status, data: responseData } = axiosError.response;
 
-        // Rate limiting (429 ou mensagem específica no 422)
         if (status === 429 || responseData?.errors?.email?.[0]?.includes('Too many')) {
           throw new AuthServiceError(
             'Muitas tentativas de login. Aguarde alguns minutos e tente novamente.',
@@ -79,9 +91,7 @@ export const authService = {
           );
         }
 
-        // Erro de validação (422)
         if (status === 422 && responseData?.errors) {
-          // Traduzir mensagens comuns
           const translatedErrors = translateValidationErrors(responseData.errors);
 
           throw new AuthServiceError(responseData.message || 'Credenciais inválidas.', {
@@ -91,7 +101,6 @@ export const authService = {
           });
         }
 
-        // Erro de servidor (500+)
         if (status >= 500) {
           throw new AuthServiceError('Erro no servidor. Tente novamente em alguns instantes.', {
             isServerError: true,
@@ -99,30 +108,80 @@ export const authService = {
           });
         }
 
-        // Outros erros HTTP
         throw new AuthServiceError(responseData?.message || 'Ocorreu um erro. Tente novamente.', {
           statusCode: status,
         });
       }
 
-      // Erro desconhecido
       throw new AuthServiceError('Erro inesperado. Tente novamente.');
+    }
+  },
+
+  refreshToken: async (refreshToken: string): Promise<RefreshTokenResponse> => {
+    try {
+      const response = await apiClient.post<RefreshTokenResponse>(
+        API_ENDPOINTS.AUTH.REFRESH,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${refreshToken}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao renovar token:', getErrorMessage(error));
+
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<ApiValidationError>;
+
+        if (!axiosError.response) {
+          throw new AuthServiceError(
+            'Sem conexão com a internet. Verifique sua conexão e tente novamente.',
+            { isNetworkError: true }
+          );
+        }
+
+        const { status, data: responseData } = axiosError.response;
+
+        if (status === 401) {
+          throw new AuthServiceError('Sessão expirada. Faça login novamente.', {
+            statusCode: status,
+          });
+        }
+
+        if (status === 403) {
+          throw new AuthServiceError(
+            responseData?.message || 'Acesso negado. Sua conta pode estar pendente de aprovação.',
+            { statusCode: status }
+          );
+        }
+
+        if (status >= 500) {
+          throw new AuthServiceError('Erro no servidor. Tente novamente em alguns instantes.', {
+            isServerError: true,
+            statusCode: status,
+          });
+        }
+
+        throw new AuthServiceError(responseData?.message || 'Erro ao renovar sessão.', {
+          statusCode: status,
+        });
+      }
+
+      throw new AuthServiceError('Erro inesperado ao renovar sessão.');
     }
   },
 
   logout: async (): Promise<void> => {
     try {
-      await api.post('/logout');
+      await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
     } catch (error) {
-      // Mesmo se der erro, limpa local
-      console.error('Erro ao fazer logout:', error);
+      console.error('Erro ao fazer logout:', getErrorMessage(error));
     }
   },
 };
 
-/**
- * Traduz mensagens de erro da API para português
- */
 function translateValidationErrors(errors: Record<string, string[]>): Record<string, string[]> {
   const translations: Record<string, string> = {
     'These credentials do not match our records.': 'E-mail ou senha incorretos.',

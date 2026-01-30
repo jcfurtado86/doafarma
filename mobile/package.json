@@ -14,8 +14,22 @@
   },
   "jest": {
     "preset": "jest-expo",
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup.ts"
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/$1"
+    },
     "transformIgnorePatterns": [
       "node_modules/(?!(?:.pnpm/)?((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg))"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/"
+    ],
+    "collectCoverageFrom": [
+      "stores/**/*.{ts,tsx}",
+      "services/**/*.{ts,tsx}",
+      "!**/*.d.ts"
     ]
   },
   "dependencies": {
@@ -57,7 +71,9 @@
   "devDependencies": {
     "@babel/core": "^7.28.0",
     "@testing-library/react-native": "^13.2.0",
+    "@types/jest": "^30.0.0",
     "@types/react": "~19.1.17",
+    "axios-mock-adapter": "^2.1.0",
     "eslint": "^8.57.1",
     "eslint-config-expo": "~10.0.0",
     "eslint-config-prettier": "^9.1.0",

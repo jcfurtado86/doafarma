@@ -20,6 +20,7 @@ import PrimaryButton from '@/components/PrimaryButton';
 import { z } from 'zod';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
 import { authService, AuthServiceError } from '@/services/authService';
+import { isUserBlocked, UserRole } from '@/types/user';
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import * as Device from 'expo-device';
@@ -79,21 +80,26 @@ export default function LoginScreen() {
         device_name: deviceName,
       });
 
-      const { user, token } = response.data;
+      const { user, access_token, refresh_token, expires_in } = response.data;
 
-      await saveSession(user, token);
+      await saveSession(user, access_token, refresh_token, expires_in);
 
-      // Configure push notifications in background
+      // Redirect blocked users (pending/rejected) to approval screen
+      if (isUserBlocked(user.status)) {
+        router.replace('/(auth)/pending-approval' as Href);
+        return;
+      }
+
+      // Push notifications only set up for approved users to avoid
+      // sending notifications to users who can't access the app
       setupPushNotifications();
 
-      // Navegação condicional baseada na role
-      if (user.role === 'doctor') {
-        router.replace('/(auth)/dashboard' as Href);
-      } else if (user.role === 'receptor') {
-        router.replace('/(auth)/receptor' as Href);
-      } else {
-        router.replace('/(auth)/dashboard' as Href);
-      }
+      // Navigate based on user role
+      const routeByRole: Record<UserRole, Href> = {
+        [UserRole.Doctor]: '/(auth)/dashboard' as Href,
+        [UserRole.Receptor]: '/(auth)/receptor' as Href,
+      };
+      router.replace(routeByRole[user.role] || ('/(auth)/dashboard' as Href));
     } catch (err) {
       if (err instanceof AuthServiceError) {
         if (err.isNetworkError) {

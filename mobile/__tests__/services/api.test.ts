@@ -83,40 +83,9 @@ describe('API Interceptor - Refresh Token Flow', () => {
   // RESPONSE INTERCEPTOR - 401 HANDLING
   // ============================================
   describe('response interceptor - 401 handling', () => {
-    it('should attempt refresh when receiving 401', async () => {
-      // This test verifies the interceptor tries to refresh the token
-      // when a 401 is received
+    it.todo('should attempt refresh when receiving 401 - see api.integration.test.ts');
 
-      const mockRefreshToken = '2|refresh_token';
-      // Token that would be returned by refresh endpoint (used in integration tests)
-      const _mockNewAccessToken = '3|new_access_token'; // eslint-disable-line @typescript-eslint/no-unused-vars
-
-      // Mock SecureStore to return refresh token
-      (SecureStore.getItemAsync as jest.Mock).mockResolvedValueOnce(mockRefreshToken); // getRefreshToken call
-
-      // The interceptor should:
-      // 1. Detect 401
-      // 2. Get refresh token from store
-      // 3. Call refresh endpoint
-      // 4. Update access token
-      // 5. Retry original request
-
-      // Since we can't easily test the actual interceptor without
-      // making real HTTP calls, we verify the expected behavior pattern
-      expect(true).toBe(true); // Placeholder - actual test needs integration
-    });
-
-    it('should retry original request after successful refresh', async () => {
-      // After successful refresh, the original request should be retried
-      // with the new access token in the Authorization header
-
-      // This is verified by checking that:
-      // 1. The original request config is preserved
-      // 2. The new token is applied
-      // 3. The request is re-executed
-
-      expect(true).toBe(true); // Placeholder - needs integration test
-    });
+    it.todo('should retry original request after successful refresh - see api.integration.test.ts');
 
     it('should logout when refresh fails with 401', async () => {
       // When the refresh token is also expired (401 on refresh),
@@ -159,34 +128,13 @@ describe('API Interceptor - Refresh Token Flow', () => {
   // RESPONSE INTERCEPTOR - RACE CONDITION
   // ============================================
   describe('response interceptor - multiple simultaneous 401s', () => {
-    it('should only make one refresh call for multiple 401s', async () => {
-      // When multiple requests fail with 401 simultaneously,
-      // only ONE refresh call should be made
+    it.todo('should only make one refresh call for multiple 401s - see api.retryerror.test.ts');
 
-      // All failed requests should wait for the same refresh Promise
-      // and retry with the new token once it completes
+    it.todo(
+      'should retry all queued requests after successful refresh - see api.processqueue.test.ts'
+    );
 
-      // This is critical to avoid:
-      // 1. Multiple refresh calls to backend
-      // 2. Race conditions in token storage
-      // 3. Wasted resources
-
-      expect(true).toBe(true); // Placeholder - needs integration test
-    });
-
-    it('should retry all queued requests after successful refresh', async () => {
-      // After the single refresh completes successfully,
-      // ALL queued requests should be retried with the new token
-
-      expect(true).toBe(true); // Placeholder - needs integration test
-    });
-
-    it('should fail all queued requests if refresh fails', async () => {
-      // If refresh fails, ALL queued requests should fail
-      // and trigger logout only once
-
-      expect(true).toBe(true); // Placeholder - needs integration test
-    });
+    it.todo('should fail all queued requests if refresh fails - see api.processqueue.test.ts');
   });
 
   // ============================================
@@ -200,25 +148,11 @@ describe('API Interceptor - Refresh Token Flow', () => {
       expect(router.replace).toBeDefined();
     });
 
-    it('should handle 422 by returning validation errors', async () => {
-      // 422 should be transformed to include validation errors
-      // but NOT trigger logout
+    it.todo('should handle 422 by returning validation errors');
 
-      expect(true).toBe(true);
-    });
+    it.todo('should handle 500 by showing toast');
 
-    it('should handle 500 by showing toast', async () => {
-      // 500 should show error toast
-      // but NOT trigger logout
-
-      expect(Toast.show).toBeDefined();
-    });
-
-    it('should pass through successful responses unchanged', async () => {
-      // 200/201 responses should pass through without modification
-
-      expect(true).toBe(true);
-    });
+    it.todo('should pass through successful responses unchanged');
   });
 });
 
@@ -241,56 +175,10 @@ describe('API Interceptor - Integration Tests', () => {
    */
 
   describe('complete refresh flow', () => {
-    it('should complete full refresh cycle transparently', async () => {
-      // Given:
-      // - User is authenticated with expired access token
-      // - Valid refresh token exists in store
-      //
-      // When:
-      // - User makes an API request
-      // - Backend returns 401
-      //
-      // Then:
-      // - Interceptor should refresh token automatically
-      // - Original request should be retried
-      // - User should not notice anything (transparent)
-      // - New token should be saved to store
+    it.todo('should complete full refresh cycle transparently - see api.integration.test.ts');
 
-      expect(true).toBe(true);
-    });
+    it.todo('should handle token expiration during active session - see api.integration.test.ts');
 
-    it('should handle token expiration during active session', async () => {
-      // Given:
-      // - User is actively using the app
-      // - Access token expires mid-session (after 1 hour)
-      //
-      // When:
-      // - Next API call fails with 401
-      //
-      // Then:
-      // - Token is refreshed automatically
-      // - User continues without interruption
-      // - Session extends for another hour
-
-      expect(true).toBe(true);
-    });
-
-    it('should handle complete session expiration', async () => {
-      // Given:
-      // - User returns after 30+ days
-      // - Both access and refresh tokens are expired
-      //
-      // When:
-      // - Any API call is made
-      //
-      // Then:
-      // - 401 is received
-      // - Refresh attempt fails with 401
-      // - User is logged out
-      // - Redirect to login screen
-      // - "Sessão expirada" toast is shown
-
-      expect(true).toBe(true);
-    });
+    it.todo('should handle complete session expiration - see api.processqueue.test.ts');
   });
 });

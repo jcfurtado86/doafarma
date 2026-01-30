@@ -151,7 +151,7 @@ api.interceptors.response.use(
         originalRequest.__retryResponse = retryResult;
         return originalRequest as unknown as AxiosResponse;
       } catch (refreshError) {
-        isRefreshing = false;
+        // Note: isRefreshing is reset in finally block (always executes)
         processQueue(refreshError, null);
         await handleLogout('Sessão expirada', 'Faça login novamente para continuar.');
         return Promise.reject(refreshError);
@@ -210,10 +210,30 @@ async function handleLogout(title: string, message: string): Promise<void> {
   });
 }
 
+/**
+ * Reset all internal state flags.
+ * Should be called when user logs in to clear stale state from previous session.
+ */
 export function resetApiState(): void {
   isLoggingOut = false;
   isRefreshing = false;
   failedQueue = [];
+}
+
+/**
+ * Get current internal state for debugging/testing.
+ * @internal - Only use in tests
+ */
+export function getApiState(): {
+  isRefreshing: boolean;
+  isLoggingOut: boolean;
+  queueLength: number;
+} {
+  return {
+    isRefreshing,
+    isLoggingOut,
+    queueLength: failedQueue.length,
+  };
 }
 
 function isConfigWithRetryResponse(obj: unknown): obj is ConfigWithRetryResponse {

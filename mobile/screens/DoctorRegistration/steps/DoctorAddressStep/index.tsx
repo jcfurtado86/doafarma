@@ -89,7 +89,6 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
           formProps={{
             name: 'addresses[0].location_name',
             control: control,
-            defaultValue: 'Consultório',
           }}
           inputProps={{
             returnKeyType: 'next',
@@ -103,7 +102,6 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
           formProps={{
             name: 'addresses[0].cep',
             control: control,
-            defaultValue: '12345678',
           }}
           inputProps={{
             returnKeyType: 'next',
@@ -119,7 +117,6 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             formProps={{
               name: 'addresses[0].uf',
               control: control,
-              defaultValue: 'AC',
             }}
             selectProps={{
               placeholder: 'Estado',
@@ -139,7 +136,6 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             formProps={{
               name: 'addresses[0].city',
               control: control,
-              defaultValue: 'Rio Branco',
             }}
             selectProps={{
               placeholder: 'Cidade',
@@ -158,7 +154,6 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
           formProps={{
             name: 'addresses[0].neighborhood',
             control: control,
-            defaultValue: 'Centro',
           }}
           inputProps={{
             returnKeyType: 'next',
@@ -173,7 +168,6 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             formProps={{
               name: 'addresses[0].full_address',
               control: control,
-              defaultValue: 'Rua das Flores',
             }}
             inputProps={{
               returnKeyType: 'next',
@@ -188,7 +182,6 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             formProps={{
               name: 'addresses[0].number',
               control: control,
-              defaultValue: '123',
             }}
             inputProps={{
               returnKeyType: 'next',

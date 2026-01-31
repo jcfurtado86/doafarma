@@ -10,6 +10,7 @@ import { InputRow } from '@/components/InputRow';
 import { Select, SelectItem } from '@/components/Select';
 import { Picker } from '@react-native-picker/picker';
 import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
+import { BRAZILIAN_STATES } from '@/constants/BrazilianStates';
 import { z } from 'zod';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
 
@@ -125,11 +126,9 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             containerStyle={{ flex: 1 }}
             nextRef={cityRef}
           >
-            <SelectItem label="AC" value="AC" />
-            <SelectItem label="AL" value="AL" />
-            <SelectItem label="AP" value="AP" />
-            <SelectItem label="AM" value="AM" />
-            <SelectItem label="BA" value="BA" />
+            {BRAZILIAN_STATES.map((state) => (
+              <SelectItem key={state.value} label={state.label} value={state.value} />
+            ))}
           </Select>
           <Select
             ref={cityRef}

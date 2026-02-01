@@ -21,12 +21,13 @@ Route::post('/login', ApiLoginController::class)
     ->middleware('guest')
     ->name('api.login');
 
+// Registration routes with rate limiting (10 requests per minute per IP)
 Route::post('/register/doctor', DoctorRegistrationController::class)
-    ->middleware('guest')
+    ->middleware(['guest', 'throttle:10,1'])
     ->name('doctor.register');
 
 Route::post('/register/receptor', ReceptorRegistrationController::class)
-    ->middleware('guest')
+    ->middleware(['guest', 'throttle:10,1'])
     ->name('receptor.register');
 
 Route::prefix('v1')->group(function (): void {
@@ -59,6 +60,7 @@ Route::prefix('v1')->group(function (): void {
             Route::get('/', MedicationOffering\ListController::class)
                 ->name('api.v1.medication-offerings.list');
             Route::post('/', MedicationOffering\StoreController::class)
+                ->middleware('throttle:60,1')
                 ->name('api.v1.medication-offerings.post');
             Route::get('/{medicationOffering}', MedicationOffering\ShowController::class)
                 ->name('api.v1.medication-offerings.show');
@@ -72,6 +74,7 @@ Route::prefix('v1')->group(function (): void {
             Route::get('/', MedicationRequest\ListController::class)
                 ->name('api.v1.medication-requests.list');
             Route::post('/', MedicationRequest\StoreController::class)
+                ->middleware('throttle:60,1')
                 ->name('api.v1.medication-requests.store');
             Route::get('/received', MedicationRequest\ReceivedController::class)
                 ->name('api.v1.medication-requests.received');

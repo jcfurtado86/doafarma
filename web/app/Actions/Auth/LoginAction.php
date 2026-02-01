@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class LoginAction
 {
     public function __construct(
-        private CreateTokenPairAction $createTokenPair
+        private readonly CreateTokenPairAction $createTokenPair
     ) {
     }
 

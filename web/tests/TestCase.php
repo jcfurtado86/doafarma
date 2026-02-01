@@ -23,7 +23,7 @@ abstract class TestCase extends BaseTestCase
     {
         // Only use Sanctum for explicit 'sanctum' guard
         if ($guard === 'sanctum') {
-            if (empty($abilities)) {
+            if ($abilities === []) {
                 $abilities = [TokenAbility::Access->value];
             }
 

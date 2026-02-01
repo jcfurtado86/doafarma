@@ -25,10 +25,18 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (ThrottleRequestsException $e, $request) {
             if ($request->wantsJson()) {
+                $isLoginRoute = $request->routeIs('api.login', 'api.v1.auth.login');
+
+                $message = $isLoginRoute
+                    ? 'Too many login attempts. Please try again later.'
+                    : 'Too many requests. Please try again later.';
+
+                $errorKey = $isLoginRoute ? 'email' : 'rate_limit';
+
                 return response()->json([
-                    'message' => 'Too many login attempts. Please try again later.',
+                    'message' => $message,
                     'errors'  => [
-                        'email' => ['Too many login attempts. Please try again later.'],
+                        $errorKey => [$message],
                     ],
                 ], Response::HTTP_TOO_MANY_REQUESTS, $e->getHeaders());
             }

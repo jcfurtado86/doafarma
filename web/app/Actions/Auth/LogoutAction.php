@@ -16,7 +16,7 @@ class LogoutAction
     {
         $currentToken = $user->currentAccessToken();
         $pattern      = '/:(' . TokenAbility::Access->value . '|' . TokenAbility::Refresh->value . ')$/';
-        $devicePrefix = preg_replace($pattern, '', $currentToken->name);
+        $devicePrefix = preg_replace($pattern, '', (string) $currentToken->name);
 
         $user->tokens()
             ->where('name', 'like', "{$devicePrefix}:%")

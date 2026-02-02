@@ -248,3 +248,92 @@ it('should return 403 when receptor tries to access doctor history', function ()
     getJson('/api/v1/medication-appointments/doctor-history')
         ->assertForbidden();
 });
+
+// Pagination Tests
+
+it('should return paginated response with meta and links', function (): void {
+    $receptor = User::factory()->receptor()->create();
+    $doctor   = Doctor::factory()->create();
+    $address  = Address::factory()->create(['user_id' => $doctor->user->id]);
+    $offering = MedicationOffering::factory()->completed()->create(['doctor_id' => $doctor->id]);
+    $request  = MedicationRequest::factory()
+        ->forReceptor($receptor)
+        ->forOffering($offering)
+        ->confirmed()
+        ->create();
+    MedicationAppointment::factory()->completed()->create([
+        'medication_request_id' => $request->id,
+        'address_id'            => $address->id,
+    ]);
+
+    actingAs($doctor->user, 'sanctum');
+
+    $response = getJson('/api/v1/medication-appointments/doctor-history');
+
+    $response->assertOk()
+        ->assertJsonStructure([
+            'data',
+            'links' => ['first', 'last', 'prev', 'next'],
+            'meta'  => ['current_page', 'from', 'last_page', 'per_page', 'to', 'total'],
+        ])
+        ->assertJsonPath('meta.current_page', 1)
+        ->assertJsonPath('meta.per_page', 15)
+        ->assertJsonPath('meta.total', 1);
+});
+
+it('should return maximum 15 items per page', function (): void {
+    $receptor = User::factory()->receptor()->create();
+    $doctor   = Doctor::factory()->create();
+    $address  = Address::factory()->create(['user_id' => $doctor->user->id]);
+
+    // Criar 20 appointments completos
+    for ($i = 0; $i < 20; $i++) {
+        $offering = MedicationOffering::factory()->completed()->create(['doctor_id' => $doctor->id]);
+        $request  = MedicationRequest::factory()
+            ->forReceptor($receptor)
+            ->forOffering($offering)
+            ->confirmed()
+            ->create();
+        MedicationAppointment::factory()->completed()->create([
+            'medication_request_id' => $request->id,
+            'address_id'            => $address->id,
+        ]);
+    }
+
+    actingAs($doctor->user, 'sanctum');
+
+    $response = getJson('/api/v1/medication-appointments/doctor-history');
+
+    $response->assertOk()
+        ->assertJsonCount(15, 'data')
+        ->assertJsonPath('meta.total', 20)
+        ->assertJsonPath('meta.last_page', 2);
+});
+
+it('should return second page with page parameter', function (): void {
+    $receptor = User::factory()->receptor()->create();
+    $doctor   = Doctor::factory()->create();
+    $address  = Address::factory()->create(['user_id' => $doctor->user->id]);
+
+    // Criar 20 appointments completos
+    for ($i = 0; $i < 20; $i++) {
+        $offering = MedicationOffering::factory()->completed()->create(['doctor_id' => $doctor->id]);
+        $request  = MedicationRequest::factory()
+            ->forReceptor($receptor)
+            ->forOffering($offering)
+            ->confirmed()
+            ->create();
+        MedicationAppointment::factory()->completed()->create([
+            'medication_request_id' => $request->id,
+            'address_id'            => $address->id,
+        ]);
+    }
+
+    actingAs($doctor->user, 'sanctum');
+
+    $response = getJson('/api/v1/medication-appointments/doctor-history?page=2');
+
+    $response->assertOk()
+        ->assertJsonCount(5, 'data')
+        ->assertJsonPath('meta.current_page', 2);
+});

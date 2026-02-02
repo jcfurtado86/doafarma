@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -14,59 +14,53 @@ import {
 import { router, Href } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { SearchResultCard } from '@/components/SearchResultCard';
+import { ListFooterLoader } from '@/components/ListFooterLoader';
 import { medicationOfferingService } from '@/services/medicationOfferingService';
 import { MedicationOfferingSearchResult } from '@/types/medicationOffering';
+import { usePagination } from '@/hooks/usePagination';
 
 type SearchState = 'loading' | 'results' | 'empty' | 'error';
 
 export default function SearchScreen() {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState<MedicationOfferingSearchResult[]>([]);
-  const [searchState, setSearchState] = useState<SearchState>('loading');
+  const [searchQuery, setSearchQuery] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Carregar todas as ofertas ao abrir a tela
-  const loadAllOfferings = useCallback(async () => {
-    setSearchState('loading');
-    setErrorMessage(null);
+  const fetchOfferingsFn = useCallback(
+    async (page: number) => {
+      return medicationOfferingService.searchOfferingsPaginated(searchQuery, page);
+    },
+    [searchQuery]
+  );
 
-    try {
-      // Buscar com string vazia retorna todas as ofertas ativas
-      const data = await medicationOfferingService.search('');
-      setResults(data);
-      setSearchState(data.length > 0 ? 'results' : 'empty');
-    } catch (error: any) {
-      setErrorMessage(error.message || 'Erro ao carregar medicamentos');
-      setSearchState('error');
-    }
-  }, []);
+  const {
+    items: results,
+    isLoading,
+    isLoadingMore,
+    error,
+    loadMore,
+    refresh,
+  } = usePagination<MedicationOfferingSearchResult>({
+    fetchFn: fetchOfferingsFn,
+    onError: (err) => setErrorMessage(err),
+    refreshKey: searchQuery,
+  });
 
-  // Carregar ofertas quando a tela monta
-  useEffect(() => {
-    loadAllOfferings();
-  }, [loadAllOfferings]);
+  const searchState: SearchState = isLoading
+    ? 'loading'
+    : error
+      ? 'error'
+      : results.length === 0
+        ? 'empty'
+        : 'results';
 
-  const handleSearch = useCallback(async () => {
-    const trimmedQuery = query.trim();
-
-    setSearchState('loading');
-    setErrorMessage(null);
+  const handleSearch = useCallback(() => {
     Keyboard.dismiss();
-
-    try {
-      const data = await medicationOfferingService.search(trimmedQuery);
-      setResults(data);
-      setSearchState(data.length > 0 ? 'results' : 'empty');
-    } catch (error: any) {
-      setErrorMessage(error.message || 'Erro ao buscar medicamentos');
-      setSearchState('error');
-    }
-  }, [query]);
+    refresh();
+  }, [refresh]);
 
   const handleClearSearch = useCallback(() => {
-    setQuery('');
-    loadAllOfferings();
-  }, [loadAllOfferings]);
+    setSearchQuery('');
+  }, []);
 
   const handleCardPress = useCallback((offering: MedicationOfferingSearchResult) => {
     router.push({
@@ -79,12 +73,8 @@ export default function SearchScreen() {
   }, []);
 
   const handleRetry = useCallback(() => {
-    if (query.trim()) {
-      handleSearch();
-    } else {
-      loadAllOfferings();
-    }
-  }, [query, handleSearch, loadAllOfferings]);
+    refresh();
+  }, [refresh]);
 
   const renderEmptyState = () => {
     switch (searchState) {
@@ -100,10 +90,12 @@ export default function SearchScreen() {
           <View style={styles.stateContainer}>
             <Text style={styles.stateIcon}>🔍</Text>
             <Text style={styles.stateTitle}>
-              {query.trim() ? 'Nenhum medicamento encontrado' : 'Nenhum medicamento disponível'}
+              {searchQuery.trim()
+                ? 'Nenhum medicamento encontrado'
+                : 'Nenhum medicamento disponível'}
             </Text>
             <Text style={styles.stateSubtitle}>
-              {query.trim()
+              {searchQuery.trim()
                 ? 'Tente buscar por outro nome ou princípio ativo'
                 : 'Não há medicamentos disponíveis para doação no momento'}
             </Text>
@@ -143,17 +135,17 @@ export default function SearchScreen() {
             style={styles.searchInput}
             placeholder="Filtrar por nome ou substância"
             placeholderTextColor="#9ca3af"
-            value={query}
-            onChangeText={setQuery}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
             onSubmitEditing={handleSearch}
             returnKeyType="search"
             autoCorrect={false}
             autoCapitalize="none"
-            editable={searchState !== 'loading'}
+            editable={!isLoading}
             accessibilityLabel="Campo de busca de medicamentos"
             accessibilityHint="Digite o nome do medicamento ou substância para filtrar a lista"
           />
-          {query.length > 0 && (
+          {searchQuery.length > 0 && (
             <Pressable
               style={styles.clearButton}
               onPress={handleClearSearch}
@@ -165,9 +157,9 @@ export default function SearchScreen() {
           )}
         </View>
         <Pressable
-          style={[styles.searchButton, searchState === 'loading' && styles.searchButtonDisabled]}
+          style={[styles.searchButton, isLoading && styles.searchButtonDisabled]}
           onPress={handleSearch}
-          disabled={searchState === 'loading'}
+          disabled={isLoading}
           accessibilityLabel="Buscar medicamentos"
           accessibilityHint="Toque para buscar medicamentos com o termo digitado"
           accessibilityRole="button"
@@ -187,6 +179,9 @@ export default function SearchScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={<ListFooterLoader isLoading={isLoadingMore} />}
         />
       ) : (
         renderEmptyState()

@@ -438,3 +438,84 @@ it('does not return offering when drug does not match query', function (): void 
     $response->assertOk();
     $response->assertJsonCount(0, 'data');
 });
+
+// Pagination Tests
+
+it('returns paginated response with meta and links', function (): void {
+    $receptor = User::factory()->receptor()->create();
+    $drug     = Drug::factory()->create(['product_name' => 'PaginationTest']);
+
+    MedicationOffering::factory()->count(5)->create([
+        'drug_id'  => $drug->id,
+        'quantity' => 10,
+    ]);
+
+    actingAs($receptor, 'sanctum');
+
+    $response = getJson('/api/v1/medication-offerings/search?q=PaginationTest');
+
+    $response->assertOk()
+        ->assertJsonStructure([
+            'data',
+            'links' => ['first', 'last', 'prev', 'next'],
+            'meta'  => ['current_page', 'from', 'last_page', 'per_page', 'to', 'total'],
+        ])
+        ->assertJsonPath('meta.current_page', 1)
+        ->assertJsonPath('meta.per_page', 50)
+        ->assertJsonPath('meta.total', 5);
+});
+
+it('returns maximum 50 items per page', function (): void {
+    $receptor = User::factory()->receptor()->create();
+    $drug     = Drug::factory()->create(['product_name' => 'LargeSet']);
+
+    MedicationOffering::factory()->count(60)->create([
+        'drug_id'  => $drug->id,
+        'quantity' => 10,
+    ]);
+
+    actingAs($receptor, 'sanctum');
+
+    $response = getJson('/api/v1/medication-offerings/search?q=LargeSet');
+
+    $response->assertOk()
+        ->assertJsonCount(50, 'data')
+        ->assertJsonPath('meta.total', 60)
+        ->assertJsonPath('meta.last_page', 2);
+});
+
+it('returns second page with page parameter', function (): void {
+    $receptor = User::factory()->receptor()->create();
+    $drug     = Drug::factory()->create(['product_name' => 'PageTest']);
+
+    MedicationOffering::factory()->count(60)->create([
+        'drug_id'  => $drug->id,
+        'quantity' => 10,
+    ]);
+
+    actingAs($receptor, 'sanctum');
+
+    $response = getJson('/api/v1/medication-offerings/search?q=PageTest&page=2');
+
+    $response->assertOk()
+        ->assertJsonCount(10, 'data')
+        ->assertJsonPath('meta.current_page', 2);
+});
+
+it('returns empty data for non-existent page', function (): void {
+    $receptor = User::factory()->receptor()->create();
+    $drug     = Drug::factory()->create(['product_name' => 'NonExistentPage']);
+
+    MedicationOffering::factory()->count(5)->create([
+        'drug_id'  => $drug->id,
+        'quantity' => 10,
+    ]);
+
+    actingAs($receptor, 'sanctum');
+
+    $response = getJson('/api/v1/medication-offerings/search?q=NonExistentPage&page=999');
+
+    $response->assertOk()
+        ->assertJsonCount(0, 'data')
+        ->assertJsonPath('meta.current_page', 999);
+});

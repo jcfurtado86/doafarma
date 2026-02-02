@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback } from 'react';
 import {
   View,
   Text,
@@ -9,17 +9,28 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { router } from 'expo-router';
-import { useMedicationAppointmentStore } from '@/stores/medicationAppointmentStore';
 import { Colors } from '@/constants/Colors';
 import { MedicationAppointment } from '@/types/medicationAppointment';
+import { ListFooterLoader } from '@/components/ListFooterLoader';
+import { usePagination } from '@/hooks/usePagination';
+import { medicationAppointmentService } from '@/services/medicationAppointmentService';
 
 export default function ReceptorHistoryScreen() {
-  const { history, isLoading, error, fetchHistory, clearError } = useMedicationAppointmentStore();
-
-  useEffect(() => {
-    fetchHistory();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const fetchHistoryFn = useCallback(async (page: number) => {
+    return medicationAppointmentService.listHistoryPaginated(page);
   }, []);
+
+  const {
+    items: history,
+    isLoading,
+    isLoadingMore,
+    error,
+    totalItems,
+    loadMore,
+    refresh,
+  } = usePagination<MedicationAppointment>({
+    fetchFn: fetchHistoryFn,
+  });
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -134,18 +145,12 @@ export default function ReceptorHistoryScreen() {
     );
   };
 
-  if (error) {
+  if (error && history.length === 0) {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorIcon}>⚠️</Text>
         <Text style={styles.errorText}>{error}</Text>
-        <Text
-          style={styles.retryText}
-          onPress={() => {
-            clearError();
-            fetchHistory();
-          }}
-        >
+        <Text style={styles.retryText} onPress={refresh}>
           Tentar novamente
         </Text>
       </View>
@@ -158,8 +163,7 @@ export default function ReceptorHistoryScreen() {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Seu histórico de medicamentos</Text>
         <Text style={styles.headerSubtitle}>
-          {history.length}{' '}
-          {history.length === 1 ? 'medicamento recebido' : 'medicamentos recebidos'}
+          {totalItems} {totalItems === 1 ? 'medicamento recebido' : 'medicamentos recebidos'}
         </Text>
       </View>
 
@@ -176,12 +180,15 @@ export default function ReceptorHistoryScreen() {
           contentContainerStyle={styles.listContent}
           refreshControl={
             <RefreshControl
-              refreshing={isLoading}
-              onRefresh={fetchHistory}
+              refreshing={false}
+              onRefresh={refresh}
               colors={[Colors.yellow_green_500]}
               tintColor={Colors.yellow_green_500}
             />
           }
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={<ListFooterLoader isLoading={isLoadingMore} />}
           ListEmptyComponent={renderEmpty}
           showsVerticalScrollIndicator={false}
         />

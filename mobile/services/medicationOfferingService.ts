@@ -5,6 +5,7 @@ import {
   UpdateMedicationOfferingData,
   MedicationOfferingSearchResult,
 } from '@/types/medicationOffering';
+import { PaginatedResponse } from '@/types/pagination';
 import { extractErrorMessage } from '@/utils/validation/errorHelpers';
 
 export const medicationOfferingService = {
@@ -66,6 +67,24 @@ export const medicationOfferingService = {
         params: { q: query },
       });
       return response.data.data;
+    } catch (error: any) {
+      throw new Error(extractErrorMessage(error));
+    }
+  },
+
+  searchPaginated: async (
+    query: string,
+    page = 1
+  ): Promise<PaginatedResponse<MedicationOfferingSearchResult>> => {
+    try {
+      const response = await apiClient.get('/v1/medication-offerings/search', {
+        params: { q: query, page },
+      });
+      return {
+        data: response.data.data,
+        meta: response.data.meta,
+        links: response.data.links,
+      };
     } catch (error: any) {
       throw new Error(extractErrorMessage(error));
     }

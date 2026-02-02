@@ -6,16 +6,18 @@ namespace App\Actions\MedicationAppointment;
 
 use App\Models\MedicationAppointment;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ListReceptorHistoryAction
 {
+    private const PER_PAGE = 15;
+
     /**
-     * Execute the action to list receptor's completed appointments (medication history).
+     * Execute the action to list receptor's completed appointments (medication history) with pagination.
      *
-     * @return Collection<int, MedicationAppointment>
+     * @return LengthAwarePaginator<int, MedicationAppointment>
      */
-    public function execute(User $receptor): Collection
+    public function execute(User $receptor, int $perPage = self::PER_PAGE): LengthAwarePaginator
     {
         return MedicationAppointment::query()
             ->whereHas('medicationRequest', fn ($q) => $q->where('receptor_id', $receptor->id))
@@ -26,6 +28,6 @@ class ListReceptorHistoryAction
                 'address',
             ])
             ->orderByDesc('updated_at')
-            ->get();
+            ->paginate($perPage);
     }
 }

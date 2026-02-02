@@ -1,17 +1,27 @@
-import React, { useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
-import { useMedicationAppointmentStore } from '@/stores/medicationAppointmentStore';
 import { Colors } from '@/constants/Colors';
 import { MedicationAppointment } from '@/types/medicationAppointment';
+import { ListFooterLoader } from '@/components/ListFooterLoader';
+import { usePagination } from '@/hooks/usePagination';
+import { medicationAppointmentService } from '@/services/medicationAppointmentService';
 
 export default function DoctorHistoryScreen() {
-  const { donationHistory, isLoading, error, fetchDoctorHistory, clearError } =
-    useMedicationAppointmentStore();
-
-  useEffect(() => {
-    fetchDoctorHistory();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const fetchDoctorHistoryFn = useCallback(async (page: number) => {
+    return medicationAppointmentService.listDoctorHistoryPaginated(page);
   }, []);
+
+  const {
+    items: donationHistory,
+    isLoading,
+    isLoadingMore,
+    error,
+    totalItems,
+    loadMore,
+    refresh,
+  } = usePagination<MedicationAppointment>({
+    fetchFn: fetchDoctorHistoryFn,
+  });
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -102,18 +112,12 @@ export default function DoctorHistoryScreen() {
     );
   };
 
-  if (error) {
+  if (error && donationHistory.length === 0) {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorIcon}>⚠️</Text>
         <Text style={styles.errorText}>{error}</Text>
-        <Text
-          style={styles.retryText}
-          onPress={() => {
-            clearError();
-            fetchDoctorHistory();
-          }}
-        >
+        <Text style={styles.retryText} onPress={refresh}>
           Tentar novamente
         </Text>
       </View>
@@ -126,8 +130,7 @@ export default function DoctorHistoryScreen() {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Seu histórico de doações</Text>
         <Text style={styles.headerSubtitle}>
-          {donationHistory.length}{' '}
-          {donationHistory.length === 1 ? 'doação realizada' : 'doações realizadas'}
+          {totalItems} {totalItems === 1 ? 'doação realizada' : 'doações realizadas'}
         </Text>
       </View>
 
@@ -144,12 +147,15 @@ export default function DoctorHistoryScreen() {
           contentContainerStyle={styles.listContent}
           refreshControl={
             <RefreshControl
-              refreshing={isLoading}
-              onRefresh={fetchDoctorHistory}
+              refreshing={false}
+              onRefresh={refresh}
               colors={[Colors.yellow_green_500]}
               tintColor={Colors.yellow_green_500}
             />
           }
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={<ListFooterLoader isLoading={isLoadingMore} />}
           ListEmptyComponent={renderEmpty}
           showsVerticalScrollIndicator={false}
         />

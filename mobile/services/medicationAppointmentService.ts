@@ -5,6 +5,7 @@ import {
   CounterProposeAppointmentData,
   MedicationAppointmentStatus,
 } from '@/types/medicationAppointment';
+import { PaginatedResponse } from '@/types/pagination';
 import { extractErrorMessage } from '@/utils/validation/errorHelpers';
 
 export const medicationAppointmentService = {
@@ -92,10 +93,42 @@ export const medicationAppointmentService = {
     }
   },
 
+  listHistoryPaginated: async (page = 1): Promise<PaginatedResponse<MedicationAppointment>> => {
+    try {
+      const response = await apiClient.get('/v1/medication-appointments/history', {
+        params: { page },
+      });
+      return {
+        data: response.data.data,
+        meta: response.data.meta,
+        links: response.data.links,
+      };
+    } catch (error: any) {
+      throw new Error(extractErrorMessage(error));
+    }
+  },
+
   listDoctorHistory: async (): Promise<MedicationAppointment[]> => {
     try {
       const response = await apiClient.get('/v1/medication-appointments/doctor-history');
       return response.data.data;
+    } catch (error: any) {
+      throw new Error(extractErrorMessage(error));
+    }
+  },
+
+  listDoctorHistoryPaginated: async (
+    page = 1
+  ): Promise<PaginatedResponse<MedicationAppointment>> => {
+    try {
+      const response = await apiClient.get('/v1/medication-appointments/doctor-history', {
+        params: { page },
+      });
+      return {
+        data: response.data.data,
+        meta: response.data.meta,
+        links: response.data.links,
+      };
     } catch (error: any) {
       throw new Error(extractErrorMessage(error));
     }

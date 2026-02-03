@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
   },
   addressOptionSelected: {
     borderColor: Colors.yellow_green_500,
-    backgroundColor: '#f0fdf4',
+    backgroundColor: Colors.green_50,
   },
   radioButton: {
     width: 20,
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     color: Colors.gray_500,
   },
   infoBox: {
-    backgroundColor: '#eff6ff',
+    backgroundColor: Colors.blue_50,
     padding: 12,
     borderRadius: 8,
     marginTop: 8,
@@ -289,12 +289,12 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#1e40af',
+    color: Colors.blue_800,
     marginBottom: 6,
   },
   infoText: {
     fontSize: 13,
-    color: '#1e3a8a',
+    color: Colors.blue_900,
     marginBottom: 4,
   },
   footer: {

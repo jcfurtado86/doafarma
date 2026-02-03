@@ -188,22 +188,22 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   infoBox: {
-    backgroundColor: '#eff6ff',
+    backgroundColor: Colors.blue_50,
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
     borderLeftWidth: 4,
-    borderLeftColor: '#3b82f6',
+    borderLeftColor: Colors.blue_500,
   },
   infoTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#1d4ed8',
+    color: Colors.blue_700,
     marginBottom: 8,
   },
   infoText: {
     fontSize: 14,
-    color: '#1e40af',
+    color: Colors.blue_800,
     lineHeight: 22,
   },
   actions: {

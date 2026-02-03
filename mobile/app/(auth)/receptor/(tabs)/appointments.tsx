@@ -9,6 +9,7 @@ import {
   Alert,
   Pressable,
 } from 'react-native';
+import { toast } from '@/utils/toast';
 import { useMedicationAppointmentStore } from '@/stores/medicationAppointmentStore';
 import { MedicationAppointmentCard } from '@/components/MedicationAppointmentCard';
 import { Colors } from '@/constants/Colors';
@@ -51,7 +52,7 @@ export default function ReceptorAppointmentsScreen() {
           onPress: async () => {
             try {
               await acceptAppointment(appointment.id, false);
-              Alert.alert('Sucesso', 'Agendamento confirmado!');
+              toast.success('Agendamento confirmado!');
             } catch (err: any) {
               Alert.alert('Erro', err.message || 'Não foi possível aceitar o agendamento.');
             }
@@ -67,7 +68,7 @@ export default function ReceptorAppointmentsScreen() {
   ) => {
     try {
       await counterProposeAppointment(appointmentId, data, false);
-      Alert.alert('Sucesso', 'Contraproposta enviada!');
+      toast.success('Contraproposta enviada!');
     } catch (err: any) {
       throw err; // Let the modal handle the error display
     }
@@ -84,7 +85,7 @@ export default function ReceptorAppointmentsScreen() {
           onPress: async () => {
             try {
               await confirmDeliveryReceptor(appointment.id);
-              Alert.alert('Sucesso', 'Recebimento confirmado com sucesso!');
+              toast.success('Recebimento confirmado com sucesso!');
             } catch (err: any) {
               Alert.alert('Erro', err.message || 'Não foi possível confirmar o recebimento.');
             }

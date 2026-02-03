@@ -9,6 +9,7 @@ import {
   Alert,
   Pressable,
 } from 'react-native';
+import { toast } from '@/utils/toast';
 import { useMedicationRequestStore } from '@/stores/medicationRequestStore';
 import { MedicationRequestCard } from '@/components/MedicationRequestCard';
 import { Colors } from '@/constants/Colors';
@@ -50,7 +51,7 @@ export default function DoctorReceivedRequestsScreen() {
           onPress: async () => {
             try {
               await confirmRequest(request.id);
-              Alert.alert('Sucesso', 'Solicitação confirmada com sucesso!');
+              toast.success('Solicitação confirmada com sucesso!');
             } catch (error: any) {
               Alert.alert('Erro', error.message || 'Não foi possível confirmar a solicitação.');
             }
@@ -72,7 +73,7 @@ export default function DoctorReceivedRequestsScreen() {
           onPress: async () => {
             try {
               await rejectRequest(request.id);
-              Alert.alert('Sucesso', 'Solicitação recusada.');
+              toast.success('Solicitação recusada.');
             } catch (error: any) {
               Alert.alert('Erro', error.message || 'Não foi possível recusar a solicitação.');
             }

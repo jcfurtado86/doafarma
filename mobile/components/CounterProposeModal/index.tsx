@@ -1,14 +1,6 @@
 import React, { useState } from 'react';
-import {
-  Modal,
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  Alert,
-  TextInput,
-} from 'react-native';
+import { Modal, View, Text, StyleSheet, Pressable, ScrollView, TextInput } from 'react-native';
+import { toast } from '@/utils/toast';
 import { Address, CounterProposeAppointmentData } from '@/types/medicationAppointment';
 import { Colors } from '@/constants/Colors';
 
@@ -64,13 +56,13 @@ export function CounterProposeModal({
   const handleSubmit = async () => {
     // Validate date format and value
     if (!dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
-      Alert.alert('Erro', 'Data inválida. Use o formato DD/MM/AAAA.');
+      toast.error('Data inválida. Use o formato DD/MM/AAAA.');
       return;
     }
 
     // Validate time format
     if (!timeStr.match(/^\d{2}:\d{2}$/)) {
-      Alert.alert('Erro', 'Horário inválido. Use o formato HH:MM.');
+      toast.error('Horário inválido. Use o formato HH:MM.');
       return;
     }
 
@@ -81,7 +73,7 @@ export function CounterProposeModal({
     selectedDate.setHours(0, 0, 0, 0);
 
     if (selectedDate < today) {
-      Alert.alert('Erro', 'A data deve ser hoje ou no futuro.');
+      toast.error('A data deve ser hoje ou no futuro.');
       return;
     }
 
@@ -100,7 +92,7 @@ export function CounterProposeModal({
       await onSubmit(data);
       onClose();
     } catch (error: any) {
-      Alert.alert('Erro', error.message || 'Não foi possível fazer a contraproposta.');
+      toast.error(error.message || 'Não foi possível fazer a contraproposta.');
     } finally {
       setIsSubmitting(false);
     }

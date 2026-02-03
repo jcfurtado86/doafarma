@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { toast } from '@/utils/toast';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useDoctorRatingStore } from '@/stores/doctorRatingStore';
@@ -64,7 +65,7 @@ export default function RateDoctorScreen() {
 
   const showConfirmation = () => {
     if (rating === 0) {
-      Alert.alert('Avaliação obrigatória', 'Por favor, selecione uma avaliação de 1 a 5 estrelas.');
+      toast.error('Por favor, selecione uma avaliação de 1 a 5 estrelas.', 'Avaliação obrigatória');
       return;
     }
 
@@ -88,17 +89,15 @@ export default function RateDoctorScreen() {
           rating,
           comment: comment.trim() || undefined,
         });
-        Alert.alert('Avaliação atualizada!', 'Sua avaliação foi alterada com sucesso.', [
-          { text: 'OK', onPress: () => router.back() },
-        ]);
+        toast.success('Sua avaliação foi alterada com sucesso.', 'Avaliação atualizada!');
+        router.back();
       } else {
         await createRating(parseInt(appointmentId, 10), {
           rating,
           comment: comment.trim() || undefined,
         });
-        Alert.alert('Avaliação enviada!', 'Obrigado por avaliar sua experiência.', [
-          { text: 'OK', onPress: () => router.back() },
-        ]);
+        toast.success('Obrigado por avaliar sua experiência.', 'Avaliação enviada!');
+        router.back();
       }
     } catch {
       // Error is handled by the store

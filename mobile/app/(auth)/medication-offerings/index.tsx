@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { View, StyleSheet, FlatList, Alert } from 'react-native';
+import { toast } from '@/utils/toast';
 import { useRouter } from 'expo-router';
 import { useMedicationOfferingStore } from '@/stores/medicationOfferingStore';
 import { Title } from '@/components/Title';
@@ -32,7 +33,7 @@ export default function MedicationOfferingsScreen() {
           onPress: async () => {
             try {
               await deleteOffering(id);
-              Alert.alert('Sucesso', 'Oferta excluída com sucesso!');
+              toast.success('Oferta excluída com sucesso!');
             } catch (error: any) {
               Alert.alert(
                 'Erro ao excluir',

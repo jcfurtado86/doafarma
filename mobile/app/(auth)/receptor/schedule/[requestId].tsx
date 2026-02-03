@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { toast } from '@/utils/toast';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useMedicationAppointmentStore } from '@/stores/medicationAppointmentStore';
@@ -68,13 +69,13 @@ export default function ScheduleAppointmentScreen() {
     const apiDate = formatDateForApi(date);
 
     if (!apiDate) {
-      Alert.alert('Erro', 'Data inválida. Use o formato DD/MM/AAAA');
+      toast.error('Data inválida. Use o formato DD/MM/AAAA');
       return false;
     }
 
     const timeParts = time.split(':');
     if (timeParts.length !== 2 || timeParts[0].length !== 2 || timeParts[1].length !== 2) {
-      Alert.alert('Erro', 'Horário inválido. Use o formato HH:MM');
+      toast.error('Horário inválido. Use o formato HH:MM');
       return false;
     }
 
@@ -82,7 +83,7 @@ export default function ScheduleAppointmentScreen() {
     const minute = parseInt(timeParts[1], 10);
 
     if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
-      Alert.alert('Erro', 'Horário inválido');
+      toast.error('Horário inválido');
       return false;
     }
 
@@ -92,7 +93,7 @@ export default function ScheduleAppointmentScreen() {
     today.setHours(0, 0, 0, 0);
 
     if (selectedDate < today) {
-      Alert.alert('Erro', 'A data não pode ser no passado');
+      toast.error('A data não pode ser no passado');
       return false;
     }
 

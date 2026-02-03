@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { View, StyleSheet, Alert, TextInput, ActivityIndicator } from 'react-native';
+import { toast } from '@/utils/toast';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useMedicationOfferingStore } from '@/stores/medicationOfferingStore';
 import { Title } from '@/components/Title';
@@ -90,9 +91,8 @@ export default function EditMedicationOfferingScreen() {
         quantity: parseInt(data.quantity, 10),
       });
 
-      Alert.alert('Sucesso', 'Oferta de medicamento atualizada com sucesso!', [
-        { text: 'OK', onPress: () => router.back() },
-      ]);
+      toast.success('Oferta de medicamento atualizada com sucesso!');
+      router.back();
     } catch (error: any) {
       Alert.alert(
         'Erro ao atualizar oferta',

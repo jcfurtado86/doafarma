@@ -27,4 +27,38 @@ export const Colors = {
   yellow_green_800: '#415321',
   yellow_green_900: '#384720',
   yellow_green_950: '#1C260D',
+
+  // Neutral grays (Tailwind naming convention)
+  gray_50: '#f9fafb',
+  gray_100: '#f3f4f6',
+  gray_200: '#e5e7eb',
+  gray_300: '#d1d5db',
+  gray_400: '#9ca3af',
+  gray_500: '#6b7280',
+  gray_600: '#4b5563',
+  gray_700: '#374151',
+  gray_800: '#1f2937',
+  gray_900: '#111827',
+
+  white: '#ffffff',
+  black: '#000000',
+
+  // Blue palette (for info boxes)
+  blue_50: '#eff6ff',
+  blue_500: '#3b82f6',
+  blue_600: '#2563eb',
+  blue_700: '#1d4ed8',
+  blue_800: '#1e40af',
+  blue_900: '#1e3a8a',
+
+  // Green palette (for success states)
+  green_50: '#f0fdf4',
+  green_100: '#dcfce7',
+  green_500: '#22c55e',
+  green_600: '#16a34a',
+
+  // Red palette (for error/danger states)
+  red_50: '#fef2f2',
+  red_500: '#ef4444',
+  red_600: '#dc2626',
 };

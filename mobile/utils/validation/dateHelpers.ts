@@ -21,3 +21,15 @@ export const convertDateFromAPI = (dateString: string): string => {
   const [year, month, day] = dateString.split('-');
   return `${day}/${month}/${year}`;
 };
+
+export const isDateInPast = (dateStr: string): boolean => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const selectedDate = new Date(dateStr);
+  selectedDate.setHours(0, 0, 0, 0);
+  return selectedDate < today;
+};
+
+export const isValidDateFormat = (dateStr: string): boolean => {
+  return /^\d{4}-\d{2}-\d{2}$/.test(dateStr);
+};

@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { View, StyleSheet, Alert, TextInput } from 'react-native';
+import { toast } from '@/utils/toast';
 import { useRouter } from 'expo-router';
 import { useMedicationOfferingStore } from '@/stores/medicationOfferingStore';
 import { Title } from '@/components/Title';
@@ -62,9 +63,8 @@ export default function CreateMedicationOfferingScreen() {
         quantity: parseInt(data.quantity, 10),
       });
 
-      Alert.alert('Sucesso', 'Oferta de medicamento criada com sucesso!', [
-        { text: 'OK', onPress: () => router.back() },
-      ]);
+      toast.success('Oferta de medicamento criada com sucesso!');
+      router.back();
     } catch (error: any) {
       Alert.alert(
         'Erro ao criar oferta',

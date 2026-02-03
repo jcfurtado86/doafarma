@@ -47,8 +47,12 @@ describe('dateHelpers', () => {
     });
 
     it('should return false for today', () => {
+      // Use local date format to match how isDateInPast works internally
       const today = new Date();
-      const todayStr = today.toISOString().split('T')[0];
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const todayStr = `${year}-${month}-${day}`;
       expect(isDateInPast(todayStr)).toBe(false);
     });
 
@@ -58,7 +62,7 @@ describe('dateHelpers', () => {
   });
 
   describe('isValidDateFormat', () => {
-    it('should return true for valid format', () => {
+    it('should return true for valid format and real date', () => {
       expect(isValidDateFormat('2024-03-12')).toBe(true);
     });
 
@@ -68,6 +72,26 @@ describe('dateHelpers', () => {
 
     it('should return false for invalid format', () => {
       expect(isValidDateFormat('invalid')).toBe(false);
+    });
+
+    it('should return false for invalid day in month (Feb 30)', () => {
+      expect(isValidDateFormat('2026-02-30')).toBe(false);
+    });
+
+    it('should return false for invalid month (month 13)', () => {
+      expect(isValidDateFormat('2026-13-01')).toBe(false);
+    });
+
+    it('should return false for invalid day (day 32)', () => {
+      expect(isValidDateFormat('2026-01-32')).toBe(false);
+    });
+
+    it('should return true for valid leap year date', () => {
+      expect(isValidDateFormat('2024-02-29')).toBe(true); // 2024 is a leap year
+    });
+
+    it('should return false for Feb 29 in non-leap year', () => {
+      expect(isValidDateFormat('2025-02-29')).toBe(false); // 2025 is not a leap year
     });
   });
 });

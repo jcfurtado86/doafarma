@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, memo } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { MedicationAppointment, Address } from '@/types/medicationAppointment';
 import { AppointmentStatusBadge } from '@/components/AppointmentStatusBadge';
@@ -26,7 +26,7 @@ interface MedicationAppointmentCardProps {
   doctorAddresses?: Address[];
 }
 
-export function MedicationAppointmentCard({
+export const MedicationAppointmentCard = memo(function MedicationAppointmentCard({
   appointment,
   variant,
   onConfirmDelivery,
@@ -39,10 +39,17 @@ export function MedicationAppointmentCard({
   const offering = appointment.medication_request?.medication_offering;
   const receptor = appointment.medication_request?.receptor;
   const doctor = offering?.doctor;
-  const proposalStatus = getProposalStatus(appointment, variant);
-  const confirmationStatus = getConfirmationStatus(appointment, variant);
-  const showActions = canRespond(appointment, variant);
-  const showConfirm = canConfirm(appointment, variant);
+
+  const proposalStatus = useMemo(
+    () => getProposalStatus(appointment, variant),
+    [appointment, variant]
+  );
+  const confirmationStatus = useMemo(
+    () => getConfirmationStatus(appointment, variant),
+    [appointment, variant]
+  );
+  const showActions = useMemo(() => canRespond(appointment, variant), [appointment, variant]);
+  const showConfirm = useMemo(() => canConfirm(appointment, variant), [appointment, variant]);
 
   return (
     <>
@@ -159,4 +166,4 @@ export function MedicationAppointmentCard({
       />
     </>
   );
-}
+});

@@ -61,4 +61,14 @@ export const Colors = {
   red_50: '#fef2f2',
   red_500: '#ef4444',
   red_600: '#dc2626',
+
+  // Yellow/amber palette (for warning/pending states)
+  yellow_50: '#fefce8',
+  yellow_100: '#fef3c7',
+  yellow_500: '#f59e0b',
+  amber_50: '#fff7ed',
+  amber_900: '#92400e',
+
+  // Overlay
+  overlay: 'rgba(0, 0, 0, 0.5)',
 };

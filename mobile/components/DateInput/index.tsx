@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useCallback, memo } from 'react';
 import { View, TextInput, Text, TextInputProps } from 'react-native';
 import {
   formatDateInput,
@@ -14,23 +14,29 @@ interface DateInputProps extends Omit<TextInputProps, 'value' | 'onChangeText'> 
   placeholder?: string;
 }
 
-export function DateInput({
+export const DateInput = memo(function DateInput({
   value,
   onChange,
   error,
   placeholder = 'DD/MM/AAAA',
   ...rest
 }: DateInputProps) {
-  const displayValue = value.includes('-') ? convertDateFromAPI(value) : value;
+  const displayValue = useMemo(
+    () => (value.includes('-') ? convertDateFromAPI(value) : value),
+    [value]
+  );
 
-  const handleChange = (text: string) => {
-    const formatted = formatDateInput(text);
-    if (formatted.length === 10) {
-      onChange(convertDateToAPI(formatted));
-    } else {
-      onChange(formatted);
-    }
-  };
+  const handleChange = useCallback(
+    (text: string) => {
+      const formatted = formatDateInput(text);
+      if (formatted.length === 10) {
+        onChange(convertDateToAPI(formatted));
+      } else {
+        onChange(formatted);
+      }
+    },
+    [onChange]
+  );
 
   return (
     <View style={styles.container}>
@@ -46,4 +52,4 @@ export function DateInput({
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
-}
+});

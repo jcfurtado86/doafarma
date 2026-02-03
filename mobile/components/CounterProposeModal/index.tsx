@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { Modal, View, Text, Pressable, ScrollView } from 'react-native';
 import { toast } from '@/utils/toast';
 import { Address, CounterProposeAppointmentData } from '@/types/medicationAppointment';
@@ -21,7 +21,7 @@ interface CounterProposeModalProps {
   doctorAddresses?: Address[];
 }
 
-export function CounterProposeModal({
+export const CounterProposeModal = memo(function CounterProposeModal({
   visible,
   onClose,
   onSubmit,
@@ -38,7 +38,7 @@ export function CounterProposeModal({
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     if (!isValidDateFormat(date)) {
       toast.error(ValidationMessages.date.invalid);
       return;
@@ -67,12 +67,13 @@ export function CounterProposeModal({
 
       await onSubmit(data);
       onClose();
-    } catch (error: any) {
-      toast.error(error.message || 'Não foi possível fazer a contraproposta.');
+    } catch {
+      // Never expose raw backend error messages to users (security best practice)
+      toast.error('Não foi possível fazer a contraproposta. Tente novamente.');
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [date, time, selectedAddressId, userRole, onSubmit, onClose]);
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
@@ -140,4 +141,4 @@ export function CounterProposeModal({
       </View>
     </Modal>
   );
-}
+});

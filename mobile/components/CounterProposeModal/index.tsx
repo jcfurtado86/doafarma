@@ -3,6 +3,12 @@ import { Modal, View, Text, StyleSheet, Pressable, ScrollView, TextInput } from 
 import { toast } from '@/utils/toast';
 import { Address, CounterProposeAppointmentData } from '@/types/medicationAppointment';
 import { Colors } from '@/constants/Colors';
+import {
+  convertDateFromAPI,
+  isDateInPast,
+  isValidDateFormat,
+} from '@/utils/validation/dateHelpers';
+import { formatTimeInput, isValidTimeFormat } from '@/utils/validation/timeHelpers';
 
 interface CounterProposeModalProps {
   visible: boolean;
@@ -32,47 +38,18 @@ export function CounterProposeModal({
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const formatDateInput = (date: string) => {
-    // Convert YYYY-MM-DD to DD/MM/YYYY for display
-    const parts = date.split('-');
-    if (parts.length === 3) {
-      return `${parts[2]}/${parts[1]}/${parts[0]}`;
-    }
-    return date;
-  };
-
-  const parseDateInput = (dateDisplay: string): string => {
-    // Convert DD/MM/YYYY to YYYY-MM-DD
-    const parts = dateDisplay.replace(/\D/g, '');
-    if (parts.length >= 8) {
-      const day = parts.substring(0, 2);
-      const month = parts.substring(2, 4);
-      const year = parts.substring(4, 8);
-      return `${year}-${month}-${day}`;
-    }
-    return dateStr;
-  };
-
   const handleSubmit = async () => {
-    // Validate date format and value
-    if (!dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    if (!isValidDateFormat(dateStr)) {
       toast.error('Data inválida. Use o formato DD/MM/AAAA.');
       return;
     }
 
-    // Validate time format
-    if (!timeStr.match(/^\d{2}:\d{2}$/)) {
+    if (!isValidTimeFormat(timeStr)) {
       toast.error('Horário inválido. Use o formato HH:MM.');
       return;
     }
 
-    // Validate date is not in the past
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const selectedDate = new Date(dateStr);
-    selectedDate.setHours(0, 0, 0, 0);
-
-    if (selectedDate < today) {
+    if (isDateInPast(dateStr)) {
       toast.error('A data deve ser hoje ou no futuro.');
       return;
     }
@@ -115,10 +92,15 @@ export function CounterProposeModal({
               <Text style={styles.label}>Data</Text>
               <TextInput
                 style={styles.input}
-                value={formatDateInput(dateStr)}
+                value={convertDateFromAPI(dateStr)}
                 onChangeText={(text) => {
-                  const parsed = parseDateInput(text);
-                  setDateStr(parsed);
+                  const numbers = text.replace(/\D/g, '');
+                  if (numbers.length >= 8) {
+                    const day = numbers.substring(0, 2);
+                    const month = numbers.substring(2, 4);
+                    const year = numbers.substring(4, 8);
+                    setDateStr(`${year}-${month}-${day}`);
+                  }
                 }}
                 placeholder="DD/MM/AAAA"
                 keyboardType="numeric"
@@ -132,15 +114,7 @@ export function CounterProposeModal({
               <TextInput
                 style={styles.input}
                 value={timeStr}
-                onChangeText={(text) => {
-                  // Auto-format time as user types
-                  const cleaned = text.replace(/\D/g, '');
-                  if (cleaned.length <= 2) {
-                    setTimeStr(cleaned);
-                  } else if (cleaned.length <= 4) {
-                    setTimeStr(`${cleaned.substring(0, 2)}:${cleaned.substring(2)}`);
-                  }
-                }}
+                onChangeText={(text) => setTimeStr(formatTimeInput(text))}
                 placeholder="HH:MM"
                 keyboardType="numeric"
                 maxLength={5}

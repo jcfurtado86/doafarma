@@ -15,6 +15,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useMedicationAppointmentStore } from '@/stores/medicationAppointmentStore';
 import PrimaryButton from '@/components/PrimaryButton';
+import { formatDateInput, convertDateToAPI, isDateInPast } from '@/utils/validation/dateHelpers';
+import { formatTimeInput, isValidTimeFormat } from '@/utils/validation/timeHelpers';
 
 export default function ScheduleAppointmentScreen() {
   const { requestId } = useLocalSearchParams<{ requestId: string }>();
@@ -24,75 +26,27 @@ export default function ScheduleAppointmentScreen() {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
 
-  // Formatar data enquanto digita (DD/MM/YYYY)
   const handleDateChange = (text: string) => {
-    const numbers = text.replace(/\D/g, '');
-    let formatted = '';
-
-    if (numbers.length <= 2) {
-      formatted = numbers;
-    } else if (numbers.length <= 4) {
-      formatted = `${numbers.slice(0, 2)}/${numbers.slice(2)}`;
-    } else {
-      formatted = `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}/${numbers.slice(4, 8)}`;
-    }
-
-    setDate(formatted);
+    setDate(formatDateInput(text));
   };
 
-  // Formatar hora enquanto digita (HH:MM)
   const handleTimeChange = (text: string) => {
-    const numbers = text.replace(/\D/g, '');
-    let formatted = '';
-
-    if (numbers.length <= 2) {
-      formatted = numbers;
-    } else {
-      formatted = `${numbers.slice(0, 2)}:${numbers.slice(2, 4)}`;
-    }
-
-    setTime(formatted);
-  };
-
-  // Converter DD/MM/YYYY para YYYY-MM-DD
-  const formatDateForApi = (dateStr: string): string | null => {
-    const parts = dateStr.split('/');
-    if (parts.length !== 3) return null;
-
-    const [day, month, year] = parts;
-    if (day.length !== 2 || month.length !== 2 || year.length !== 4) return null;
-
-    return `${year}-${month}-${day}`;
+    setTime(formatTimeInput(text));
   };
 
   const validateInputs = (): boolean => {
-    const apiDate = formatDateForApi(date);
-
-    if (!apiDate) {
+    if (date.length !== 10) {
       toast.error('Data inválida. Use o formato DD/MM/AAAA');
       return false;
     }
 
-    const timeParts = time.split(':');
-    if (timeParts.length !== 2 || timeParts[0].length !== 2 || timeParts[1].length !== 2) {
+    if (!isValidTimeFormat(time)) {
       toast.error('Horário inválido. Use o formato HH:MM');
       return false;
     }
 
-    const hour = parseInt(timeParts[0], 10);
-    const minute = parseInt(timeParts[1], 10);
-
-    if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
-      toast.error('Horário inválido');
-      return false;
-    }
-
-    // Verificar se a data não é no passado
-    const selectedDate = new Date(apiDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    if (selectedDate < today) {
+    const apiDate = convertDateToAPI(date);
+    if (isDateInPast(apiDate)) {
       toast.error('A data não pode ser no passado');
       return false;
     }
@@ -105,13 +59,10 @@ export default function ScheduleAppointmentScreen() {
 
     if (!validateInputs()) return;
 
-    const apiDate = formatDateForApi(date);
-    if (!apiDate) return;
-
     try {
       await createAppointment({
         medication_request_id: parseInt(requestId, 10),
-        scheduled_date: apiDate,
+        scheduled_date: convertDateToAPI(date),
         scheduled_time: time,
       });
 

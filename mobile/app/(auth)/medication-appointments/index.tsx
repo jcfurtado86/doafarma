@@ -7,11 +7,11 @@ import {
   RefreshControl,
   ActivityIndicator,
   Alert,
-  Pressable,
 } from 'react-native';
 import { toast } from '@/utils/toast';
 import { useMedicationAppointmentStore } from '@/stores/medicationAppointmentStore';
 import { MedicationAppointmentCard } from '@/components/MedicationAppointmentCard';
+import { FilterButton } from '@/components/FilterButton';
 import { Colors } from '@/constants/Colors';
 import { MedicationAppointment, MedicationAppointmentStatus } from '@/types/medicationAppointment';
 
@@ -125,17 +125,6 @@ export default function DoctorReceivedAppointmentsScreen() {
     );
   };
 
-  const FilterButton = ({ value, label }: { value: FilterOption; label: string }) => (
-    <Pressable
-      style={[styles.filterButton, filter === value && styles.filterButtonActive]}
-      onPress={() => setFilter(value)}
-    >
-      <Text style={[styles.filterButtonText, filter === value && styles.filterButtonTextActive]}>
-        {label}
-      </Text>
-    </Pressable>
-  );
-
   if (error) {
     return (
       <View style={styles.errorContainer}>
@@ -156,12 +145,26 @@ export default function DoctorReceivedAppointmentsScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Filter Tabs */}
       <View style={styles.filterContainer}>
-        <FilterButton value="proposed" label="Propostas" />
-        <FilterButton value="confirmed" label="Confirmados" />
-        <FilterButton value="completed" label="Concluídos" />
-        <FilterButton value="all" label="Todos" />
+        <FilterButton
+          value="proposed"
+          label="Propostas"
+          isActive={filter === 'proposed'}
+          onPress={setFilter}
+        />
+        <FilterButton
+          value="confirmed"
+          label="Confirmados"
+          isActive={filter === 'confirmed'}
+          onPress={setFilter}
+        />
+        <FilterButton
+          value="completed"
+          label="Concluídos"
+          isActive={filter === 'completed'}
+          onPress={setFilter}
+        />
+        <FilterButton value="all" label="Todos" isActive={filter === 'all'} onPress={setFilter} />
       </View>
 
       {isLoading && receivedAppointments.length === 0 ? (
@@ -203,25 +206,6 @@ const styles = StyleSheet.create({
     gap: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#e5e7eb',
-  },
-  filterButton: {
-    flex: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    backgroundColor: '#f3f4f6',
-    alignItems: 'center',
-  },
-  filterButtonActive: {
-    backgroundColor: Colors.yellow_green_500,
-  },
-  filterButtonText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#6b7280',
-  },
-  filterButtonTextActive: {
-    color: '#ffffff',
   },
   listContent: {
     padding: 16,

@@ -7,11 +7,11 @@ import {
   RefreshControl,
   ActivityIndicator,
   Alert,
-  Pressable,
 } from 'react-native';
 import { toast } from '@/utils/toast';
 import { useMedicationRequestStore } from '@/stores/medicationRequestStore';
 import { MedicationRequestCard } from '@/components/MedicationRequestCard';
+import { FilterButton } from '@/components/FilterButton';
 import { Colors } from '@/constants/Colors';
 import { MedicationRequest, MedicationRequestStatus } from '@/types/medicationRequest';
 
@@ -111,17 +111,6 @@ export default function DoctorReceivedRequestsScreen() {
     );
   };
 
-  const FilterButton = ({ value, label }: { value: FilterOption; label: string }) => (
-    <Pressable
-      style={[styles.filterButton, filter === value && styles.filterButtonActive]}
-      onPress={() => setFilter(value)}
-    >
-      <Text style={[styles.filterButtonText, filter === value && styles.filterButtonTextActive]}>
-        {label}
-      </Text>
-    </Pressable>
-  );
-
   if (error) {
     return (
       <View style={styles.errorContainer}>
@@ -142,12 +131,26 @@ export default function DoctorReceivedRequestsScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Filter Tabs */}
       <View style={styles.filterContainer}>
-        <FilterButton value="pending" label="Pendentes" />
-        <FilterButton value="confirmed" label="Confirmadas" />
-        <FilterButton value="rejected" label="Recusadas" />
-        <FilterButton value="all" label="Todas" />
+        <FilterButton
+          value="pending"
+          label="Pendentes"
+          isActive={filter === 'pending'}
+          onPress={setFilter}
+        />
+        <FilterButton
+          value="confirmed"
+          label="Confirmadas"
+          isActive={filter === 'confirmed'}
+          onPress={setFilter}
+        />
+        <FilterButton
+          value="rejected"
+          label="Recusadas"
+          isActive={filter === 'rejected'}
+          onPress={setFilter}
+        />
+        <FilterButton value="all" label="Todas" isActive={filter === 'all'} onPress={setFilter} />
       </View>
 
       {isLoading && receivedRequests.length === 0 ? (
@@ -189,25 +192,6 @@ const styles = StyleSheet.create({
     gap: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#e5e7eb',
-  },
-  filterButton: {
-    flex: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    backgroundColor: '#f3f4f6',
-    alignItems: 'center',
-  },
-  filterButtonActive: {
-    backgroundColor: Colors.yellow_green_500,
-  },
-  filterButtonText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#6b7280',
-  },
-  filterButtonTextActive: {
-    color: '#ffffff',
   },
   listContent: {
     padding: 16,

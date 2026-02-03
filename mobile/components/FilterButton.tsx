@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 8,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: Colors.gray_100,
     alignItems: 'center',
   },
   filterButtonActive: {
@@ -42,9 +42,9 @@ const styles = StyleSheet.create({
   filterButtonText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#6b7280',
+    color: Colors.gray_500,
   },
   filterButtonTextActive: {
-    color: '#ffffff',
+    color: Colors.white,
   },
 });

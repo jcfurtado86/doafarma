@@ -3,7 +3,10 @@ import { Modal, View, Text, StyleSheet, Pressable, ScrollView, TextInput } from 
 import { toast } from '@/utils/toast';
 import { Address, CounterProposeAppointmentData } from '@/types/medicationAppointment';
 import { Colors } from '@/constants/Colors';
+import { ValidationMessages } from '@/constants/ValidationMessages';
 import {
+  formatDateInput,
+  convertDateToAPI,
   convertDateFromAPI,
   isDateInPast,
   isValidDateFormat,
@@ -31,37 +34,43 @@ export function CounterProposeModal({
   userRole,
   doctorAddresses = [],
 }: CounterProposeModalProps) {
-  const [dateStr, setDateStr] = useState(currentDate);
-  const [timeStr, setTimeStr] = useState(currentTime.substring(0, 5));
+  const [date, setDate] = useState(currentDate);
+  const [time, setTime] = useState(currentTime.substring(0, 5));
   const [selectedAddressId, setSelectedAddressId] = useState<number | undefined>(
     currentAddress?.id
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const handleDateChange = (text: string) => {
+    const formatted = formatDateInput(text);
+    if (formatted.length === 10) {
+      setDate(convertDateToAPI(formatted));
+    }
+  };
+
   const handleSubmit = async () => {
-    if (!isValidDateFormat(dateStr)) {
-      toast.error('Data inválida. Use o formato DD/MM/AAAA.');
+    if (!isValidDateFormat(date)) {
+      toast.error(ValidationMessages.date.invalid);
       return;
     }
 
-    if (!isValidTimeFormat(timeStr)) {
-      toast.error('Horário inválido. Use o formato HH:MM.');
+    if (!isValidTimeFormat(time)) {
+      toast.error(ValidationMessages.time.invalid);
       return;
     }
 
-    if (isDateInPast(dateStr)) {
-      toast.error('A data deve ser hoje ou no futuro.');
+    if (isDateInPast(date)) {
+      toast.error(ValidationMessages.date.mustBeTodayOrFuture);
       return;
     }
 
     setIsSubmitting(true);
     try {
       const data: CounterProposeAppointmentData = {
-        scheduled_date: dateStr,
-        scheduled_time: timeStr,
+        scheduled_date: date,
+        scheduled_time: time,
       };
 
-      // Only include address_id if user is doctor and selected an address
       if (userRole === 'doctor' && selectedAddressId) {
         data.address_id = selectedAddressId;
       }
@@ -87,41 +96,30 @@ export function CounterProposeModal({
           </View>
 
           <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-            {/* Date Input */}
             <View style={styles.section}>
               <Text style={styles.label}>Data</Text>
               <TextInput
                 style={styles.input}
-                value={convertDateFromAPI(dateStr)}
-                onChangeText={(text) => {
-                  const numbers = text.replace(/\D/g, '');
-                  if (numbers.length >= 8) {
-                    const day = numbers.substring(0, 2);
-                    const month = numbers.substring(2, 4);
-                    const year = numbers.substring(4, 8);
-                    setDateStr(`${year}-${month}-${day}`);
-                  }
-                }}
+                value={convertDateFromAPI(date)}
+                onChangeText={handleDateChange}
                 placeholder="DD/MM/AAAA"
                 keyboardType="numeric"
                 maxLength={10}
               />
             </View>
 
-            {/* Time Input */}
             <View style={styles.section}>
               <Text style={styles.label}>Horário</Text>
               <TextInput
                 style={styles.input}
-                value={timeStr}
-                onChangeText={(text) => setTimeStr(formatTimeInput(text))}
+                value={time}
+                onChangeText={(text) => setTime(formatTimeInput(text))}
                 placeholder="HH:MM"
                 keyboardType="numeric"
                 maxLength={5}
               />
             </View>
 
-            {/* Address Picker (Doctor only) */}
             {userRole === 'doctor' && doctorAddresses.length > 0 && (
               <View style={styles.section}>
                 <Text style={styles.label}>Local de Retirada (Opcional)</Text>
@@ -149,10 +147,9 @@ export function CounterProposeModal({
               </View>
             )}
 
-            {/* Current Address Info (Receptor) */}
             {userRole === 'receptor' && currentAddress && (
               <View style={styles.infoBox}>
-                <Text style={styles.infoTitle}>ℹ️ Informação</Text>
+                <Text style={styles.infoTitle}>Informação</Text>
                 <Text style={styles.infoText}>
                   Como paciente, você não pode alterar o local de retirada. Apenas o médico pode
                   escolher o endereço.
@@ -189,7 +186,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContainer: {
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.white,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: '90%',
@@ -200,19 +197,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: Colors.gray_200,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: Colors.gray_800,
   },
   closeButton: {
     padding: 4,
   },
   closeButtonText: {
     fontSize: 24,
-    color: '#6b7280',
+    color: Colors.gray_500,
   },
   content: {
     padding: 20,
@@ -223,28 +220,28 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#374151',
+    color: Colors.gray_700,
     marginBottom: 8,
   },
   hint: {
     fontSize: 12,
-    color: '#6b7280',
+    color: Colors.gray_500,
     marginBottom: 12,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: Colors.gray_300,
     borderRadius: 8,
     padding: 12,
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.white,
     fontSize: 16,
-    color: '#1f2937',
+    color: Colors.gray_800,
   },
   addressOption: {
     flexDirection: 'row',
     padding: 12,
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: Colors.gray_300,
     borderRadius: 8,
     marginBottom: 8,
     alignItems: 'flex-start',
@@ -258,7 +255,7 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: '#d1d5db',
+    borderColor: Colors.gray_300,
     marginRight: 12,
     marginTop: 2,
     justifyContent: 'center',
@@ -276,12 +273,12 @@ const styles = StyleSheet.create({
   addressName: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#1f2937',
+    color: Colors.gray_800,
     marginBottom: 2,
   },
   addressText: {
     fontSize: 13,
-    color: '#6b7280',
+    color: Colors.gray_500,
   },
   infoBox: {
     backgroundColor: '#eff6ff',
@@ -305,20 +302,20 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 12,
     borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
+    borderTopColor: Colors.gray_200,
   },
   cancelButton: {
     flex: 1,
     paddingVertical: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: Colors.gray_300,
     alignItems: 'center',
   },
   cancelButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#6b7280',
+    color: Colors.gray_500,
   },
   submitButton: {
     flex: 1,
@@ -328,11 +325,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   submitButtonDisabled: {
-    backgroundColor: '#9ca3af',
+    backgroundColor: Colors.gray_400,
   },
   submitButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#ffffff',
+    color: Colors.white,
   },
 });

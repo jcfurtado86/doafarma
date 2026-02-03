@@ -13,6 +13,7 @@ import {
 import { toast } from '@/utils/toast';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
+import { ValidationMessages } from '@/constants/ValidationMessages';
 import { useMedicationAppointmentStore } from '@/stores/medicationAppointmentStore';
 import PrimaryButton from '@/components/PrimaryButton';
 import { formatDateInput, convertDateToAPI, isDateInPast } from '@/utils/validation/dateHelpers';
@@ -36,18 +37,18 @@ export default function ScheduleAppointmentScreen() {
 
   const validateInputs = (): boolean => {
     if (date.length !== 10) {
-      toast.error('Data inválida. Use o formato DD/MM/AAAA');
+      toast.error(ValidationMessages.date.invalid);
       return false;
     }
 
     if (!isValidTimeFormat(time)) {
-      toast.error('Horário inválido. Use o formato HH:MM');
+      toast.error(ValidationMessages.time.invalid);
       return false;
     }
 
     const apiDate = convertDateToAPI(date);
     if (isDateInPast(apiDate)) {
-      toast.error('A data não pode ser no passado');
+      toast.error(ValidationMessages.date.inPast);
       return false;
     }
 
@@ -97,7 +98,7 @@ export default function ScheduleAppointmentScreen() {
           <TextInput
             style={styles.input}
             placeholder="DD/MM/AAAA"
-            placeholderTextColor="#9ca3af"
+            placeholderTextColor={Colors.gray_400}
             value={date}
             onChangeText={handleDateChange}
             keyboardType="numeric"
@@ -110,7 +111,7 @@ export default function ScheduleAppointmentScreen() {
           <TextInput
             style={styles.input}
             placeholder="HH:MM"
-            placeholderTextColor="#9ca3af"
+            placeholderTextColor={Colors.gray_400}
             value={time}
             onChangeText={handleTimeChange}
             keyboardType="numeric"
@@ -145,7 +146,7 @@ export default function ScheduleAppointmentScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: Colors.gray_100,
   },
   content: {
     padding: 16,
@@ -156,12 +157,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: Colors.gray_800,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#6b7280',
+    color: Colors.gray_500,
   },
   section: {
     marginBottom: 20,
@@ -169,18 +170,18 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#6b7280',
+    color: Colors.gray_500,
     letterSpacing: 0.5,
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.white,
     borderRadius: 12,
     padding: 16,
     fontSize: 18,
     fontWeight: '600',
-    color: '#1f2937',
-    shadowColor: '#000',
+    color: Colors.gray_800,
+    shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -213,12 +214,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: Colors.gray_100,
     borderRadius: 8,
     gap: 12,
   },
   loadingText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: Colors.gray_500,
   },
 });

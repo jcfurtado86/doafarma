@@ -1,3 +1,7 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # DoaFarma - AI Assistant Context
 
 Medication donation platform connecting doctors with patients who need medications.
@@ -12,7 +16,8 @@ This file defines the 5-phase workflow (Clarification → Design → Test Planni
 
 - **Backend:** Laravel 12 (in `/web`)
 - **Mobile:** React Native/Expo (in `/mobile`)
-- **Auth:** Laravel Sanctum (token-based)
+- **Admin Panel:** Filament (in `web/app/Filament/`)
+- **Auth:** Laravel Sanctum (token-based with refresh tokens)
 - **Database:** PostgreSQL
 
 ## Documentation
@@ -65,23 +70,42 @@ If documentation conflicts with codebase:
 
 ```bash
 # Backend (from /web)
-composer fix          # Run all quality checks (Pint + tests)
-composer t            # Run tests only
-./vendor/bin/pest     # Run Pest tests
+composer dev              # Start dev server (Laravel + queue + logs + Vite)
+composer fix              # Run all quality checks (rector + phpstan + pint + tests)
+composer t                # Run tests only
+composer analyse          # Run PHPStan static analysis
+composer pint             # Format code with Laravel Pint
+./vendor/bin/pest tests/Feature/Auth/LoginTest.php  # Run single test file
+./vendor/bin/pest --filter "test name"              # Run test by name
 
 # Mobile (from /mobile)
-npm start             # Start Expo
-npm run lint          # Lint code
-npm test              # Run Jest tests
+npm start                 # Start Expo dev server
+npm test                  # Run all Jest tests
+npm test -- authStore.test.ts                       # Run single test file
+npm test -- --testNamePattern="test name"            # Run test by name
+npm run lint              # Lint code
+npm run lint:fix          # Lint and auto-fix
+npm run check-types       # TypeScript type checking
 ```
 
 ## Key Patterns
 
-- **Actions:** Business logic in `app/Actions/` (single-purpose classes)
+### Backend
+
+- **Actions:** Business logic in `app/Actions/` — single-purpose classes with `execute()` method, injected into thin controllers
 - **Form Requests:** Validation in `app/Http/Requests/` (with Portuguese messages)
 - **Resources:** JSON transformation in `app/Http/Resources/Api/V1/`
 - **Policies:** Authorization in `app/Policies/`
 - **Enums:** Type-safe enums in `app/Enums/`
+- **Routes:** Versioned API under `/api/v1/` in `routes/api.php`, with Sanctum + `approved` middleware
+
+### Mobile
+
+- **Routing:** Expo Router (file-based) in `app/` — `(auth)/` group for login/register, `(main)/` group for authenticated screens
+- **State:** Zustand stores in `stores/` — one store per domain (auth, medicationOffering, etc.)
+- **Services:** API calls in `services/` — use the configured Axios instance from `services/api.ts` which handles token injection and automatic refresh
+- **Path alias:** `@/` maps to project root (e.g., `import { useAuthStore } from '@/stores/authStore'`)
+- **Forms:** React Hook Form + Zod for validation schemas
 
 ## Entity Quick Reference
 

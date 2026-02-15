@@ -19,7 +19,8 @@ export interface ReceptorRegistrationResponse {
       name: string;
       email: string;
       phone_number: string;
-      role: string;
+      role: 'doctor' | 'receptor';
+      status: 'pending' | 'approved' | 'rejected';
     };
     token: string;
   };

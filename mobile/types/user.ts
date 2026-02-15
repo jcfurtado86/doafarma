@@ -17,18 +17,20 @@ export enum UserRole {
   Receptor = 'receptor',
 }
 
+export type UserStatusValue = UserStatus | 'pending' | 'approved' | 'rejected';
+
 /**
  * Checks if user can access the app based on their status.
  * Mirrors backend logic from UserStatus::canAccess()
  */
-export const canUserAccessApp = (status: UserStatus): boolean => {
-  return status === UserStatus.Approved;
+export const canUserAccessApp = (status: UserStatusValue): boolean => {
+  return String(status) === 'approved';
 };
 
 /**
  * Checks if user is blocked from accessing the app.
  * Inverse of canUserAccessApp for readability.
  */
-export const isUserBlocked = (status: UserStatus): boolean => {
-  return status !== UserStatus.Approved;
+export const isUserBlocked = (status: UserStatusValue): boolean => {
+  return String(status) !== 'approved';
 };

@@ -8,7 +8,7 @@ import {
 import { styles } from './styles';
 import { a11y } from '@/utils/accessibility';
 
-interface DateInputProps extends Omit<TextInputProps, 'value' | 'onChangeText'> {
+interface DateInputProps extends Omit<TextInputProps, 'value' | 'onChangeText' | 'onChange'> {
   value: string;
   onChange: (date: string) => void;
   error?: string;

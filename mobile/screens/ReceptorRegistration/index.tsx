@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, Href } from 'expo-router';
 import { Input } from '@/components/Input';
 import PrimaryButton from '@/components/PrimaryButton';
 import ArrowBackButton from '@/components/ArrowBackButton';
@@ -122,7 +122,7 @@ export function ReceptorRegistrationScreen() {
     }
 
     if (success) {
-      router.replace('/(auth)/receptor');
+      router.replace('/(auth)/receptor' as Href);
     }
   };
 

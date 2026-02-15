@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { MedicationRequest } from '@/types/medicationRequest';
 import { RequestStatusBadge } from '@/components/RequestStatusBadge';
 import { Colors } from '@/constants/Colors';
+import { a11y } from '@/utils/accessibility';
 
 interface MedicationRequestCardProps {
   request: MedicationRequest;
@@ -87,10 +88,18 @@ export function MedicationRequestCard({
 
       {variant === 'doctor' && isPending && (
         <View style={styles.actions}>
-          <Pressable style={[styles.button, styles.confirmButton]} onPress={onConfirm}>
+          <Pressable
+            style={[styles.button, styles.confirmButton]}
+            onPress={onConfirm}
+            {...a11y.button('Confirmar solicitação')}
+          >
             <Text style={styles.buttonText}>Confirmar</Text>
           </Pressable>
-          <Pressable style={[styles.button, styles.rejectButton]} onPress={onReject}>
+          <Pressable
+            style={[styles.button, styles.rejectButton]}
+            onPress={onReject}
+            {...a11y.button('Recusar solicitação')}
+          >
             <Text style={styles.buttonText}>Recusar</Text>
           </Pressable>
         </View>
@@ -98,7 +107,11 @@ export function MedicationRequestCard({
 
       {variant === 'receptor' && request.status === 'confirmed' && !hasAppointment && (
         <View style={styles.actions}>
-          <Pressable style={[styles.button, styles.scheduleButton]} onPress={onSchedule}>
+          <Pressable
+            style={[styles.button, styles.scheduleButton]}
+            onPress={onSchedule}
+            {...a11y.button('Agendar retirada do medicamento')}
+          >
             <Text style={styles.buttonText}>Agendar Retirada</Text>
           </Pressable>
         </View>

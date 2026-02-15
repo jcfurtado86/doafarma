@@ -12,6 +12,7 @@ import {
   formatAppointmentTime,
 } from '@/utils/businessRules/appointmentRules';
 import { styles } from './styles';
+import { a11y } from '@/utils/accessibility';
 
 interface MedicationAppointmentCardProps {
   appointment: MedicationAppointment;
@@ -123,12 +124,17 @@ export const MedicationAppointmentCard = memo(function MedicationAppointmentCard
 
         {showActions && (
           <View style={styles.actions}>
-            <Pressable style={[styles.button, styles.acceptButton]} onPress={onAccept}>
+            <Pressable
+              style={[styles.button, styles.acceptButton]}
+              onPress={onAccept}
+              {...a11y.button('Aceitar proposta de agendamento')}
+            >
               <Text style={styles.buttonText}>Aceitar</Text>
             </Pressable>
             <Pressable
               style={[styles.button, styles.counterProposeButton]}
               onPress={() => setShowCounterProposeModal(true)}
+              {...a11y.button('Contrapropor novo horário')}
             >
               <Text style={styles.buttonText}>Contrapropor</Text>
             </Pressable>
@@ -143,7 +149,11 @@ export const MedicationAppointmentCard = memo(function MedicationAppointmentCard
 
         {showConfirm && (
           <View style={styles.actions}>
-            <Pressable style={[styles.button, styles.confirmButton]} onPress={onConfirmDelivery}>
+            <Pressable
+              style={[styles.button, styles.confirmButton]}
+              onPress={onConfirmDelivery}
+              {...a11y.button('Confirmar entrega do medicamento')}
+            >
               <Text style={styles.buttonText}>Confirmar Entrega</Text>
             </Pressable>
           </View>

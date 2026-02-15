@@ -1,6 +1,7 @@
 import { Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native';
 import { styles } from './styles';
 import { Ionicons } from '@expo/vector-icons';
+import { a11y } from '@/utils/accessibility';
 
 type ArrowBackButtonProps = Omit<PressableProps, 'style'> & {
   style?: StyleProp<ViewStyle>;
@@ -8,7 +9,7 @@ type ArrowBackButtonProps = Omit<PressableProps, 'style'> & {
 
 export default function ArrowBackButton({ style, ...props }: ArrowBackButtonProps) {
   return (
-    <Pressable {...props} style={[styles.arrowBackButton, style]}>
+    <Pressable {...a11y.backButton()} {...props} style={[styles.arrowBackButton, style]}>
       {({ pressed }) => (
         <Ionicons
           name="arrow-back"

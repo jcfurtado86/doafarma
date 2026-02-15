@@ -19,6 +19,9 @@ export function FilterButton<T extends string>({
     <Pressable
       style={[styles.filterButton, isActive && styles.filterButtonActive]}
       onPress={() => onPress(value)}
+      accessibilityRole="button"
+      accessibilityLabel={`Filtro: ${label}`}
+      accessibilityState={{ selected: isActive }}
     >
       <Text style={[styles.filterButtonText, isActive && styles.filterButtonTextActive]}>
         {label}

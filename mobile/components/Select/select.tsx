@@ -16,6 +16,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { Colors } from '@/constants/Colors';
+import { a11y } from '@/utils/accessibility';
 
 interface SelectProps<T extends FieldValues = FieldValues> {
   formProps: UseControllerProps<T>;
@@ -86,6 +87,7 @@ const Select = forwardRef<Picker<string | number> | { focus: () => void } | null
                   hasError && styles.selectContainerError,
                   selectViewStyle,
                 ]}
+                {...a11y.input(selectProps.placeholder ?? 'Selecione uma opção')}
               >
                 <Picker
                   // No Android, o ref é passado para o Picker para suportar navegação entre campos

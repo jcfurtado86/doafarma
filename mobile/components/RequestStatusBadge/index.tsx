@@ -5,6 +5,7 @@ import {
   REQUEST_STATUS_LABELS,
   REQUEST_STATUS_COLORS,
 } from '@/types/medicationRequest';
+import { a11y } from '@/utils/accessibility';
 
 interface RequestStatusBadgeProps {
   status: MedicationRequestStatus;
@@ -16,7 +17,7 @@ export function RequestStatusBadge({ status }: RequestStatusBadgeProps) {
   const label = REQUEST_STATUS_LABELS[status];
 
   return (
-    <View style={[styles.badge, { backgroundColor }]}>
+    <View style={[styles.badge, { backgroundColor }]} {...a11y.badge(label)}>
       <Text style={[styles.text, { color: textColor }]}>{label}</Text>
     </View>
   );

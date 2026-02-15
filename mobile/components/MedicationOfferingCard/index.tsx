@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { MedicationOffering } from '@/types/medicationOffering';
 import { Colors } from '@/constants/Colors';
+import { a11y } from '@/utils/accessibility';
 
 interface MedicationOfferingCardProps {
   offering: MedicationOffering;
@@ -43,10 +44,18 @@ export function MedicationOfferingCard({
       </View>
 
       <View style={styles.actions}>
-        <Pressable style={styles.editButton} onPress={onEdit}>
+        <Pressable
+          style={styles.editButton}
+          onPress={onEdit}
+          {...a11y.button('Editar medicamento')}
+        >
           <Text style={styles.editButtonText}>Editar</Text>
         </Pressable>
-        <Pressable style={styles.deleteButton} onPress={onDelete}>
+        <Pressable
+          style={styles.deleteButton}
+          onPress={onDelete}
+          {...a11y.button('Excluir medicamento')}
+        >
           <Text style={styles.deleteButtonText}>Excluir</Text>
         </Pressable>
       </View>

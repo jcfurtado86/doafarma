@@ -6,6 +6,7 @@ import {
   convertDateFromAPI,
 } from '@/utils/validation/dateHelpers';
 import { styles } from './styles';
+import { a11y } from '@/utils/accessibility';
 
 interface DateInputProps extends Omit<TextInputProps, 'value' | 'onChangeText'> {
   value: string;
@@ -41,6 +42,7 @@ export const DateInput = memo(function DateInput({
   return (
     <View style={styles.container}>
       <TextInput
+        {...a11y.input('Data', 'Formato dia, mês, ano')}
         style={[styles.input, error && styles.inputError]}
         value={displayValue}
         onChangeText={handleChange}

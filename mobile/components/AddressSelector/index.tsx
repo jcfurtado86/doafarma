@@ -2,6 +2,7 @@ import React, { useCallback, memo } from 'react';
 import { View, Pressable, Text } from 'react-native';
 import { Address } from '@/types/medicationAppointment';
 import { styles } from './styles';
+import { a11y } from '@/utils/accessibility';
 
 interface AddressItemProps {
   address: Address;
@@ -15,7 +16,11 @@ const AddressItem = memo(function AddressItem({ address, isSelected, onSelect }:
   }, [address.id, onSelect]);
 
   return (
-    <Pressable style={[styles.option, isSelected && styles.optionSelected]} onPress={handlePress}>
+    <Pressable
+      style={[styles.option, isSelected && styles.optionSelected]}
+      onPress={handlePress}
+      {...a11y.radioButton(address.location_name, isSelected)}
+    >
       <View style={[styles.radioButton, isSelected && styles.radioButtonSelected]}>
         {isSelected && <View style={styles.radioButtonInner} />}
       </View>

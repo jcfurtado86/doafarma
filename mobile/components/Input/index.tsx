@@ -10,6 +10,7 @@ import {
 import { styles } from './styles';
 import { Controller, FieldValues, UseControllerProps } from 'react-hook-form';
 import { forwardRef, useState } from 'react';
+import { a11y } from '@/utils/accessibility';
 
 interface InputProps<T extends FieldValues = FieldValues> {
   formProps: UseControllerProps<T>;
@@ -36,6 +37,7 @@ const Input = forwardRef<TextInput, InputProps<any>>(
           render={({ field }) => (
             <TextInput
               ref={ref}
+              {...a11y.input(inputProps.placeholder ?? '')}
               style={[
                 styles.input,
                 isFocused && styles.inputFocused,

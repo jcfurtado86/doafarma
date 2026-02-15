@@ -2,6 +2,7 @@ import React, { useCallback, memo } from 'react';
 import { View, TextInput, Text, TextInputProps } from 'react-native';
 import { formatTimeInput } from '@/utils/validation/timeHelpers';
 import { styles } from './styles';
+import { a11y } from '@/utils/accessibility';
 
 interface TimeInputProps extends Omit<TextInputProps, 'value' | 'onChangeText'> {
   value: string;
@@ -28,6 +29,7 @@ export const TimeInput = memo(function TimeInput({
   return (
     <View style={styles.container}>
       <TextInput
+        {...a11y.input('Horário', 'Formato hora, minutos')}
         style={[styles.input, error && styles.inputError]}
         value={value}
         onChangeText={handleChange}

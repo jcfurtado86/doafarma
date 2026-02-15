@@ -9,6 +9,7 @@ import { DateInput } from '@/components/DateInput';
 import { TimeInput } from '@/components/TimeInput';
 import { AddressSelector } from '@/components/AddressSelector';
 import { styles } from './styles';
+import { a11y } from '@/utils/accessibility';
 
 interface CounterProposeModalProps {
   visible: boolean;
@@ -81,7 +82,7 @@ export const CounterProposeModal = memo(function CounterProposeModal({
         <View style={styles.modalContainer}>
           <View style={styles.header}>
             <Text style={styles.title}>Contrapropor Horário</Text>
-            <Pressable onPress={onClose} style={styles.closeButton}>
+            <Pressable onPress={onClose} style={styles.closeButton} {...a11y.closeButton()}>
               <Text style={styles.closeButtonText}>✕</Text>
             </Pressable>
           </View>
@@ -124,13 +125,19 @@ export const CounterProposeModal = memo(function CounterProposeModal({
           </ScrollView>
 
           <View style={styles.footer}>
-            <Pressable style={styles.cancelButton} onPress={onClose} disabled={isSubmitting}>
+            <Pressable
+              style={styles.cancelButton}
+              onPress={onClose}
+              disabled={isSubmitting}
+              {...a11y.button('Cancelar', isSubmitting)}
+            >
               <Text style={styles.cancelButtonText}>Cancelar</Text>
             </Pressable>
             <Pressable
               style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
               onPress={handleSubmit}
               disabled={isSubmitting}
+              {...a11y.button('Enviar contraproposta', isSubmitting)}
             >
               <Text style={styles.submitButtonText}>
                 {isSubmitting ? 'Enviando...' : 'Contrapropor'}

@@ -57,6 +57,7 @@ describe('authStore', () => {
       name: 'Dr. João Silva',
       email: 'joao@example.com',
       role: 'doctor' as const,
+      status: 'approved' as const,
     };
     const mockAccessToken = '1|access_token_abc123';
     const mockRefreshToken = '2|refresh_token_xyz789';
@@ -140,6 +141,7 @@ describe('authStore', () => {
       name: 'Dr. João Silva',
       email: 'joao@example.com',
       role: 'doctor' as const,
+      status: 'approved' as const,
     };
     const initialAccessToken = '1|old_access_token';
     const initialRefreshToken = '2|refresh_token';
@@ -267,7 +269,13 @@ describe('authStore', () => {
     beforeEach(() => {
       // Setup authenticated state
       useAuthStore.setState({
-        user: { id: 1, name: 'Test', email: 'test@test.com', role: 'doctor' },
+        user: {
+          id: 1,
+          name: 'Test',
+          email: 'test@test.com',
+          role: 'doctor',
+          status: 'approved' as const,
+        },
         token: '1|access_token',
         refreshToken: '2|refresh_token',
         expiresAt: Date.now() + 3600000,
@@ -364,7 +372,13 @@ describe('authStore', () => {
     it('should restore access token from SecureStore', async () => {
       const mockToken = '1|access_token';
       const mockRefreshToken = '2|refresh_token';
-      const mockUser = { id: 1, name: 'Test', email: 'test@test.com', role: 'doctor' };
+      const mockUser = {
+        id: 1,
+        name: 'Test',
+        email: 'test@test.com',
+        role: 'doctor',
+        status: 'approved',
+      };
 
       (SecureStore.getItemAsync as jest.Mock)
         .mockResolvedValueOnce(mockToken) // auth_token
@@ -380,7 +394,13 @@ describe('authStore', () => {
     it('should restore refresh token from SecureStore', async () => {
       const mockToken = '1|access_token';
       const mockRefreshToken = '2|refresh_token';
-      const mockUser = { id: 1, name: 'Test', email: 'test@test.com', role: 'doctor' };
+      const mockUser = {
+        id: 1,
+        name: 'Test',
+        email: 'test@test.com',
+        role: 'doctor',
+        status: 'approved',
+      };
 
       (SecureStore.getItemAsync as jest.Mock)
         .mockResolvedValueOnce(mockToken) // auth_token
@@ -396,7 +416,13 @@ describe('authStore', () => {
     it('should restore user from AsyncStorage', async () => {
       const mockToken = '1|access_token';
       const mockRefreshToken = '2|refresh_token';
-      const mockUser = { id: 1, name: 'Test', email: 'test@test.com', role: 'doctor' };
+      const mockUser = {
+        id: 1,
+        name: 'Test',
+        email: 'test@test.com',
+        role: 'doctor',
+        status: 'approved',
+      };
 
       (SecureStore.getItemAsync as jest.Mock)
         .mockResolvedValueOnce(mockToken)
@@ -412,7 +438,13 @@ describe('authStore', () => {
     it('should set isAuthenticated to true when tokens exist', async () => {
       const mockToken = '1|access_token';
       const mockRefreshToken = '2|refresh_token';
-      const mockUser = { id: 1, name: 'Test', email: 'test@test.com', role: 'doctor' };
+      const mockUser = {
+        id: 1,
+        name: 'Test',
+        email: 'test@test.com',
+        role: 'doctor',
+        status: 'approved',
+      };
 
       (SecureStore.getItemAsync as jest.Mock)
         .mockResolvedValueOnce(mockToken)
@@ -428,7 +460,13 @@ describe('authStore', () => {
     it('should set Authorization header on api', async () => {
       const mockToken = '1|access_token';
       const mockRefreshToken = '2|refresh_token';
-      const mockUser = { id: 1, name: 'Test', email: 'test@test.com', role: 'doctor' };
+      const mockUser = {
+        id: 1,
+        name: 'Test',
+        email: 'test@test.com',
+        role: 'doctor',
+        status: 'approved',
+      };
 
       (SecureStore.getItemAsync as jest.Mock)
         .mockResolvedValueOnce(mockToken)

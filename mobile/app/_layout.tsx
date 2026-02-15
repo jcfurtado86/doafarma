@@ -1,4 +1,4 @@
-import { Stack, router } from 'expo-router';
+import { Stack, router, Href } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useRef } from 'react';
 import 'react-native-reanimated';
@@ -39,8 +39,8 @@ export default function RootLayout() {
   });
 
   const checkAuth = useAuthStore((state) => state.checkAuth);
-  const notificationListener = useRef<Subscription>();
-  const responseListener = useRef<Subscription>();
+  const notificationListener = useRef<Subscription | null>(null);
+  const responseListener = useRef<Subscription | null>(null);
 
   useEffect(() => {
     if (error) throw error;
@@ -77,9 +77,9 @@ export default function RootLayout() {
       if (data?.type === 'appointment_reminder') {
         const user = useAuthStore.getState().user;
         if (user?.role === 'doctor') {
-          router.push('/(auth)/appointments/received');
+          router.push('/(auth)/medication-appointments' as Href);
         } else {
-          router.push('/(auth)/receptor/appointments');
+          router.push('/(auth)/receptor/(tabs)/appointments' as Href);
         }
       }
     });

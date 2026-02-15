@@ -4,7 +4,7 @@ import { formatTimeInput } from '@/utils/validation/timeHelpers';
 import { styles } from './styles';
 import { a11y } from '@/utils/accessibility';
 
-interface TimeInputProps extends Omit<TextInputProps, 'value' | 'onChangeText'> {
+interface TimeInputProps extends Omit<TextInputProps, 'value' | 'onChangeText' | 'onChange'> {
   value: string;
   onChange: (time: string) => void;
   error?: string;

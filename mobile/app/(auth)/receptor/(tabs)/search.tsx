@@ -27,7 +27,7 @@ export default function SearchScreen() {
 
   const fetchOfferingsFn = useCallback(
     async (page: number) => {
-      return medicationOfferingService.searchOfferingsPaginated(searchQuery, page);
+      return medicationOfferingService.searchPaginated(searchQuery, page);
     },
     [searchQuery]
   );

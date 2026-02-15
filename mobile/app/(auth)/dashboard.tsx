@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, Href } from 'expo-router';
 import { useAuthStore } from '@/stores/authStore';
 import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';
@@ -41,11 +41,11 @@ export default function Dashboard() {
 
   // Receptor navigation
   const handleSearchMedications = () => {
-    router.push('/(auth)/receptor/search');
+    router.push('/(auth)/receptor/(tabs)/search' as Href);
   };
 
   const handleMyRequests = () => {
-    router.push('/(auth)/receptor/requests');
+    router.push('/(auth)/receptor/(tabs)/requests' as Href);
   };
 
   return (

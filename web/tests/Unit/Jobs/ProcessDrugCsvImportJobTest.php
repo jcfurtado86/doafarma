@@ -234,9 +234,8 @@ describe('ProcessDrugCsvImportJob', function (): void {
 
         // Assert
         expect(Drug::count())->toBe(10000);
-        // Allow up to 15 seconds to accommodate Xdebug overhead when enabled
-        expect($endTime - $startTime)->toBeLessThan(15);
-    })->group('slow');
+        expect($endTime - $startTime)->toBeLessThan(10);
+    });
 
     it('handles missing required columns gracefully', function (): void {
         // Arrange

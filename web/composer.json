@@ -75,21 +75,14 @@
             "./vendor/bin/pint",
             "./vendor/bin/pest --parallel"
         ],
-        "t": [
-            "./vendor/bin/pest"
-        ],
-        "tp": [
-            "./vendor/bin/pest --parallel"
-        ],
-        "td": [
-            "./vendor/bin/pest --dirty"
-        ],
-        "tr": [
-            "./vendor/bin/pest --retry"
-        ],
-        "tf": [
-            "./vendor/bin/pest --filter "
-        ]
+        "t": "@php -dxdebug.mode=off ./vendor/bin/pest",
+        "tp": "@php -dxdebug.mode=off ./vendor/bin/pest --parallel",
+        "td": "@php -dxdebug.mode=off ./vendor/bin/pest --dirty",
+        "tr": "@php -dxdebug.mode=off ./vendor/bin/pest --retry",
+        "tf": "@php -dxdebug.mode=off ./vendor/bin/pest --filter ",
+        "t:coverage": "@php -dpcov.enabled=1 -dxdebug.mode=off -d memory_limit=-1 ./vendor/bin/pest --coverage",
+        "t:coverage:html": "@php -dpcov.enabled=1 -dxdebug.mode=off -d memory_limit=-1 ./vendor/bin/pest --coverage --coverage-html=build/coverage",
+        "t:type-coverage": "@php -dxdebug.mode=off -d memory_limit=-1 ./vendor/bin/pest --type-coverage"
     },
     "extra": {
         "laravel": {

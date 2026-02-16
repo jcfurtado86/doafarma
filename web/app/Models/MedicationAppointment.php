@@ -24,6 +24,40 @@ class MedicationAppointment extends Model
     use HasFactory;
     use LogsActivity;
 
+    /**
+     * Full relationship set for API responses (mutations).
+     *
+     * @var array<int, string>
+     */
+    public const array RELATIONS_FULL = [
+        'medicationRequest.medicationOffering.drug',
+        'medicationRequest.medicationOffering.doctor.user',
+        'medicationRequest.receptor',
+        'address',
+    ];
+
+    /**
+     * Relationships for doctor-facing views (excludes doctor.user since they're viewing their own data).
+     *
+     * @var array<int, string>
+     */
+    public const array RELATIONS_FOR_DOCTOR = [
+        'medicationRequest.medicationOffering.drug',
+        'medicationRequest.receptor',
+        'address',
+    ];
+
+    /**
+     * Relationships for receptor-facing views (excludes receptor since they're viewing their own data).
+     *
+     * @var array<int, string>
+     */
+    public const array RELATIONS_FOR_RECEPTOR = [
+        'medicationRequest.medicationOffering.drug',
+        'medicationRequest.medicationOffering.doctor.user',
+        'address',
+    ];
+
     protected $table = 'medication_appointments';
 
     protected $fillable = [

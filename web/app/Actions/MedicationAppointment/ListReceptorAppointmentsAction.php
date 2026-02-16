@@ -21,11 +21,7 @@ class ListReceptorAppointmentsAction
             ->whereHas('medicationRequest', function ($q) use ($receptor): void {
                 $q->where('receptor_id', $receptor->id);
             })
-            ->with([
-                'medicationRequest.medicationOffering.drug',
-                'medicationRequest.medicationOffering.doctor.user',
-                'address',
-            ])
+            ->with(MedicationAppointment::RELATIONS_FOR_RECEPTOR)
             ->upcoming();
 
         if ($status !== null) {

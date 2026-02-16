@@ -25,12 +25,7 @@ class ConfirmDeliveryDoctorAction
                 ]);
             }
 
-            return $appointment->fresh([
-                'medicationRequest.medicationOffering.drug',
-                'medicationRequest.medicationOffering.doctor.user',
-                'medicationRequest.receptor',
-                'address',
-            ]);
+            return $appointment->fresh(MedicationAppointment::RELATIONS_FULL);
         });
     }
 }

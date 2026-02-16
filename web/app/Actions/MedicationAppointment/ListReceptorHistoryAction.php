@@ -22,11 +22,7 @@ class ListReceptorHistoryAction
         return MedicationAppointment::query()
             ->whereHas('medicationRequest', fn ($q) => $q->where('receptor_id', $receptor->id))
             ->completed()
-            ->with([
-                'medicationRequest.medicationOffering.drug',
-                'medicationRequest.medicationOffering.doctor.user',
-                'address',
-            ])
+            ->with(MedicationAppointment::RELATIONS_FOR_RECEPTOR)
             ->orderByDesc('updated_at')
             ->paginate($perPage);
     }

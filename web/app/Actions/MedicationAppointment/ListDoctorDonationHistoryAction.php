@@ -22,11 +22,7 @@ class ListDoctorDonationHistoryAction
         return MedicationAppointment::query()
             ->whereHas('medicationRequest.medicationOffering', fn ($q) => $q->where('doctor_id', $doctor->id))
             ->completed()
-            ->with([
-                'medicationRequest.medicationOffering.drug',
-                'medicationRequest.receptor',
-                'address',
-            ])
+            ->with(MedicationAppointment::RELATIONS_FOR_DOCTOR)
             ->orderByDesc('updated_at')
             ->paginate($perPage);
     }

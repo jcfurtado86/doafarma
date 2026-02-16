@@ -36,11 +36,6 @@ class CreateMedicationAppointmentAction
             'proposed_by'           => 'receptor',
         ]);
 
-        return $appointment->load([
-            'medicationRequest.medicationOffering.drug',
-            'medicationRequest.medicationOffering.doctor.user',
-            'medicationRequest.receptor',
-            'address',
-        ]);
+        return $appointment->load(MedicationAppointment::RELATIONS_FULL);
     }
 }

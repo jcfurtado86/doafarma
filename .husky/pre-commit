@@ -21,9 +21,9 @@ if echo "$CHANGED_FILES" | grep -q "^web/"; then
     exit 1
   fi
 
-  # Rodar os teste
+  # Rodar os testes (excluindo testes lentos)
   echo "${Blue}2. Rodando o Testes em paralelo${NC}"
-  php artisan test --parallel
+  php artisan test --parallel --exclude-group=slow
   if [ $? -ne 0 ]; then
     echo "${Red} Tivemos erro em algum teste, revise o código ou o teste! ${NC}"
     exit 1

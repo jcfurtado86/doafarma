@@ -21,6 +21,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'approved'  => App\Http\Middleware\EnsureUserIsApproved::class,
             'abilities' => Laravel\Sanctum\Http\Middleware\CheckAbilities::class,
         ]);
+
+        $middleware->api(append: [
+            App\Http\Middleware\SecurityHeaders::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (ThrottleRequestsException $e, $request) {

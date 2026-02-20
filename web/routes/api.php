@@ -49,6 +49,7 @@ Route::prefix('v1')->group(function (): void {
     Route::middleware(['auth:sanctum', 'abilities:access', 'approved'])->group(function (): void {
         Route::prefix('drugs')->group(function (): void {
             Route::get('search', Drug\SearchController::class)
+                ->middleware('throttle:100,1')
                 ->name('api.v1.drugs.search');
             Route::get('/', Drug\ListController::class)
                 ->name('api.v1.drugs.list');
@@ -56,6 +57,7 @@ Route::prefix('v1')->group(function (): void {
 
         Route::prefix('medication-offerings')->group(function (): void {
             Route::get('/search', MedicationOffering\SearchController::class)
+                ->middleware('throttle:100,1')
                 ->name('api.v1.medication-offerings.search');
             Route::get('/', MedicationOffering\ListController::class)
                 ->name('api.v1.medication-offerings.list');
@@ -90,8 +92,10 @@ Route::prefix('v1')->group(function (): void {
             Route::post('/', MedicationAppointment\StoreController::class)
                 ->name('api.v1.medication-appointments.store');
             Route::get('/history', MedicationAppointment\HistoryController::class)
+                ->middleware('throttle:60,1')
                 ->name('api.v1.medication-appointments.history');
             Route::get('/doctor-history', MedicationAppointment\DoctorHistoryController::class)
+                ->middleware('throttle:60,1')
                 ->name('api.v1.medication-appointments.doctor-history');
             Route::get('/received', MedicationAppointment\ReceivedController::class)
                 ->name('api.v1.medication-appointments.received');

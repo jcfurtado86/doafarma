@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
+import { formatShortDate } from '@/utils/dateFormatters';
 import { MedicationOfferingSearchResult } from '@/types/medicationOffering';
 import { useMedicationRequestStore } from '@/stores/medicationRequestStore';
 import PrimaryButton from '@/components/PrimaryButton';
@@ -68,10 +69,6 @@ export default function OfferingDetailScreen() {
     );
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
-  };
-
   const isExpired = new Date(offering.expires_at) < new Date();
 
   return (
@@ -107,7 +104,7 @@ export default function OfferingDetailScreen() {
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Validade:</Text>
             <Text style={[styles.detailValue, isExpired && styles.expiredText]}>
-              {formatDate(offering.expires_at)}
+              {formatShortDate(offering.expires_at)}
             </Text>
           </View>
         </View>

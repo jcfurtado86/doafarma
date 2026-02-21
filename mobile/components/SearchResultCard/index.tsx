@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { MedicationOfferingSearchResult } from '@/types/medicationOffering';
+import { formatShortDate } from '@/utils/dateFormatters';
 import { styles } from './styles';
 
 interface SearchResultCardProps {
@@ -9,10 +10,6 @@ interface SearchResultCardProps {
 }
 
 export function SearchResultCard({ offering, onPress }: SearchResultCardProps) {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
-  };
-
   const isExpired = new Date(offering.expires_at) < new Date();
 
   return (
@@ -44,7 +41,7 @@ export function SearchResultCard({ offering, onPress }: SearchResultCardProps) {
               <Text style={styles.label}>Quantidade:</Text> {offering.quantity} unidades
             </Text>
             <Text style={[styles.detailText, isExpired && styles.expiredText]}>
-              <Text style={styles.label}>Validade:</Text> {formatDate(offering.expires_at)}
+              <Text style={styles.label}>Validade:</Text> {formatShortDate(offering.expires_at)}
             </Text>
           </View>
 

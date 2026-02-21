@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { router, Href } from 'expo-router';
 import { Colors } from '@/constants/Colors';
+import { Pagination } from '@/constants/Pagination';
 import { SearchResultCard } from '@/components/SearchResultCard';
 import { ListFooterLoader } from '@/components/ListFooterLoader';
 import { medicationOfferingService } from '@/services/medicationOfferingService';
@@ -180,7 +181,7 @@ export default function SearchScreen() {
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
           onEndReached={loadMore}
-          onEndReachedThreshold={0.5}
+          onEndReachedThreshold={Pagination.END_REACHED_THRESHOLD}
           ListFooterComponent={<ListFooterLoader isLoading={isLoadingMore} />}
         />
       ) : (

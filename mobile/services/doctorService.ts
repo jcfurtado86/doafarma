@@ -1,5 +1,6 @@
 import { apiClient } from './api';
 import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
+import { logger } from '@/utils/logger';
 
 export const doctorService = {
   register: async (doctorData: DoctorRegistrationFormData) => {
@@ -7,7 +8,7 @@ export const doctorService = {
       const response = await apiClient.post('/register/doctor', doctorData);
       return response.data;
     } catch (error) {
-      console.error('Erro ao registrar médico:', error);
+      logger.error('Erro ao registrar médico:', error);
       throw error;
     }
   },

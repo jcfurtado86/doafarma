@@ -6,6 +6,7 @@ import {
 } from '@/services/pushNotificationService';
 import { STORAGE_KEYS } from '@/config/storage';
 import { getErrorMessage } from '@/utils/error';
+import { logger } from '@/utils/logger';
 import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
@@ -79,7 +80,7 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
         isAuthenticated: true,
       });
     } catch (error) {
-      console.error('Error saving session:', getErrorMessage(error));
+      logger.error('Error saving session:', getErrorMessage(error));
       set({ error: 'Failed to save session' });
     }
   },
@@ -94,7 +95,7 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
 
       set({ token, expiresAt });
     } catch (error) {
-      console.error('Error updating access token:', getErrorMessage(error));
+      logger.error('Error updating access token:', getErrorMessage(error));
       set({ error: 'Failed to update access token' });
     }
   },
@@ -103,7 +104,7 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
     try {
       return await SecureStore.getItemAsync(STORAGE_KEYS.REFRESH_TOKEN);
     } catch (error) {
-      console.error('Error getting refresh token:', getErrorMessage(error));
+      logger.error('Error getting refresh token:', getErrorMessage(error));
       return null;
     }
   },
@@ -133,7 +134,7 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
         isAuthenticated: false,
       });
     } catch (error) {
-      console.error('Error logging out:', getErrorMessage(error));
+      logger.error('Error logging out:', getErrorMessage(error));
       delete api.defaults.headers.common['Authorization'];
       set({
         user: null,
@@ -171,7 +172,7 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
       set({ user, token, refreshToken, isAuthenticated: true, isLoading: false });
       return true;
     } catch (error) {
-      console.error('Error checking authentication:', getErrorMessage(error));
+      logger.error('Error checking authentication:', getErrorMessage(error));
       set({ isLoading: false, error: 'Failed to check authentication' });
       return false;
     }
@@ -189,7 +190,7 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
         set({ pushToken: expoPushToken });
       }
     } catch (error) {
-      console.error('Error setting up push notifications:', getErrorMessage(error));
+      logger.error('Error setting up push notifications:', getErrorMessage(error));
     }
   },
 }));

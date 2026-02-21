@@ -3,6 +3,7 @@ import axios, { AxiosError } from 'axios';
 import { User } from '@/stores/authStore';
 import { API_ENDPOINTS } from '@/config/endpoints';
 import { getErrorMessage } from '@/utils/error';
+import { logger } from '@/utils/logger';
 
 export interface LoginCredentials {
   email: string;
@@ -70,7 +71,7 @@ export const authService = {
       const response = await apiClient.post<LoginResponse>(API_ENDPOINTS.AUTH.LOGIN, credentials);
       return response.data;
     } catch (error) {
-      console.error('Erro ao fazer login:', getErrorMessage(error));
+      logger.error('Erro ao fazer login:', getErrorMessage(error));
 
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<ApiValidationError>;
@@ -130,7 +131,7 @@ export const authService = {
       );
       return response.data;
     } catch (error) {
-      console.error('Erro ao renovar token:', getErrorMessage(error));
+      logger.error('Erro ao renovar token:', getErrorMessage(error));
 
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<ApiValidationError>;
@@ -177,7 +178,7 @@ export const authService = {
     try {
       await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
     } catch (error) {
-      console.error('Erro ao fazer logout:', getErrorMessage(error));
+      logger.error('Erro ao fazer logout:', getErrorMessage(error));
     }
   },
 };

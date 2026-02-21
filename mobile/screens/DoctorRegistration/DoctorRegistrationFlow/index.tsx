@@ -10,6 +10,7 @@ import { DoctorAddressStep } from '../steps/DoctorAddressStep';
 import { styles } from './styles';
 import { Colors } from '@/constants/Colors';
 import { UseFormSetError } from 'react-hook-form';
+import { logger } from '@/utils/logger';
 
 interface DoctorRegistrationFlowProps {
   currentStep: number;
@@ -46,8 +47,8 @@ export function DoctorRegistrationFlow({ currentStep }: DoctorRegistrationFlowPr
     const success = await submitDoctorRegistrationForm();
 
     if (!success && setError && validationErrors && error) {
-      console.log('Erro ao registrar médico:', error);
-      console.error('Erro de validação:', validationErrors);
+      logger.log('Erro ao registrar médico:', error);
+      logger.error('Erro de validação:', validationErrors);
       setError(Object.keys(validationErrors)[0], { message: error }, { shouldFocus: true });
     }
 

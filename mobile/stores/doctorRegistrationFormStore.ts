@@ -2,6 +2,7 @@ import { doctorService } from '@/services/doctorService';
 import { create } from 'zustand';
 import * as Device from 'expo-device';
 import { useAuthStore } from './authStore';
+import { logger } from '@/utils/logger';
 
 export interface DoctorRegistrationFormData {
   // first step
@@ -125,7 +126,7 @@ async function getDeviceName(): Promise<string> {
 
     return deviceName || 'Dispositivo Desconhecido';
   } catch (error) {
-    console.warn('Erro ao obter nome do dispositivo:', error);
+    logger.warn('Erro ao obter nome do dispositivo:', error);
     return 'Mobile App';
   }
 }

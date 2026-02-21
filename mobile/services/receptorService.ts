@@ -1,5 +1,6 @@
 import { apiClient } from './api';
 import axios, { AxiosError } from 'axios';
+import { logger } from '@/utils/logger';
 
 export interface ReceptorRegistrationData {
   name: string;
@@ -67,7 +68,7 @@ export const receptorService = {
       );
       return response.data;
     } catch (error) {
-      console.error('Erro ao registrar receptor:', error);
+      logger.error('Erro ao registrar receptor:', error);
 
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<ApiValidationError>;

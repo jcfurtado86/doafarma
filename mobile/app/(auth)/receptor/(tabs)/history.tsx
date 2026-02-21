@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
+import { Pagination } from '@/constants/Pagination';
 import { MedicationAppointment } from '@/types/medicationAppointment';
 import { ListFooterLoader } from '@/components/ListFooterLoader';
 import { usePagination } from '@/hooks/usePagination';
@@ -187,7 +188,7 @@ export default function ReceptorHistoryScreen() {
             />
           }
           onEndReached={loadMore}
-          onEndReachedThreshold={0.5}
+          onEndReachedThreshold={Pagination.END_REACHED_THRESHOLD}
           ListFooterComponent={<ListFooterLoader isLoading={isLoadingMore} />}
           ListEmptyComponent={renderEmpty}
           showsVerticalScrollIndicator={false}

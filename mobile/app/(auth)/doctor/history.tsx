@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
 import { Colors } from '@/constants/Colors';
+import { Pagination } from '@/constants/Pagination';
 import { MedicationAppointment } from '@/types/medicationAppointment';
 import { ListFooterLoader } from '@/components/ListFooterLoader';
 import { usePagination } from '@/hooks/usePagination';
@@ -154,7 +155,7 @@ export default function DoctorHistoryScreen() {
             />
           }
           onEndReached={loadMore}
-          onEndReachedThreshold={0.5}
+          onEndReachedThreshold={Pagination.END_REACHED_THRESHOLD}
           ListFooterComponent={<ListFooterLoader isLoading={isLoadingMore} />}
           ListEmptyComponent={renderEmpty}
           showsVerticalScrollIndicator={false}

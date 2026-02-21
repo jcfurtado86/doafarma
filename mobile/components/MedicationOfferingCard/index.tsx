@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { MedicationOffering } from '@/types/medicationOffering';
 import { Colors } from '@/constants/Colors';
 import { a11y } from '@/utils/accessibility';
+import { formatShortDate } from '@/utils/dateFormatters';
 
 interface MedicationOfferingCardProps {
   offering: MedicationOffering;
@@ -15,10 +16,6 @@ export function MedicationOfferingCard({
   onEdit,
   onDelete,
 }: MedicationOfferingCardProps) {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
-  };
-
   const isExpired = new Date(offering.expires_at) < new Date();
 
   return (
@@ -39,7 +36,7 @@ export function MedicationOfferingCard({
           <Text style={styles.label}>Quantidade:</Text> {offering.quantity} unidades
         </Text>
         <Text style={[styles.detailText, isExpired && styles.expiredText]}>
-          <Text style={styles.label}>Vencimento:</Text> {formatDate(offering.expires_at)}
+          <Text style={styles.label}>Vencimento:</Text> {formatShortDate(offering.expires_at)}
         </Text>
       </View>
 

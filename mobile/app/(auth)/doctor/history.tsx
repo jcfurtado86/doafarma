@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { Pagination } from '@/constants/Pagination';
+import { formatLongDate } from '@/utils/dateFormatters';
 import { MedicationAppointment } from '@/types/medicationAppointment';
 import { ListFooterLoader } from '@/components/ListFooterLoader';
 import { usePagination } from '@/hooks/usePagination';
@@ -23,15 +24,6 @@ export default function DoctorHistoryScreen() {
   } = usePagination<MedicationAppointment>({
     fetchFn: fetchDoctorHistoryFn,
   });
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-    });
-  };
 
   const renderItem = ({ item }: { item: MedicationAppointment }) => {
     const drug = item.medication_request?.medication_offering?.drug;
@@ -74,7 +66,7 @@ export default function DoctorHistoryScreen() {
             <View style={styles.infoRow}>
               <Text style={styles.infoLabel}>Validade:</Text>
               <Text style={styles.infoValue}>
-                {formatDate(item.medication_request.medication_offering.expires_at)}
+                {formatLongDate(item.medication_request.medication_offering.expires_at)}
               </Text>
             </View>
           )}
@@ -90,7 +82,7 @@ export default function DoctorHistoryScreen() {
 
           <View style={styles.dateRow}>
             <Text style={styles.dateIcon}>📅</Text>
-            <Text style={styles.dateText}>Doado em {formatDate(item.updated_at)}</Text>
+            <Text style={styles.dateText}>Doado em {formatLongDate(item.updated_at)}</Text>
           </View>
         </View>
       </View>

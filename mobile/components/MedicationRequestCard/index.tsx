@@ -4,6 +4,7 @@ import { MedicationRequest } from '@/types/medicationRequest';
 import { RequestStatusBadge } from '@/components/RequestStatusBadge';
 import { Colors } from '@/constants/Colors';
 import { a11y } from '@/utils/accessibility';
+import { formatShortDate, formatDateTime } from '@/utils/dateFormatters';
 
 interface MedicationRequestCardProps {
   request: MedicationRequest;
@@ -22,20 +23,6 @@ export function MedicationRequestCard({
   onSchedule,
   hasAppointment = false,
 }: MedicationRequestCardProps) {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
-  };
-
-  const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
   const offering = request.medication_offering;
   const isPending = request.status === 'pending';
 
@@ -57,7 +44,7 @@ export function MedicationRequestCard({
         </Text>
         <Text style={styles.detailText}>
           <Text style={styles.label}>Validade:</Text>{' '}
-          {offering ? formatDate(offering.expires_at) : '-'}
+          {offering ? formatShortDate(offering.expires_at) : '-'}
         </Text>
 
         {variant === 'doctor' && request.receptor && (

@@ -11,6 +11,7 @@ import {
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { Pagination } from '@/constants/Pagination';
+import { formatLongDate } from '@/utils/dateFormatters';
 import { MedicationAppointment } from '@/types/medicationAppointment';
 import { ListFooterLoader } from '@/components/ListFooterLoader';
 import { usePagination } from '@/hooks/usePagination';
@@ -32,15 +33,6 @@ export default function ReceptorHistoryScreen() {
   } = usePagination<MedicationAppointment>({
     fetchFn: fetchHistoryFn,
   });
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-    });
-  };
 
   const handleRateDoctor = (appointment: MedicationAppointment) => {
     const drug = appointment.medication_request?.medication_offering?.drug;
@@ -97,7 +89,7 @@ export default function ReceptorHistoryScreen() {
             <View style={styles.infoRow}>
               <Text style={styles.infoLabel}>Validade:</Text>
               <Text style={styles.infoValue}>
-                {formatDate(item.medication_request.medication_offering.expires_at)}
+                {formatLongDate(item.medication_request.medication_offering.expires_at)}
               </Text>
             </View>
           )}
@@ -113,7 +105,7 @@ export default function ReceptorHistoryScreen() {
 
           <View style={styles.dateRow}>
             <Text style={styles.dateIcon}>📅</Text>
-            <Text style={styles.dateText}>Recebido em {formatDate(item.updated_at)}</Text>
+            <Text style={styles.dateText}>Recebido em {formatLongDate(item.updated_at)}</Text>
           </View>
 
           {/* Rate Button */}

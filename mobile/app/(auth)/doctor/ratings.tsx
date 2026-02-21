@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
 import { useDoctorRatingStore } from '@/stores/doctorRatingStore';
 import { Colors } from '@/constants/Colors';
+import { formatLongDate } from '@/utils/dateFormatters';
 import { DoctorRating, RATING_LABELS } from '@/types/doctorRating';
 
 export default function DoctorRatingsScreen() {
@@ -12,15 +13,6 @@ export default function DoctorRatingsScreen() {
     fetchMyRatings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-    });
-  };
 
   const renderStars = (rating: number) => {
     return (
@@ -81,7 +73,7 @@ export default function DoctorRatingsScreen() {
             {renderStars(item.rating)}
             <Text style={styles.ratingLabel}>{RATING_LABELS[item.rating]}</Text>
           </View>
-          <Text style={styles.date}>{formatDate(item.created_at)}</Text>
+          <Text style={styles.date}>{formatLongDate(item.created_at)}</Text>
         </View>
 
         {item.comment && <Text style={styles.comment}>{item.comment}</Text>}

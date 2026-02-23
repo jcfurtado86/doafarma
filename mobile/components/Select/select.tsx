@@ -9,7 +9,6 @@ import {
   Pressable,
   StyleProp,
   Text,
-  TextInput,
   TextStyle,
   TouchableOpacity,
   View,
@@ -25,7 +24,7 @@ interface SelectProps<T extends FieldValues = FieldValues> {
   containerStyle?: StyleProp<ViewStyle>;
   selectViewStyle?: StyleProp<ViewStyle>;
   selectStyle?: StyleProp<TextStyle>;
-  nextRef?: React.RefObject<TextInput | Picker<string | number> | null>;
+  nextRef?: React.RefObject<{ focus: () => void } | null>;
   error?: string;
 }
 

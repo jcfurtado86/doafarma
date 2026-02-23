@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, TextInput } from 'react-native';
 import { Input } from '@/components/Input';
 import PrimaryButton from '@/components/PrimaryButton';
@@ -8,11 +8,13 @@ import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import { InputRow } from '@/components/InputRow';
 import { Select, SelectItem } from '@/components/Select';
+import { SearchableSelect, SearchableSelectRef } from '@/components/SearchableSelect';
 import { Picker } from '@react-native-picker/picker';
 import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
 import { BRAZILIAN_STATES } from '@/constants/BrazilianStates';
 import { z } from 'zod';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
+import { useCitiesByState } from '@/hooks/useCitiesByState';
 
 interface DoctorAddressStepProps {
   onSubmit: (
@@ -62,9 +64,18 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
     handleSubmit,
     formState: { errors },
     setError,
+    watch,
+    setValue,
   } = useFeatureForm<DoctorAddressFormData>({
     schema: doctorAddressSchema,
   });
+
+  const selectedUf = watch('addresses.0.uf');
+  const { cities, isLoading, error: citiesError } = useCitiesByState(selectedUf || null);
+
+  useEffect(() => {
+    setValue('addresses.0.city', '');
+  }, [selectedUf, setValue]);
 
   async function handleFinishRegistration(data: DoctorAddressFormData) {
     await onSubmit(data, setError);
@@ -72,7 +83,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
 
   const cepRef = useRef<TextInput>(null);
   const ufRef = useRef<Picker<string | number>>(null);
-  const cityRef = useRef<Picker<string | number>>(null);
+  const cityRef = useRef<SearchableSelectRef | null>(null);
   const neighborhoodRef = useRef<TextInput>(null);
   const streetRef = useRef<TextInput>(null);
   const numberRef = useRef<TextInput>(null);
@@ -130,23 +141,20 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
               <SelectItem key={state.value} label={state.label} value={state.value} />
             ))}
           </Select>
-          <Select
+          <SearchableSelect
             ref={cityRef}
             formProps={{
               name: 'addresses[0].city',
               control: control,
             }}
-            selectProps={{
-              placeholder: 'Cidade',
-            }}
+            placeholder="Cidade"
+            cities={cities}
+            isLoading={isLoading}
+            loadError={citiesError}
             error={errors.addresses?.[0]?.city?.message}
             containerStyle={{ flex: 1 }}
             nextRef={neighborhoodRef}
-          >
-            <SelectItem label="Rio Branco" value="Rio Branco" />
-            <SelectItem label="Maceió" value="Maceió" />
-            <SelectItem label="Macapá" value="Macapá" />
-          </Select>
+          />
         </InputRow>
         <Input
           ref={neighborhoodRef}

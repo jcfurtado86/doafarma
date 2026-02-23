@@ -11,6 +11,8 @@ import {
 } from '@expo-google-fonts/roboto';
 import { StatusBar } from 'expo-status-bar';
 import { useAuthStore } from '@/stores/authStore';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import OfflineBanner from '@/components/OfflineBanner';
 import Toast from 'react-native-toast-message';
 import type { Subscription } from 'expo-notifications';
 import {
@@ -39,6 +41,7 @@ export default function RootLayout() {
   });
 
   const checkAuth = useAuthStore((state) => state.checkAuth);
+  useNetworkStatus();
   const notificationListener = useRef<Subscription | null>(null);
   const responseListener = useRef<Subscription | null>(null);
 
@@ -112,6 +115,7 @@ function RootLayoutNav() {
         }}
       />
       <StatusBar style="auto" />
+      <OfflineBanner />
       <Toast />
     </>
   );

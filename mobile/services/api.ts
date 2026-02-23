@@ -1,4 +1,5 @@
 import { useAuthStore } from '@/stores/authStore';
+import { useNetworkStore } from '@/stores/networkStore';
 import { STORAGE_KEYS } from '@/config/storage';
 import { API_ENDPOINTS } from '@/config/endpoints';
 import * as SecureStore from 'expo-secure-store';
@@ -59,6 +60,13 @@ function processQueue(error: unknown, token: string | null = null): void {
 
 api.interceptors.request.use(
   async (config) => {
+    const { isConnected } = useNetworkStore.getState();
+    if (!isConnected) {
+      const error = new Error('Você está sem conexão com a internet.');
+      Object.assign(error, { isNetworkError: true, isOfflineError: true });
+      return Promise.reject(error);
+    }
+
     if (config.headers.Authorization) {
       return config;
     }

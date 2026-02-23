@@ -24,4 +24,10 @@ export const styles = StyleSheet.create({
     fontFamily: fontFamily.bold,
     lineHeight: 56,
   },
+
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+
+  buttonTextDisabled: {},
 });

@@ -11,7 +11,7 @@ export const medicationRequestService = {
     try {
       const response = await apiClient.post('/v1/medication-requests', data);
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -20,7 +20,7 @@ export const medicationRequestService = {
     try {
       const response = await apiClient.get('/v1/medication-requests');
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -30,7 +30,7 @@ export const medicationRequestService = {
       const params = status ? { status } : {};
       const response = await apiClient.get('/v1/medication-requests/received', { params });
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -39,7 +39,7 @@ export const medicationRequestService = {
     try {
       const response = await apiClient.patch(`/v1/medication-requests/${id}/confirm`);
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -48,7 +48,7 @@ export const medicationRequestService = {
     try {
       const response = await apiClient.patch(`/v1/medication-requests/${id}/reject`);
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },

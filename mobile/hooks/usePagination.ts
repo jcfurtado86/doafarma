@@ -71,8 +71,10 @@ export function usePagination<T>({
         setItems(response.data);
       } else {
         setItems((prev) => {
-          const existingIds = new Set(prev.map((item: any) => item.id));
-          const newItems = response.data.filter((item: any) => !existingIds.has(item.id));
+          const existingIds = new Set(prev.map((item) => (item as { id: unknown }).id));
+          const newItems = response.data.filter(
+            (item) => !existingIds.has((item as { id: unknown }).id)
+          );
           return [...prev, ...newItems];
         });
       }

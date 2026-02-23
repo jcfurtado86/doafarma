@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { View, StyleSheet, Alert, TextInput, ActivityIndicator } from 'react-native';
 import { toast } from '@/utils/toast';
+import { getErrorMessage } from '@/types/errors';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useMedicationOfferingStore } from '@/stores/medicationOfferingStore';
 import { Title } from '@/components/Title';
@@ -52,7 +53,7 @@ export default function EditMedicationOfferingScreen() {
     try {
       const response = await api.get('/v1/drugs');
       setDrugs(response.data.data);
-    } catch (error) {
+    } catch {
       Alert.alert('Erro', 'Erro ao carregar lista de medicamentos');
     } finally {
       setLoadingDrugs(false);
@@ -69,8 +70,8 @@ export default function EditMedicationOfferingScreen() {
         expires_at: convertDateFromAPI(offeringData.expires_at),
         quantity: offeringData.quantity.toString(),
       });
-    } catch (error: any) {
-      Alert.alert('Erro', error.message || 'Erro ao carregar dados da oferta', [
+    } catch (error: unknown) {
+      Alert.alert('Erro', getErrorMessage(error, 'Erro ao carregar dados da oferta'), [
         { text: 'OK', onPress: () => router.back() },
       ]);
     } finally {
@@ -93,10 +94,10 @@ export default function EditMedicationOfferingScreen() {
 
       toast.success('Oferta de medicamento atualizada com sucesso!');
       router.back();
-    } catch (error: any) {
+    } catch (error: unknown) {
       Alert.alert(
         'Erro ao atualizar oferta',
-        error.message || 'Ocorreu um erro inesperado. Tente novamente.',
+        getErrorMessage(error, 'Ocorreu um erro inesperado. Tente novamente.'),
         [{ text: 'OK' }]
       );
     }

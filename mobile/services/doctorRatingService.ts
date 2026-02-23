@@ -7,7 +7,7 @@ export const doctorRatingService = {
     try {
       const response = await apiClient.post(`/v1/doctor-ratings/${appointmentId}`, data);
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -16,7 +16,7 @@ export const doctorRatingService = {
     try {
       const response = await apiClient.patch(`/v1/doctor-ratings/${ratingId}`, data);
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -25,7 +25,7 @@ export const doctorRatingService = {
     try {
       const response = await apiClient.get(`/v1/doctor-ratings/appointment/${appointmentId}`);
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -34,7 +34,7 @@ export const doctorRatingService = {
     try {
       const response = await apiClient.get(`/v1/doctor-ratings/doctor/${doctorId}`);
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -43,7 +43,7 @@ export const doctorRatingService = {
     try {
       const response = await apiClient.get('/v1/doctor-ratings/my-ratings');
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },

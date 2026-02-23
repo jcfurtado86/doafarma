@@ -17,7 +17,7 @@ export const medicationOfferingService = {
         },
       });
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -30,7 +30,7 @@ export const medicationOfferingService = {
         },
       });
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -39,7 +39,7 @@ export const medicationOfferingService = {
     try {
       const response = await apiClient.post('/v1/medication-offerings', data);
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -48,7 +48,7 @@ export const medicationOfferingService = {
     try {
       const response = await apiClient.put(`/v1/medication-offerings/${id}`, data);
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -56,7 +56,7 @@ export const medicationOfferingService = {
   delete: async (id: number): Promise<void> => {
     try {
       await apiClient.delete(`/v1/medication-offerings/${id}`);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -67,7 +67,7 @@ export const medicationOfferingService = {
         params: { q: query },
       });
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -85,7 +85,7 @@ export const medicationOfferingService = {
         meta: response.data.meta,
         links: response.data.links,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },

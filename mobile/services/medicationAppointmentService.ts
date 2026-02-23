@@ -13,7 +13,7 @@ export const medicationAppointmentService = {
     try {
       const response = await apiClient.post('/v1/medication-appointments', data);
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -23,7 +23,7 @@ export const medicationAppointmentService = {
       const params = status ? { status } : {};
       const response = await apiClient.get('/v1/medication-appointments', { params });
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -33,7 +33,7 @@ export const medicationAppointmentService = {
       const params = status ? { status } : {};
       const response = await apiClient.get('/v1/medication-appointments/received', { params });
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -42,7 +42,7 @@ export const medicationAppointmentService = {
     try {
       const response = await apiClient.patch(`/v1/medication-appointments/${id}/accept`);
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -57,7 +57,7 @@ export const medicationAppointmentService = {
         data
       );
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -68,7 +68,7 @@ export const medicationAppointmentService = {
         `/v1/medication-appointments/${id}/confirm-delivery-receptor`
       );
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -79,7 +79,7 @@ export const medicationAppointmentService = {
         `/v1/medication-appointments/${id}/confirm-delivery-doctor`
       );
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -88,7 +88,7 @@ export const medicationAppointmentService = {
     try {
       const response = await apiClient.get('/v1/medication-appointments/history');
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -103,7 +103,7 @@ export const medicationAppointmentService = {
         meta: response.data.meta,
         links: response.data.links,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -112,7 +112,7 @@ export const medicationAppointmentService = {
     try {
       const response = await apiClient.get('/v1/medication-appointments/doctor-history');
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },
@@ -129,7 +129,7 @@ export const medicationAppointmentService = {
         meta: response.data.meta,
         links: response.data.links,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(extractErrorMessage(error));
     }
   },

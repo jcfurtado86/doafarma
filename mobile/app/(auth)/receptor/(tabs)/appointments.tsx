@@ -9,6 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import { toast } from '@/utils/toast';
+import { getErrorMessage } from '@/types/errors';
 import { useMedicationAppointmentStore } from '@/stores/medicationAppointmentStore';
 import { MedicationAppointmentCard } from '@/components/MedicationAppointmentCard';
 import { FilterButton } from '@/components/FilterButton';
@@ -53,8 +54,8 @@ export default function ReceptorAppointmentsScreen() {
             try {
               await acceptAppointment(appointment.id, false);
               toast.success('Agendamento confirmado!');
-            } catch (err: any) {
-              Alert.alert('Erro', err.message || 'Não foi possível aceitar o agendamento.');
+            } catch (err: unknown) {
+              Alert.alert('Erro', getErrorMessage(err, 'Não foi possível aceitar o agendamento.'));
             }
           },
         },
@@ -69,7 +70,7 @@ export default function ReceptorAppointmentsScreen() {
     try {
       await counterProposeAppointment(appointmentId, data, false);
       toast.success('Contraproposta enviada!');
-    } catch (err: any) {
+    } catch (err: unknown) {
       throw err; // Let the modal handle the error display
     }
   };
@@ -86,8 +87,11 @@ export default function ReceptorAppointmentsScreen() {
             try {
               await confirmDeliveryReceptor(appointment.id);
               toast.success('Recebimento confirmado com sucesso!');
-            } catch (err: any) {
-              Alert.alert('Erro', err.message || 'Não foi possível confirmar o recebimento.');
+            } catch (err: unknown) {
+              Alert.alert(
+                'Erro',
+                getErrorMessage(err, 'Não foi possível confirmar o recebimento.')
+              );
             }
           },
         },

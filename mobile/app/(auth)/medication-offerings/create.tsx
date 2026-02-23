@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { View, StyleSheet, Alert, TextInput } from 'react-native';
 import { toast } from '@/utils/toast';
+import { getErrorMessage } from '@/types/errors';
 import { useRouter } from 'expo-router';
 import { useMedicationOfferingStore } from '@/stores/medicationOfferingStore';
 import { Title } from '@/components/Title';
@@ -47,7 +48,7 @@ export default function CreateMedicationOfferingScreen() {
     try {
       const response = await api.get('/v1/drugs');
       setDrugs(response.data.data);
-    } catch (error) {
+    } catch {
       Alert.alert('Erro', 'Erro ao carregar lista de medicamentos');
     } finally {
       setLoadingDrugs(false);
@@ -65,10 +66,10 @@ export default function CreateMedicationOfferingScreen() {
 
       toast.success('Oferta de medicamento criada com sucesso!');
       router.back();
-    } catch (error: any) {
+    } catch (error: unknown) {
       Alert.alert(
         'Erro ao criar oferta',
-        error.message || 'Ocorreu um erro inesperado. Tente novamente.',
+        getErrorMessage(error, 'Ocorreu um erro inesperado. Tente novamente.'),
         [{ text: 'OK' }]
       );
     }

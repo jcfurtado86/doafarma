@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -31,79 +31,90 @@ export default function DoctorReceivedAppointmentsScreen() {
 
   const [filter, setFilter] = useState<FilterOption>('proposed');
 
-  const loadAppointments = () => {
+  const loadAppointments = useCallback(() => {
     const status = filter === 'all' ? undefined : filter;
     fetchReceivedAppointments(status);
-  };
+  }, [filter, fetchReceivedAppointments]);
 
   useEffect(() => {
     loadAppointments();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter]);
+  }, [loadAppointments]);
 
-  const handleAccept = (appointment: MedicationAppointment) => {
-    Alert.alert(
-      'Aceitar Proposta',
-      `Aceitar o agendamento para ${new Date(appointment.scheduled_date).toLocaleDateString('pt-BR')} às ${appointment.scheduled_time.substring(0, 5)}?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Aceitar',
-          onPress: async () => {
-            try {
-              await acceptAppointment(appointment.id, true);
-              toast.success('Agendamento confirmado!');
-            } catch (err: any) {
-              Alert.alert('Erro', err.message || 'Não foi possível aceitar o agendamento.');
-            }
+  const handleAccept = useCallback(
+    (appointment: MedicationAppointment) => {
+      Alert.alert(
+        'Aceitar Proposta',
+        `Aceitar o agendamento para ${new Date(appointment.scheduled_date).toLocaleDateString('pt-BR')} às ${appointment.scheduled_time.substring(0, 5)}?`,
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          {
+            text: 'Aceitar',
+            onPress: async () => {
+              try {
+                await acceptAppointment(appointment.id, true);
+                toast.success('Agendamento confirmado!');
+              } catch (err: any) {
+                Alert.alert('Erro', err.message || 'Não foi possível aceitar o agendamento.');
+              }
+            },
           },
-        },
-      ]
-    );
-  };
+        ]
+      );
+    },
+    [acceptAppointment]
+  );
 
-  const handleCounterPropose = async (
-    appointmentId: number,
-    data: { scheduled_date: string; scheduled_time: string; address_id?: number }
-  ) => {
-    try {
-      await counterProposeAppointment(appointmentId, data, true);
-      toast.success('Contraproposta enviada!');
-    } catch (err: any) {
-      throw err; // Let the modal handle the error display
-    }
-  };
+  const handleCounterPropose = useCallback(
+    async (
+      appointmentId: number,
+      data: { scheduled_date: string; scheduled_time: string; address_id?: number }
+    ) => {
+      try {
+        await counterProposeAppointment(appointmentId, data, true);
+        toast.success('Contraproposta enviada!');
+      } catch (err: any) {
+        throw err; // Let the modal handle the error display
+      }
+    },
+    [counterProposeAppointment]
+  );
 
-  const handleConfirmDelivery = (appointment: MedicationAppointment) => {
-    Alert.alert(
-      'Confirmar Entrega',
-      `Confirmar que o medicamento "${appointment.medication_request?.medication_offering?.drug?.product_name}" foi entregue?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Confirmar',
-          onPress: async () => {
-            try {
-              await confirmDeliveryDoctor(appointment.id);
-              toast.success('Entrega confirmada com sucesso!');
-            } catch (err: any) {
-              Alert.alert('Erro', err.message || 'Não foi possível confirmar a entrega.');
-            }
+  const handleConfirmDelivery = useCallback(
+    (appointment: MedicationAppointment) => {
+      Alert.alert(
+        'Confirmar Entrega',
+        `Confirmar que o medicamento "${appointment.medication_request?.medication_offering?.drug?.product_name}" foi entregue?`,
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          {
+            text: 'Confirmar',
+            onPress: async () => {
+              try {
+                await confirmDeliveryDoctor(appointment.id);
+                toast.success('Entrega confirmada com sucesso!');
+              } catch (err: any) {
+                Alert.alert('Erro', err.message || 'Não foi possível confirmar a entrega.');
+              }
+            },
           },
-        },
-      ]
-    );
-  };
+        ]
+      );
+    },
+    [confirmDeliveryDoctor]
+  );
 
-  const renderItem = ({ item }: { item: MedicationAppointment }) => (
-    <MedicationAppointmentCard
-      appointment={item}
-      variant="doctor"
-      onConfirmDelivery={() => handleConfirmDelivery(item)}
-      onAccept={() => handleAccept(item)}
-      onCounterPropose={(data) => handleCounterPropose(item.id, data)}
-      doctorAddresses={[]} // TODO: Pass doctor's addresses from user store
-    />
+  const renderItem = useCallback(
+    ({ item }: { item: MedicationAppointment }) => (
+      <MedicationAppointmentCard
+        appointment={item}
+        variant="doctor"
+        onConfirmDelivery={() => handleConfirmDelivery(item)}
+        onAccept={() => handleAccept(item)}
+        onCounterPropose={(data) => handleCounterPropose(item.id, data)}
+        doctorAddresses={[]} // TODO: Pass doctor's addresses from user store
+      />
+    ),
+    [handleConfirmDelivery, handleAccept, handleCounterPropose]
   );
 
   const renderEmpty = () => {

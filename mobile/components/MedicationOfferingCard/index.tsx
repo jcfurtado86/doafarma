@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useMemo } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { MedicationOffering } from '@/types/medicationOffering';
 import { Colors } from '@/constants/Colors';
@@ -11,12 +11,15 @@ interface MedicationOfferingCardProps {
   onDelete: () => void;
 }
 
-export function MedicationOfferingCard({
+export const MedicationOfferingCard = memo(function MedicationOfferingCard({
   offering,
   onEdit,
   onDelete,
 }: MedicationOfferingCardProps) {
-  const isExpired = new Date(offering.expires_at) < new Date();
+  const isExpired = useMemo(
+    () => new Date(offering.expires_at) < new Date(),
+    [offering.expires_at]
+  );
 
   return (
     <View style={[styles.card, isExpired && styles.expiredCard]}>
@@ -58,7 +61,7 @@ export function MedicationOfferingCard({
       </View>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   card: {

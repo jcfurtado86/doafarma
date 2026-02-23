@@ -27,4 +27,10 @@ export const styles = StyleSheet.create({
   buttonTextSecondaryHover: {
     color: Colors.yellow_green_500,
   },
+
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+
+  buttonTextDisabled: {},
 });

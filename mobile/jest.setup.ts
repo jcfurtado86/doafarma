@@ -32,6 +32,12 @@ jest.mock('react-native-toast-message', () => ({
   hide: jest.fn(),
 }));
 
+// Mock @react-native-community/netinfo
+jest.mock('@react-native-community/netinfo', () => ({
+  fetch: jest.fn().mockResolvedValue({ isConnected: true, isInternetReachable: true }),
+  addEventListener: jest.fn().mockReturnValue(jest.fn()), // returns unsubscribe fn
+}));
+
 // Mock push notification service
 jest.mock('@/services/pushNotificationService', () => ({
   registerForPushNotificationsAsync: jest.fn(),

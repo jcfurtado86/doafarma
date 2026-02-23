@@ -1,10 +1,13 @@
 import React, { useState, useCallback, memo } from 'react';
 import { Modal, View, Text, Pressable, ScrollView } from 'react-native';
+import { Controller } from 'react-hook-form';
 import { toast } from '@/utils/toast';
 import { Address, CounterProposeAppointmentData } from '@/types/medicationAppointment';
-import { ValidationMessages } from '@/constants/ValidationMessages';
-import { isDateInPast, isValidDateFormat } from '@/utils/validation/dateHelpers';
-import { isValidTimeFormat } from '@/utils/validation/timeHelpers';
+import { useFeatureForm } from '@/hooks/useFeatureForm';
+import {
+  counterProposeSchema,
+  CounterProposeFormData,
+} from '@/utils/validation/appointmentValidation';
 import { DateInput } from '@/components/DateInput';
 import { TimeInput } from '@/components/TimeInput';
 import { AddressSelector } from '@/components/AddressSelector';
@@ -32,49 +35,47 @@ export const CounterProposeModal = memo(function CounterProposeModal({
   userRole,
   doctorAddresses = [],
 }: CounterProposeModalProps) {
-  const [date, setDate] = useState(currentDate);
-  const [time, setTime] = useState(currentTime.substring(0, 5));
   const [selectedAddressId, setSelectedAddressId] = useState<number | undefined>(
     currentAddress?.id
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = useCallback(async () => {
-    if (!isValidDateFormat(date)) {
-      toast.error(ValidationMessages.date.invalid);
-      return;
-    }
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useFeatureForm<CounterProposeFormData>({
+    schema: counterProposeSchema,
+    defaultValues: {
+      scheduled_date: currentDate,
+      scheduled_time: currentTime.substring(0, 5),
+    },
+  });
 
-    if (!isValidTimeFormat(time)) {
-      toast.error(ValidationMessages.time.invalid);
-      return;
-    }
+  const handleFormSubmit = useCallback(
+    async (formData: CounterProposeFormData) => {
+      setIsSubmitting(true);
+      try {
+        const data: CounterProposeAppointmentData = {
+          scheduled_date: formData.scheduled_date,
+          scheduled_time: formData.scheduled_time,
+        };
 
-    if (isDateInPast(date)) {
-      toast.error(ValidationMessages.date.mustBeTodayOrFuture);
-      return;
-    }
+        if (userRole === 'doctor' && selectedAddressId) {
+          data.address_id = selectedAddressId;
+        }
 
-    setIsSubmitting(true);
-    try {
-      const data: CounterProposeAppointmentData = {
-        scheduled_date: date,
-        scheduled_time: time,
-      };
-
-      if (userRole === 'doctor' && selectedAddressId) {
-        data.address_id = selectedAddressId;
+        await onSubmit(data);
+        onClose();
+      } catch {
+        // Never expose raw backend error messages to users (security best practice)
+        toast.error('Não foi possível fazer a contraproposta. Tente novamente.');
+      } finally {
+        setIsSubmitting(false);
       }
-
-      await onSubmit(data);
-      onClose();
-    } catch {
-      // Never expose raw backend error messages to users (security best practice)
-      toast.error('Não foi possível fazer a contraproposta. Tente novamente.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [date, time, selectedAddressId, userRole, onSubmit, onClose]);
+    },
+    [selectedAddressId, userRole, onSubmit, onClose]
+  );
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
@@ -90,12 +91,34 @@ export const CounterProposeModal = memo(function CounterProposeModal({
           <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
             <View style={styles.section}>
               <Text style={styles.label}>Data</Text>
-              <DateInput value={date} onChange={setDate} placeholder="DD/MM/AAAA" />
+              <Controller
+                control={control}
+                name="scheduled_date"
+                render={({ field }) => (
+                  <DateInput
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={errors.scheduled_date?.message}
+                    placeholder="DD/MM/AAAA"
+                  />
+                )}
+              />
             </View>
 
             <View style={styles.section}>
               <Text style={styles.label}>Horário</Text>
-              <TimeInput value={time} onChange={setTime} placeholder="HH:MM" />
+              <Controller
+                control={control}
+                name="scheduled_time"
+                render={({ field }) => (
+                  <TimeInput
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={errors.scheduled_time?.message}
+                    placeholder="HH:MM"
+                  />
+                )}
+              />
             </View>
 
             {userRole === 'doctor' && doctorAddresses.length > 0 && (
@@ -135,7 +158,7 @@ export const CounterProposeModal = memo(function CounterProposeModal({
             </Pressable>
             <Pressable
               style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
-              onPress={handleSubmit}
+              onPress={handleSubmit(handleFormSubmit)}
               disabled={isSubmitting}
               {...a11y.button('Enviar contraproposta', isSubmitting)}
             >

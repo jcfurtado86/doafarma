@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useMemo } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { MedicationOfferingSearchResult } from '@/types/medicationOffering';
 import { formatShortDate } from '@/utils/dateFormatters';
@@ -9,15 +9,23 @@ interface SearchResultCardProps {
   onPress: () => void;
 }
 
-export function SearchResultCard({ offering, onPress }: SearchResultCardProps) {
-  const isExpired = new Date(offering.expires_at) < new Date();
+const PRESSED_STYLE = { opacity: 0.8 } as const;
+
+export const SearchResultCard = memo(function SearchResultCard({
+  offering,
+  onPress,
+}: SearchResultCardProps) {
+  const isExpired = useMemo(
+    () => new Date(offering.expires_at) < new Date(),
+    [offering.expires_at]
+  );
 
   return (
     <Pressable
       style={({ pressed }) => [
         styles.card,
         isExpired && styles.expiredCard,
-        pressed && { opacity: 0.8 },
+        pressed && PRESSED_STYLE,
       ]}
       onPress={onPress}
       accessibilityLabel={`${offering.drug.product_name}, ${offering.quantity} unidades, oferecido por ${offering.doctor.name}`}
@@ -54,4 +62,4 @@ export function SearchResultCard({ offering, onPress }: SearchResultCardProps) {
       </View>
     </Pressable>
   );
-}
+});

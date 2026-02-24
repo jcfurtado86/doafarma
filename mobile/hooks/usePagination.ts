@@ -118,6 +118,7 @@ export function usePagination<T>({
 
     return () => {
       isMounted.current = false;
+      isLoadingMoreRef.current = false;
     };
   }, [refreshKey]);
 

@@ -40,6 +40,11 @@ interface ConfigWithRetryResponse extends InternalAxiosRequestConfig {
   __retryResponse?: AxiosResponse;
 }
 
+// Thread-safety note: these module-level flags are safe from race conditions because
+// JavaScript runs on a single-threaded event loop — there is no preemption between
+// synchronous operations. Concurrent 401 responses are serialised by the microtask
+// queue, so reads and writes to isRefreshing/isLoggingOut/failedQueue are always
+// atomic with respect to one another within a single turn of the event loop.
 let isRefreshing = false;
 let isLoggingOut = false;
 let failedQueue: {

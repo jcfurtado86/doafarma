@@ -34,7 +34,7 @@ export default function ReceptorHistoryScreen() {
     fetchFn: fetchHistoryFn,
   });
 
-  const handleRateDoctor = (appointment: MedicationAppointment) => {
+  const handleRateDoctor = useCallback((appointment: MedicationAppointment) => {
     const drug = appointment.medication_request?.medication_offering?.drug;
     const doctor = appointment.medication_request?.medication_offering?.doctor;
 
@@ -46,81 +46,84 @@ export default function ReceptorHistoryScreen() {
         medicationName: drug?.product_name || '',
       },
     });
-  };
+  }, []);
 
-  const renderItem = ({ item }: { item: MedicationAppointment }) => {
-    const drug = item.medication_request?.medication_offering?.drug;
-    const doctor = item.medication_request?.medication_offering?.doctor;
+  const renderItem = useCallback(
+    ({ item }: { item: MedicationAppointment }) => {
+      const drug = item.medication_request?.medication_offering?.drug;
+      const doctor = item.medication_request?.medication_offering?.doctor;
 
-    return (
-      <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          <Text style={styles.medicationName}>{drug?.product_name || 'Medicamento'}</Text>
-          <View style={styles.statusBadge}>
-            <Text style={styles.statusText}>Recebido</Text>
-          </View>
-        </View>
-
-        <View style={styles.cardContent}>
-          {drug?.substance && (
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Substância:</Text>
-              <Text style={styles.infoValue}>{drug.substance}</Text>
+      return (
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.medicationName}>{drug?.product_name || 'Medicamento'}</Text>
+            <View style={styles.statusBadge}>
+              <Text style={styles.statusText}>Recebido</Text>
             </View>
-          )}
-
-          {drug?.laboratory && (
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Laboratório:</Text>
-              <Text style={styles.infoValue}>{drug.laboratory}</Text>
-            </View>
-          )}
-
-          {item.medication_request?.medication_offering?.lot_number && (
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Lote:</Text>
-              <Text style={styles.infoValue}>
-                {item.medication_request.medication_offering.lot_number}
-              </Text>
-            </View>
-          )}
-
-          {item.medication_request?.medication_offering?.expires_at && (
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Validade:</Text>
-              <Text style={styles.infoValue}>
-                {formatLongDate(item.medication_request.medication_offering.expires_at)}
-              </Text>
-            </View>
-          )}
-
-          {doctor?.name && (
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Doador:</Text>
-              <Text style={styles.infoValue}>{doctor.name}</Text>
-            </View>
-          )}
-
-          <View style={styles.divider} />
-
-          <View style={styles.dateRow}>
-            <Text style={styles.dateIcon}>📅</Text>
-            <Text style={styles.dateText}>Recebido em {formatLongDate(item.updated_at)}</Text>
           </View>
 
-          {/* Rate Button */}
-          <TouchableOpacity
-            style={styles.rateButton}
-            onPress={() => handleRateDoctor(item)}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.rateButtonIcon}>⭐</Text>
-            <Text style={styles.rateButtonText}>Avaliar Doador</Text>
-          </TouchableOpacity>
+          <View style={styles.cardContent}>
+            {drug?.substance && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Substância:</Text>
+                <Text style={styles.infoValue}>{drug.substance}</Text>
+              </View>
+            )}
+
+            {drug?.laboratory && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Laboratório:</Text>
+                <Text style={styles.infoValue}>{drug.laboratory}</Text>
+              </View>
+            )}
+
+            {item.medication_request?.medication_offering?.lot_number && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Lote:</Text>
+                <Text style={styles.infoValue}>
+                  {item.medication_request.medication_offering.lot_number}
+                </Text>
+              </View>
+            )}
+
+            {item.medication_request?.medication_offering?.expires_at && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Validade:</Text>
+                <Text style={styles.infoValue}>
+                  {formatLongDate(item.medication_request.medication_offering.expires_at)}
+                </Text>
+              </View>
+            )}
+
+            {doctor?.name && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Doador:</Text>
+                <Text style={styles.infoValue}>{doctor.name}</Text>
+              </View>
+            )}
+
+            <View style={styles.divider} />
+
+            <View style={styles.dateRow}>
+              <Text style={styles.dateIcon}>📅</Text>
+              <Text style={styles.dateText}>Recebido em {formatLongDate(item.updated_at)}</Text>
+            </View>
+
+            {/* Rate Button */}
+            <TouchableOpacity
+              style={styles.rateButton}
+              onPress={() => handleRateDoctor(item)}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.rateButtonIcon}>⭐</Text>
+              <Text style={styles.rateButtonText}>Avaliar Doador</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    );
-  };
+      );
+    },
+    [handleRateDoctor]
+  );
 
   const renderEmpty = () => {
     if (isLoading) return null;

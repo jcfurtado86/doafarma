@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
+import { getErrorMessage } from '@/types/errors';
 import { View, StyleSheet, FlatList, Alert } from 'react-native';
 import { toast } from '@/utils/toast';
 import { useRouter } from 'expo-router';
@@ -35,10 +36,10 @@ export default function MedicationOfferingsScreen() {
               try {
                 await deleteOffering(id);
                 toast.success('Oferta excluída com sucesso!');
-              } catch (error: any) {
+              } catch (error: unknown) {
                 Alert.alert(
                   'Erro ao excluir',
-                  error.message || 'Não foi possível excluir a oferta. Tente novamente.'
+                  getErrorMessage(error, 'Não foi possível excluir a oferta. Tente novamente.')
                 );
               }
             },

@@ -11,6 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import { toast } from '@/utils/toast';
+import { getErrorMessage } from '@/types/errors';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { ValidationMessages } from '@/constants/ValidationMessages';
@@ -77,8 +78,8 @@ export default function ScheduleAppointmentScreen() {
           onPress: () => router.back(),
         },
       ]);
-    } catch (error: any) {
-      Alert.alert('Erro', error.message || 'Não foi possível criar o agendamento.');
+    } catch (error: unknown) {
+      Alert.alert('Erro', getErrorMessage(error, 'Não foi possível criar o agendamento.'));
     }
   };
 

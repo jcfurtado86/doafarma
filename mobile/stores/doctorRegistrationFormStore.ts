@@ -1,4 +1,5 @@
 import { doctorService } from '@/services/doctorService';
+import { getErrorMessage } from '@/types/errors';
 import { create } from 'zustand';
 import * as Device from 'expo-device';
 import { useAuthStore } from './authStore';
@@ -38,6 +39,21 @@ interface DoctorRegistrationFormStore {
   updateDoctorRegistrationFormData: (data: Partial<DoctorRegistrationFormData>) => void;
   submitDoctorRegistrationForm: () => Promise<boolean>;
   clearValidationErrors: () => void;
+}
+
+interface ValidationError {
+  isValidationError: true;
+  validationErrors: Record<string, string[]>;
+  message: string;
+}
+
+function isValidationError(error: unknown): error is ValidationError {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'isValidationError' in error &&
+    (error as Record<string, unknown>).isValidationError === true
+  );
 }
 
 export const useDoctorRegistrationFormStore = create<DoctorRegistrationFormStore>((set, get) => ({
@@ -100,8 +116,8 @@ export const useDoctorRegistrationFormStore = create<DoctorRegistrationFormStore
 
       set({ isLoading: false });
       return true;
-    } catch (error: any) {
-      if (error.isValidationError) {
+    } catch (error: unknown) {
+      if (isValidationError(error)) {
         set({
           isLoading: false,
           validationErrors: error.validationErrors,
@@ -110,7 +126,7 @@ export const useDoctorRegistrationFormStore = create<DoctorRegistrationFormStore
       } else {
         set({
           isLoading: false,
-          error: error instanceof Error ? error.message : 'Erro ao cadastrar médico',
+          error: getErrorMessage(error, 'Erro ao cadastrar médico'),
         });
       }
 

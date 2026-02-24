@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { getErrorMessage } from '@/types/errors';
 import {
   View,
   Text,
@@ -52,8 +53,11 @@ export default function DoctorReceivedRequestsScreen() {
               try {
                 await confirmRequest(request.id);
                 toast.success('Solicitação confirmada com sucesso!');
-              } catch (error: any) {
-                Alert.alert('Erro', error.message || 'Não foi possível confirmar a solicitação.');
+              } catch (error: unknown) {
+                Alert.alert(
+                  'Erro',
+                  getErrorMessage(error, 'Não foi possível confirmar a solicitação.')
+                );
               }
             },
           },
@@ -77,8 +81,11 @@ export default function DoctorReceivedRequestsScreen() {
               try {
                 await rejectRequest(request.id);
                 toast.success('Solicitação recusada.');
-              } catch (error: any) {
-                Alert.alert('Erro', error.message || 'Não foi possível recusar a solicitação.');
+              } catch (error: unknown) {
+                Alert.alert(
+                  'Erro',
+                  getErrorMessage(error, 'Não foi possível recusar a solicitação.')
+                );
               }
             },
           },

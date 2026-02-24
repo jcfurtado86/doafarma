@@ -1,3 +1,4 @@
+import { getErrorMessage } from '@/types/errors';
 import { create } from 'zustand';
 import { medicationOfferingService } from '@/services/medicationOfferingService';
 import {
@@ -31,8 +32,8 @@ export const useMedicationOfferingStore = create<MedicationOfferingStoreState>((
     try {
       const offerings = await medicationOfferingService.list();
       set({ offerings, isLoading: false, error: null });
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -42,8 +43,8 @@ export const useMedicationOfferingStore = create<MedicationOfferingStoreState>((
     try {
       const offering = await medicationOfferingService.show(id);
       set({ currentOffering: offering, isLoading: false, error: null });
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -57,8 +58,8 @@ export const useMedicationOfferingStore = create<MedicationOfferingStoreState>((
         isLoading: false,
         error: null,
       }));
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -75,8 +76,8 @@ export const useMedicationOfferingStore = create<MedicationOfferingStoreState>((
         isLoading: false,
         error: null,
       }));
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -91,8 +92,8 @@ export const useMedicationOfferingStore = create<MedicationOfferingStoreState>((
         isLoading: false,
         error: null,
       }));
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },

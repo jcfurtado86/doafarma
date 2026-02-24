@@ -1,3 +1,4 @@
+import { getErrorMessage } from '@/types/errors';
 import { create } from 'zustand';
 import { medicationRequestService } from '@/services/medicationRequestService';
 import { MedicationRequest, MedicationRequestStatus } from '@/types/medicationRequest';
@@ -33,8 +34,8 @@ export const useMedicationRequestStore = create<MedicationRequestStoreState>((se
     try {
       const requests = await medicationRequestService.list();
       set({ requests, isLoading: false, error: null });
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -51,8 +52,8 @@ export const useMedicationRequestStore = create<MedicationRequestStoreState>((se
         error: null,
       }));
       return newRequest;
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -62,8 +63,8 @@ export const useMedicationRequestStore = create<MedicationRequestStoreState>((se
     try {
       const receivedRequests = await medicationRequestService.listReceived(status);
       set({ receivedRequests, isLoading: false, error: null });
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -79,8 +80,8 @@ export const useMedicationRequestStore = create<MedicationRequestStoreState>((se
         isLoading: false,
         error: null,
       }));
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -96,8 +97,8 @@ export const useMedicationRequestStore = create<MedicationRequestStoreState>((se
         isLoading: false,
         error: null,
       }));
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },

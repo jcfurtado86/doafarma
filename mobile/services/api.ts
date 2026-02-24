@@ -286,7 +286,7 @@ export const apiClient = {
 
   async post<T = any>(
     url: string,
-    data?: any,
+    data?: unknown,
     config?: AxiosRequestConfig
   ): Promise<AxiosResponse<T>> {
     const result = await api.post<T>(url, data, config);
@@ -295,7 +295,7 @@ export const apiClient = {
 
   async put<T = any>(
     url: string,
-    data?: any,
+    data?: unknown,
     config?: AxiosRequestConfig
   ): Promise<AxiosResponse<T>> {
     const result = await api.put<T>(url, data, config);
@@ -304,7 +304,7 @@ export const apiClient = {
 
   async patch<T = any>(
     url: string,
-    data?: any,
+    data?: unknown,
     config?: AxiosRequestConfig
   ): Promise<AxiosResponse<T>> {
     const result = await api.patch<T>(url, data, config);

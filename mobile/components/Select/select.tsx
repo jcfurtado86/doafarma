@@ -61,10 +61,12 @@ const Select = forwardRef<Picker<string | number> | { focus: () => void } | null
     }));
 
     const options = Array.isArray(children)
-      ? children.map((child: any) => ({
-          label: child.props.label,
-          value: child.props.value,
-        }))
+      ? (children as React.ReactElement<{ label: string; value: string | number }>[]).map(
+          (child) => ({
+            label: child.props.label,
+            value: child.props.value,
+          })
+        )
       : [];
 
     if (Platform.OS === 'android') {

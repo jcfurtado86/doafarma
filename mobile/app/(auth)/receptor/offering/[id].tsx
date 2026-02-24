@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { getErrorMessage } from '@/types/errors';
 import { View, Text, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
@@ -47,8 +48,8 @@ export default function OfferingDetailScreen() {
                   { text: 'OK', onPress: () => router.back() },
                 ]
               );
-            } catch (error: any) {
-              Alert.alert('Erro', error.message || 'Não foi possível enviar a solicitação.');
+            } catch (error: unknown) {
+              Alert.alert('Erro', getErrorMessage(error, 'Não foi possível enviar a solicitação.'));
             } finally {
               setIsRequesting(false);
             }

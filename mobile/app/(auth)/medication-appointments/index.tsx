@@ -9,6 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import { toast } from '@/utils/toast';
+import { getErrorMessage } from '@/types/errors';
 import { useMedicationAppointmentStore } from '@/stores/medicationAppointmentStore';
 import { MedicationAppointmentCard } from '@/components/MedicationAppointmentCard';
 import { FilterButton } from '@/components/FilterButton';
@@ -53,8 +54,11 @@ export default function DoctorReceivedAppointmentsScreen() {
               try {
                 await acceptAppointment(appointment.id, true);
                 toast.success('Agendamento confirmado!');
-              } catch (err: any) {
-                Alert.alert('Erro', err.message || 'Não foi possível aceitar o agendamento.');
+              } catch (err: unknown) {
+                Alert.alert(
+                  'Erro',
+                  getErrorMessage(err, 'Não foi possível aceitar o agendamento.')
+                );
               }
             },
           },
@@ -72,7 +76,7 @@ export default function DoctorReceivedAppointmentsScreen() {
       try {
         await counterProposeAppointment(appointmentId, data, true);
         toast.success('Contraproposta enviada!');
-      } catch (err: any) {
+      } catch (err: unknown) {
         throw err; // Let the modal handle the error display
       }
     },
@@ -92,8 +96,8 @@ export default function DoctorReceivedAppointmentsScreen() {
               try {
                 await confirmDeliveryDoctor(appointment.id);
                 toast.success('Entrega confirmada com sucesso!');
-              } catch (err: any) {
-                Alert.alert('Erro', err.message || 'Não foi possível confirmar a entrega.');
+              } catch (err: unknown) {
+                Alert.alert('Erro', getErrorMessage(err, 'Não foi possível confirmar a entrega.'));
               }
             },
           },

@@ -1,5 +1,9 @@
 # DoaFarma
 
+[![CI — Web](https://github.com/jcfurtado86/doafarma/actions/workflows/ci-web.yml/badge.svg)](https://github.com/jcfurtado86/doafarma/actions/workflows/ci-web.yml)
+[![CI — Mobile](https://github.com/jcfurtado86/doafarma/actions/workflows/ci-mobile.yml/badge.svg)](https://github.com/jcfurtado86/doafarma/actions/workflows/ci-mobile.yml)
+
+
 Plataforma de doacao de medicamentos que conecta medicos (doadores) com receptores. O projeto consiste em um monorepo com duas aplicacoes principais:
 
 - **`web/`** — Backend API + Painel Admin (Laravel 12 + Filament 5)

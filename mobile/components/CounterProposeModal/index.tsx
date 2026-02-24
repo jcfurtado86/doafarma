@@ -14,6 +14,8 @@ import { AddressSelector } from '@/components/AddressSelector';
 import { styles } from './styles';
 import { a11y } from '@/utils/accessibility';
 
+const EMPTY_ADDRESSES: Address[] = [];
+
 interface CounterProposeModalProps {
   visible: boolean;
   onClose: () => void;
@@ -33,7 +35,7 @@ export const CounterProposeModal = memo(function CounterProposeModal({
   currentTime,
   currentAddress,
   userRole,
-  doctorAddresses = [],
+  doctorAddresses = EMPTY_ADDRESSES,
 }: CounterProposeModalProps) {
   const [selectedAddressId, setSelectedAddressId] = useState<number | undefined>(
     currentAddress?.id

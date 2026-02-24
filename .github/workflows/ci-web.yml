@@ -1,0 +1,78 @@
+name: CI — Web (Laravel)
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'web/**'
+      - '.github/workflows/ci-web.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'web/**'
+      - '.github/workflows/ci-web.yml'
+
+jobs:
+  ci:
+    name: PHPStan · Pint · Pest
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: doafarma_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.5
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: pdo, pdo_sqlite, pdo_pgsql
+          coverage: none
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: web/vendor
+          key: composer-${{ hashFiles('web/composer.lock') }}
+          restore-keys: composer-
+
+      - name: Install dependencies
+        working-directory: web
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Copy .env
+        working-directory: web
+        run: cp .env.example .env
+
+      - name: Generate key
+        working-directory: web
+        run: php artisan key:generate
+
+      - name: Run PHPStan
+        working-directory: web
+        run: composer analyse --no-interaction
+
+      - name: Run Pint (check only)
+        working-directory: web
+        run: ./vendor/bin/pint --test
+
+      - name: Run Pest
+        working-directory: web
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ':memory:'
+        run: composer tp

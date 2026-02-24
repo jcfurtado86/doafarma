@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useMemo } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { MedicationRequest } from '@/types/medicationRequest';
 import { RequestStatusBadge } from '@/components/RequestStatusBadge';
@@ -15,7 +15,7 @@ interface MedicationRequestCardProps {
   hasAppointment?: boolean;
 }
 
-export function MedicationRequestCard({
+export const MedicationRequestCard = memo(function MedicationRequestCard({
   request,
   variant,
   onConfirm,
@@ -24,7 +24,7 @@ export function MedicationRequestCard({
   hasAppointment = false,
 }: MedicationRequestCardProps) {
   const offering = request.medication_offering;
-  const isPending = request.status === 'pending';
+  const isPending = useMemo(() => request.status === 'pending', [request.status]);
 
   return (
     <View style={styles.card}>
@@ -111,7 +111,7 @@ export function MedicationRequestCard({
       )}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   card: {

@@ -22,41 +22,50 @@ export default function MedicationOfferingsScreen() {
     fetchOfferingsCallback();
   }, [fetchOfferingsCallback]);
 
-  const handleDelete = async (id: number, drugName: string) => {
-    Alert.alert(
-      'Confirmar exclusão',
-      `Tem certeza que deseja excluir a oferta do medicamento "${drugName}"?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Excluir',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteOffering(id);
-              toast.success('Oferta excluída com sucesso!');
-            } catch (error: unknown) {
-              Alert.alert(
-                'Erro ao excluir',
-                getErrorMessage(error, 'Não foi possível excluir a oferta. Tente novamente.')
-              );
-            }
+  const handleDelete = useCallback(
+    async (id: number, drugName: string) => {
+      Alert.alert(
+        'Confirmar exclusão',
+        `Tem certeza que deseja excluir a oferta do medicamento "${drugName}"?`,
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          {
+            text: 'Excluir',
+            style: 'destructive',
+            onPress: async () => {
+              try {
+                await deleteOffering(id);
+                toast.success('Oferta excluída com sucesso!');
+              } catch (error: unknown) {
+                Alert.alert(
+                  'Erro ao excluir',
+                  getErrorMessage(error, 'Não foi possível excluir a oferta. Tente novamente.')
+                );
+              }
+            },
           },
-        },
-      ]
-    );
-  };
+        ]
+      );
+    },
+    [deleteOffering]
+  );
 
-  const handleEdit = (offering: MedicationOffering) => {
-    router.push(`/(auth)/medication-offerings/edit/${offering.id}`);
-  };
+  const handleEdit = useCallback(
+    (offering: MedicationOffering) => {
+      router.push(`/(auth)/medication-offerings/edit/${offering.id}`);
+    },
+    [router]
+  );
 
-  const renderOffering = ({ item }: { item: MedicationOffering }) => (
-    <MedicationOfferingCard
-      offering={item}
-      onEdit={() => handleEdit(item)}
-      onDelete={() => handleDelete(item.id, item.drug?.product_name || 'Medicamento')}
-    />
+  const renderOffering = useCallback(
+    ({ item }: { item: MedicationOffering }) => (
+      <MedicationOfferingCard
+        offering={item}
+        onEdit={() => handleEdit(item)}
+        onDelete={() => handleDelete(item.id, item.drug?.product_name || 'Medicamento')}
+      />
+    ),
+    [handleEdit, handleDelete]
   );
 
   return (

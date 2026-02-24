@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { getErrorMessage } from '@/types/errors';
 import {
   View,
@@ -31,72 +31,80 @@ export default function DoctorReceivedRequestsScreen() {
 
   const [filter, setFilter] = useState<FilterOption>('pending');
 
-  const loadRequests = () => {
+  const loadRequests = useCallback(() => {
     const status = filter === 'all' ? undefined : filter;
     fetchReceivedRequests(status);
-  };
+  }, [filter, fetchReceivedRequests]);
 
   useEffect(() => {
     loadRequests();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter]);
+  }, [loadRequests]);
 
-  const handleConfirm = (request: MedicationRequest) => {
-    Alert.alert(
-      'Confirmar Solicitação',
-      `Confirmar a entrega do medicamento "${request.medication_offering?.drug?.product_name}" para ${request.receptor?.name}?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Confirmar',
-          onPress: async () => {
-            try {
-              await confirmRequest(request.id);
-              toast.success('Solicitação confirmada com sucesso!');
-            } catch (error: unknown) {
-              Alert.alert(
-                'Erro',
-                getErrorMessage(error, 'Não foi possível confirmar a solicitação.')
-              );
-            }
+  const handleConfirm = useCallback(
+    (request: MedicationRequest) => {
+      Alert.alert(
+        'Confirmar Solicitação',
+        `Confirmar a entrega do medicamento "${request.medication_offering?.drug?.product_name}" para ${request.receptor?.name}?`,
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          {
+            text: 'Confirmar',
+            onPress: async () => {
+              try {
+                await confirmRequest(request.id);
+                toast.success('Solicitação confirmada com sucesso!');
+              } catch (error: unknown) {
+                Alert.alert(
+                  'Erro',
+                  getErrorMessage(error, 'Não foi possível confirmar a solicitação.')
+                );
+              }
+            },
           },
-        },
-      ]
-    );
-  };
+        ]
+      );
+    },
+    [confirmRequest]
+  );
 
-  const handleReject = (request: MedicationRequest) => {
-    Alert.alert(
-      'Recusar Solicitação',
-      `Recusar a solicitação do medicamento "${request.medication_offering?.drug?.product_name}" de ${request.receptor?.name}?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Recusar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await rejectRequest(request.id);
-              toast.success('Solicitação recusada.');
-            } catch (error: unknown) {
-              Alert.alert(
-                'Erro',
-                getErrorMessage(error, 'Não foi possível recusar a solicitação.')
-              );
-            }
+  const handleReject = useCallback(
+    (request: MedicationRequest) => {
+      Alert.alert(
+        'Recusar Solicitação',
+        `Recusar a solicitação do medicamento "${request.medication_offering?.drug?.product_name}" de ${request.receptor?.name}?`,
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          {
+            text: 'Recusar',
+            style: 'destructive',
+            onPress: async () => {
+              try {
+                await rejectRequest(request.id);
+                toast.success('Solicitação recusada.');
+              } catch (error: unknown) {
+                Alert.alert(
+                  'Erro',
+                  getErrorMessage(error, 'Não foi possível recusar a solicitação.')
+                );
+              }
+            },
           },
-        },
-      ]
-    );
-  };
+        ]
+      );
+    },
+    [rejectRequest]
+  );
 
-  const renderItem = ({ item }: { item: MedicationRequest }) => (
-    <MedicationRequestCard
-      request={item}
-      variant="doctor"
-      onConfirm={() => handleConfirm(item)}
-      onReject={() => handleReject(item)}
-    />
+  const renderItem = useCallback(
+    ({ item }: { item: MedicationRequest }) => (
+      <MedicationRequestCard
+        request={item}
+        variant="doctor"
+        onConfirm={() => handleConfirm(item)}
+        onReject={() => handleReject(item)}
+      />
+    ),
+    [handleConfirm, handleReject]
   );
 
   const renderEmpty = () => {

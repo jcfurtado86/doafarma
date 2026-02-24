@@ -198,7 +198,7 @@ export function ReceptorRegistrationScreen() {
               name: 'cpf',
               control: control,
               rules: {
-                onChange: (e: any) => {
+                onChange: (e: { target: { value: string } }) => {
                   const formatted = formatCPF(e.target.value);
                   setValue('cpf', formatted);
                 },
@@ -220,7 +220,7 @@ export function ReceptorRegistrationScreen() {
               name: 'phone_number',
               control: control,
               rules: {
-                onChange: (e: any) => {
+                onChange: (e: { target: { value: string } }) => {
                   const formatted = formatPhone(e.target.value);
                   setValue('phone_number', formatted);
                 },

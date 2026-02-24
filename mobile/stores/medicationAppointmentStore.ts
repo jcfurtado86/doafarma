@@ -1,3 +1,4 @@
+import { getErrorMessage } from '@/types/errors';
 import { create } from 'zustand';
 import { medicationAppointmentService } from '@/services/medicationAppointmentService';
 import {
@@ -54,8 +55,8 @@ export const useMedicationAppointmentStore = create<MedicationAppointmentStoreSt
     try {
       const appointments = await medicationAppointmentService.list(status);
       set({ appointments, isLoading: false, error: null });
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -70,8 +71,8 @@ export const useMedicationAppointmentStore = create<MedicationAppointmentStoreSt
         error: null,
       }));
       return newAppointment;
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -87,8 +88,8 @@ export const useMedicationAppointmentStore = create<MedicationAppointmentStoreSt
         isLoading: false,
         error: null,
       }));
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -98,8 +99,8 @@ export const useMedicationAppointmentStore = create<MedicationAppointmentStoreSt
     try {
       const history = await medicationAppointmentService.listHistory();
       set({ history, isLoading: false, error: null });
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -109,8 +110,8 @@ export const useMedicationAppointmentStore = create<MedicationAppointmentStoreSt
     try {
       const receivedAppointments = await medicationAppointmentService.listReceived(status);
       set({ receivedAppointments, isLoading: false, error: null });
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -126,8 +127,8 @@ export const useMedicationAppointmentStore = create<MedicationAppointmentStoreSt
         isLoading: false,
         error: null,
       }));
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -137,8 +138,8 @@ export const useMedicationAppointmentStore = create<MedicationAppointmentStoreSt
     try {
       const donationHistory = await medicationAppointmentService.listDoctorHistory();
       set({ donationHistory, isLoading: false, error: null });
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -166,8 +167,8 @@ export const useMedicationAppointmentStore = create<MedicationAppointmentStoreSt
           };
         }
       });
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -199,8 +200,8 @@ export const useMedicationAppointmentStore = create<MedicationAppointmentStoreSt
           };
         }
       });
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },

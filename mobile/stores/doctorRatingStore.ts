@@ -1,3 +1,4 @@
+import { getErrorMessage } from '@/types/errors';
 import { create } from 'zustand';
 import { doctorRatingService } from '@/services/doctorRatingService';
 import { DoctorRating, CreateDoctorRatingData, RatingSummary } from '@/types/doctorRating';
@@ -42,8 +43,8 @@ export const useDoctorRatingStore = create<DoctorRatingStoreState>((set) => ({
       const newRating = await doctorRatingService.create(appointmentId, data);
       set({ isLoading: false, error: null, currentRating: newRating });
       return newRating;
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -54,8 +55,8 @@ export const useDoctorRatingStore = create<DoctorRatingStoreState>((set) => ({
       const updatedRating = await doctorRatingService.update(ratingId, data);
       set({ isLoading: false, error: null, currentRating: updatedRating });
       return updatedRating;
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -66,8 +67,8 @@ export const useDoctorRatingStore = create<DoctorRatingStoreState>((set) => ({
       const rating = await doctorRatingService.getByAppointment(appointmentId);
       set({ isLoading: false, error: null, currentRating: rating });
       return rating;
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -77,8 +78,8 @@ export const useDoctorRatingStore = create<DoctorRatingStoreState>((set) => ({
     try {
       const doctorRatings = await doctorRatingService.listByDoctor(doctorId);
       set({ doctorRatings, isLoading: false, error: null });
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -93,8 +94,8 @@ export const useDoctorRatingStore = create<DoctorRatingStoreState>((set) => ({
         isLoading: false,
         error: null,
       });
-    } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+    } catch (error: unknown) {
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },

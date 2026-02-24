@@ -2,7 +2,7 @@ interface ValidationError {
   [field: string]: string[];
 }
 
-interface ApiError {
+interface ApiErrorShape {
   response?: {
     data?: {
       message?: string;
@@ -12,7 +12,15 @@ interface ApiError {
   message?: string;
 }
 
-export const extractErrorMessage = (error: ApiError): string => {
+function isApiErrorShape(error: unknown): error is ApiErrorShape {
+  return typeof error === 'object' && error !== null;
+}
+
+export const extractErrorMessage = (error: unknown): string => {
+  if (!isApiErrorShape(error)) {
+    return 'Erro inesperado';
+  }
+
   const responseErrors = error.response?.data?.errors;
 
   if (responseErrors && Object.keys(responseErrors).length > 0) {

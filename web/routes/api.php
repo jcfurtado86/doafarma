@@ -28,11 +28,11 @@ Route::post('/register/receptor', ReceptorRegistrationController::class)
 Route::prefix('v1')->group(function (): void {
     Route::prefix('auth')->group(function (): void {
         Route::post('login', Auth\LoginController::class)
-            ->middleware('guest')
+            ->middleware(['guest', 'throttle:login'])
             ->name('api.v1.auth.login');
 
         Route::post('refresh', Auth\RefreshController::class)
-            ->middleware(['auth:sanctum', 'abilities:refresh'])
+            ->middleware(['auth:sanctum', 'abilities:refresh', 'throttle:auth'])
             ->name('api.v1.auth.refresh');
 
         Route::post('logout', Auth\LogoutController::class)

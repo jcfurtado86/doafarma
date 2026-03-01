@@ -29,7 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (ThrottleRequestsException $e, $request) {
             if ($request->wantsJson()) {
-                $isLoginRoute = $request->routeIs('api.login', 'api.v1.auth.login');
+                $isLoginRoute = $request->routeIs('api.v1.auth.login');
 
                 $message = $isLoginRoute
                     ? 'Too many login attempts. Please try again later.'

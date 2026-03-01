@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 use App\Models\User;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\RateLimiter;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertGuest;
@@ -172,11 +171,7 @@ it('should create tokens with correct abilities via API v1', function (): void {
 it('should rate limit login attempts via API v1', function (): void {
     $user = User::factory()->create();
 
-    RateLimiter::clear('login:' . request()->ip());
-
-    $maxAttempts = config('auth.rate_limiting.max_attempts', 5);
-
-    for ($i = 0; $i < $maxAttempts; $i++) {
+    for ($i = 0; $i < 5; $i++) {
         $this->postJson('/api/v1/auth/login', [
             'email'    => $user->email,
             'password' => 'wrong-password',

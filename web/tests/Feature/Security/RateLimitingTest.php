@@ -14,7 +14,7 @@ use function Pest\Laravel\postJson;
 |--------------------------------------------------------------------------
 |
 | Test suite for rate limiting on sensitive endpoints.
-| Tests cover: registration endpoints, medication offerings, medication requests.
+| Tests cover: registration, login, refresh, medication offerings, medication requests.
 |
 */
 
@@ -254,34 +254,218 @@ describe('Rate Limiting - Medication Requests (Authenticated)', function (): voi
     });
 });
 
-describe('Rate Limiting - Existing Login Behavior', function (): void {
-    it('should NOT interfere with login custom rate limiting', function (): void {
-        // Login has its own rate limiting via FormRequest (5 attempts)
-        // This test ensures we didn't break it by adding route-level throttle
-
+describe('Rate Limiting - Login Endpoint', function (): void {
+    it('should allow up to 5 login attempts per minute', function (): void {
         User::factory()->create([
-            'email'    => 'test@example.com',
-            'password' => bcrypt('correct-password'),
+            'email'    => 'login-limit@example.com',
+            'password' => bcrypt('password'),
         ]);
 
-        // Make 5 failed login attempts (login's custom limit)
+        for ($i = 0; $i < 5; $i++) {
+            $response = postJson(route('api.v1.auth.login'), [
+                'email'    => 'login-limit@example.com',
+                'password' => 'wrong-password',
+            ]);
+            expect($response->status())->not->toBe(429);
+        }
+    });
+
+    it('should return 429 after 5 login attempts', function (): void {
+        User::factory()->create([
+            'email'    => 'login-blocked@example.com',
+            'password' => bcrypt('password'),
+        ]);
+
         for ($i = 0; $i < 5; $i++) {
             postJson(route('api.v1.auth.login'), [
-                'email'       => 'test@example.com',
-                'password'    => 'wrong-password',
-                'device_name' => 'Test Device',
+                'email'    => 'login-blocked@example.com',
+                'password' => 'wrong-password',
             ]);
         }
 
-        // 6th attempt should be blocked by login's custom rate limiter
         $response = postJson(route('api.v1.auth.login'), [
-            'email'       => 'test@example.com',
-            'password'    => 'wrong-password',
-            'device_name' => 'Test Device',
+            'email'    => 'login-blocked@example.com',
+            'password' => 'wrong-password',
         ]);
 
-        // Should still return 422 (login's custom behavior) not 429
-        // The login rate limiter throws ValidationException, not ThrottleRequestsException
-        expect($response->status())->toBeIn([422, 429]);
+        $response->assertStatus(429);
+    });
+
+    it('should include Retry-After and X-RateLimit-Limit headers when rate limited', function (): void {
+        User::factory()->create([
+            'email'    => 'login-headers@example.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        for ($i = 0; $i < 5; $i++) {
+            postJson(route('api.v1.auth.login'), [
+                'email'    => 'login-headers@example.com',
+                'password' => 'wrong-password',
+            ]);
+        }
+
+        $response = postJson(route('api.v1.auth.login'), [
+            'email'    => 'login-headers@example.com',
+            'password' => 'wrong-password',
+        ]);
+
+        $response->assertStatus(429);
+        $response->assertHeader('Retry-After');
+        $response->assertHeader('X-RateLimit-Limit');
+    });
+
+    it('should return login-specific JSON error message when rate limited', function (): void {
+        User::factory()->create([
+            'email'    => 'login-msg@example.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        for ($i = 0; $i < 5; $i++) {
+            postJson(route('api.v1.auth.login'), [
+                'email'    => 'login-msg@example.com',
+                'password' => 'wrong-password',
+            ]);
+        }
+
+        $response = postJson(route('api.v1.auth.login'), [
+            'email'    => 'login-msg@example.com',
+            'password' => 'wrong-password',
+        ]);
+
+        $response->assertStatus(429);
+        $response->assertJson([
+            'message' => 'Too many login attempts. Please try again later.',
+            'errors'  => [
+                'email' => ['Too many login attempts. Please try again later.'],
+            ],
+        ]);
+    });
+
+    it('should have independent limits per IP', function (): void {
+        User::factory()->create([
+            'email'    => 'login-ip@example.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        for ($i = 0; $i < 5; $i++) {
+            $this->call('POST', route('api.v1.auth.login'), [
+                'email'    => 'login-ip@example.com',
+                'password' => 'wrong-password',
+            ], [], [], ['REMOTE_ADDR' => '10.0.0.1', 'CONTENT_TYPE' => 'application/json']);
+        }
+
+        $blockedResponse = $this->call('POST', route('api.v1.auth.login'), [
+            'email'    => 'login-ip@example.com',
+            'password' => 'wrong-password',
+        ], [], [], ['REMOTE_ADDR' => '10.0.0.1', 'CONTENT_TYPE' => 'application/json']);
+
+        expect($blockedResponse->status())->toBe(429);
+
+        $allowedResponse = $this->call('POST', route('api.v1.auth.login'), [
+            'email'    => 'login-ip@example.com',
+            'password' => 'wrong-password',
+        ], [], [], ['REMOTE_ADDR' => '10.0.0.2', 'CONTENT_TYPE' => 'application/json']);
+
+        expect($allowedResponse->status())->not->toBe(429);
+    });
+
+    it('should have independent limits per email from the same IP', function (): void {
+        User::factory()->create([
+            'email'    => 'user-a@example.com',
+            'password' => bcrypt('password'),
+        ]);
+        User::factory()->create([
+            'email'    => 'user-b@example.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        for ($i = 0; $i < 5; $i++) {
+            postJson(route('api.v1.auth.login'), [
+                'email'    => 'user-a@example.com',
+                'password' => 'wrong-password',
+            ]);
+        }
+
+        $blockedResponse = postJson(route('api.v1.auth.login'), [
+            'email'    => 'user-a@example.com',
+            'password' => 'wrong-password',
+        ]);
+
+        $blockedResponse->assertStatus(429);
+
+        $allowedResponse = postJson(route('api.v1.auth.login'), [
+            'email'    => 'user-b@example.com',
+            'password' => 'wrong-password',
+        ]);
+
+        expect($allowedResponse->status())->not->toBe(429);
+    });
+});
+
+describe('Rate Limiting - Refresh Endpoint', function (): void {
+    it('should allow up to 10 refresh attempts per minute', function (): void {
+        $user = User::factory()->create();
+
+        $loginResponse = postJson(route('api.v1.auth.login'), [
+            'email'    => $user->email,
+            'password' => 'password',
+        ]);
+
+        $refreshToken = $loginResponse->json('data.refresh_token');
+
+        for ($i = 0; $i < 10; $i++) {
+            $response = $this->withHeaders([
+                'Authorization' => 'Bearer ' . $refreshToken,
+            ])->postJson(route('api.v1.auth.refresh'));
+            expect($response->status())->not->toBe(429);
+        }
+    });
+
+    it('should return 429 after 10 refresh attempts', function (): void {
+        $user = User::factory()->create();
+
+        $loginResponse = postJson(route('api.v1.auth.login'), [
+            'email'    => $user->email,
+            'password' => 'password',
+        ]);
+
+        $refreshToken = $loginResponse->json('data.refresh_token');
+
+        for ($i = 0; $i < 10; $i++) {
+            $this->withHeaders([
+                'Authorization' => 'Bearer ' . $refreshToken,
+            ])->postJson(route('api.v1.auth.refresh'));
+        }
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $refreshToken,
+        ])->postJson(route('api.v1.auth.refresh'));
+
+        $response->assertStatus(429);
+    });
+
+    it('should include correct headers when rate limited', function (): void {
+        $user = User::factory()->create();
+
+        $loginResponse = postJson(route('api.v1.auth.login'), [
+            'email'    => $user->email,
+            'password' => 'password',
+        ]);
+
+        $refreshToken = $loginResponse->json('data.refresh_token');
+
+        for ($i = 0; $i < 10; $i++) {
+            $this->withHeaders([
+                'Authorization' => 'Bearer ' . $refreshToken,
+            ])->postJson(route('api.v1.auth.refresh'));
+        }
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $refreshToken,
+        ])->postJson(route('api.v1.auth.refresh'));
+
+        $response->assertStatus(429);
+        $response->assertHeader('Retry-After');
+        $response->assertHeader('X-RateLimit-Limit');
     });
 });

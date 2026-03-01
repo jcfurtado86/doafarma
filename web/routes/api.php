@@ -9,17 +9,12 @@ use App\Http\Controllers\Api\V1\MedicationAppointment;
 use App\Http\Controllers\Api\V1\MedicationOffering;
 use App\Http\Controllers\Api\V1\MedicationRequest;
 use App\Http\Controllers\Api\V1\PushToken;
-use App\Http\Controllers\Auth\ApiLoginController;
 use App\Http\Controllers\Auth\DoctorRegistrationController;
 use App\Http\Controllers\Auth\ReceptorRegistrationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'abilities:access'])->get('/user', fn (Request $request) => $request->user());
-
-Route::post('/login', ApiLoginController::class)
-    ->middleware('guest')
-    ->name('api.login');
 
 // Registration routes with rate limiting (10 requests per minute per IP)
 Route::post('/register/doctor', DoctorRegistrationController::class)
@@ -33,11 +28,11 @@ Route::post('/register/receptor', ReceptorRegistrationController::class)
 Route::prefix('v1')->group(function (): void {
     Route::prefix('auth')->group(function (): void {
         Route::post('login', Auth\LoginController::class)
-            ->middleware('guest')
+            ->middleware(['guest', 'throttle:login'])
             ->name('api.v1.auth.login');
 
         Route::post('refresh', Auth\RefreshController::class)
-            ->middleware(['auth:sanctum', 'abilities:refresh'])
+            ->middleware(['auth:sanctum', 'abilities:refresh', 'throttle:auth'])
             ->name('api.v1.auth.refresh');
 
         Route::post('logout', Auth\LogoutController::class)

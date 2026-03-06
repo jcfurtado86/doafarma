@@ -496,6 +496,51 @@ describe('Receptor Registration - Security Tests', function (): void {
     });
 });
 
+describe('Receptor Registration - Auto Approval', function (): void {
+    it('should create receptor with status approved', function (): void {
+        postJson(route('receptor.register'), [
+            'name'                  => 'Auto Approved',
+            'email'                 => 'approved@example.com',
+            'cpf'                   => '529.982.247-25',
+            'phone_number'          => '(11) 98765-4321',
+            'password'              => 'Password123!',
+            'password_confirmation' => 'Password123!',
+            'device_name'           => 'Test Device',
+            'terms_accepted'        => true,
+        ])->assertCreated();
+
+        $user = User::whereEmail('approved@example.com')->first();
+        expect($user->status->value)->toBe('approved');
+
+        assertDatabaseHas('users', [
+            'email'  => 'approved@example.com',
+            'status' => 'approved',
+        ]);
+    });
+
+    it('should allow receptor to access protected routes immediately after registration', function (): void {
+        $response = postJson(route('receptor.register'), [
+            'name'                  => 'Immediate Access',
+            'email'                 => 'immediate@example.com',
+            'cpf'                   => '529.982.247-25',
+            'phone_number'          => '(11) 98765-4321',
+            'password'              => 'Password123!',
+            'password_confirmation' => 'Password123!',
+            'device_name'           => 'Test Device',
+            'terms_accepted'        => true,
+        ]);
+
+        $response->assertCreated();
+
+        $token = $response->json('data.token');
+
+        $protectedResponse = $this->withHeader('Authorization', "Bearer {$token}")
+            ->getJson('/api/v1/drugs/search?query=test');
+
+        $protectedResponse->assertOk();
+    });
+});
+
 describe('Receptor Registration - CPF Validation Algorithm', function (): void {
     it('should accept valid CPF: 529.982.247-25', function (): void {
         postJson(route('receptor.register'), [

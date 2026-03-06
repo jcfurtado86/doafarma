@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Actions\Auth;
 
+use App\Enums\UserStatus;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -37,6 +38,7 @@ class CreateReceptorAction
             'role'              => 'receptor',
             'phone_number'      => $data['phone_number'],
             'password'          => Hash::make($data['password']),
+            'status'            => UserStatus::Approved,
             'terms_accepted'    => $data['terms_accepted'],
             'terms_accepted_at' => now(),
         ]));

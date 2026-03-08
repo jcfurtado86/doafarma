@@ -402,6 +402,149 @@ describe('Rate Limiting - Login Endpoint', function (): void {
     });
 });
 
+describe('Rate Limiting - Password Reset Endpoints', function (): void {
+    describe('Forgot Password', function (): void {
+        it('should allow up to 3 requests per minute', function (): void {
+            for ($i = 0; $i < 3; $i++) {
+                $response = postJson(route('api.v1.auth.forgot-password'), [
+                    'email' => "user{$i}@example.com",
+                ]);
+                expect($response->status())->not->toBe(429);
+            }
+        });
+
+        it('should return 429 after 3 requests', function (): void {
+            for ($i = 0; $i < 3; $i++) {
+                postJson(route('api.v1.auth.forgot-password'), [
+                    'email' => "user{$i}@example.com",
+                ]);
+            }
+
+            $response = postJson(route('api.v1.auth.forgot-password'), [
+                'email' => 'another@example.com',
+            ]);
+
+            $response->assertStatus(429);
+        });
+
+        it('should include Retry-After header when rate limited', function (): void {
+            for ($i = 0; $i < 3; $i++) {
+                postJson(route('api.v1.auth.forgot-password'), [
+                    'email' => "user{$i}@example.com",
+                ]);
+            }
+
+            $response = postJson(route('api.v1.auth.forgot-password'), [
+                'email' => 'another@example.com',
+            ]);
+
+            $response->assertStatus(429);
+            $response->assertHeader('Retry-After');
+        });
+
+        it('should return password-reset-specific JSON error message when rate limited', function (): void {
+            for ($i = 0; $i < 3; $i++) {
+                postJson(route('api.v1.auth.forgot-password'), [
+                    'email' => "user{$i}@example.com",
+                ]);
+            }
+
+            $response = postJson(route('api.v1.auth.forgot-password'), [
+                'email' => 'another@example.com',
+            ]);
+
+            $response->assertStatus(429);
+            $response->assertJson([
+                'message' => 'Too many password reset requests. Please try again later.',
+                'errors'  => [
+                    'email' => ['Too many password reset requests. Please try again later.'],
+                ],
+            ]);
+        });
+    });
+
+    describe('Reset Password', function (): void {
+        it('should allow up to 3 requests per minute', function (): void {
+            for ($i = 0; $i < 3; $i++) {
+                $response = postJson(route('api.v1.auth.reset-password'), [
+                    'token'                 => 'fake-token',
+                    'email'                 => "user{$i}@example.com",
+                    'password'              => 'new-password-123',
+                    'password_confirmation' => 'new-password-123',
+                ]);
+                expect($response->status())->not->toBe(429);
+            }
+        });
+
+        it('should return 429 after 3 requests', function (): void {
+            for ($i = 0; $i < 3; $i++) {
+                postJson(route('api.v1.auth.reset-password'), [
+                    'token'                 => 'fake-token',
+                    'email'                 => "user{$i}@example.com",
+                    'password'              => 'new-password-123',
+                    'password_confirmation' => 'new-password-123',
+                ]);
+            }
+
+            $response = postJson(route('api.v1.auth.reset-password'), [
+                'token'                 => 'fake-token',
+                'email'                 => 'another@example.com',
+                'password'              => 'new-password-123',
+                'password_confirmation' => 'new-password-123',
+            ]);
+
+            $response->assertStatus(429);
+        });
+
+        it('should include Retry-After header when rate limited', function (): void {
+            for ($i = 0; $i < 3; $i++) {
+                postJson(route('api.v1.auth.reset-password'), [
+                    'token'                 => 'fake-token',
+                    'email'                 => "user{$i}@example.com",
+                    'password'              => 'new-password-123',
+                    'password_confirmation' => 'new-password-123',
+                ]);
+            }
+
+            $response = postJson(route('api.v1.auth.reset-password'), [
+                'token'                 => 'fake-token',
+                'email'                 => 'another@example.com',
+                'password'              => 'new-password-123',
+                'password_confirmation' => 'new-password-123',
+            ]);
+
+            $response->assertStatus(429);
+            $response->assertHeader('Retry-After');
+        });
+
+        it('should return password-reset-specific JSON error message when rate limited', function (): void {
+            for ($i = 0; $i < 3; $i++) {
+                postJson(route('api.v1.auth.reset-password'), [
+                    'token'                 => 'fake-token',
+                    'email'                 => "user{$i}@example.com",
+                    'password'              => 'new-password-123',
+                    'password_confirmation' => 'new-password-123',
+                ]);
+            }
+
+            $response = postJson(route('api.v1.auth.reset-password'), [
+                'token'                 => 'fake-token',
+                'email'                 => 'another@example.com',
+                'password'              => 'new-password-123',
+                'password_confirmation' => 'new-password-123',
+            ]);
+
+            $response->assertStatus(429);
+            $response->assertJson([
+                'message' => 'Too many password reset requests. Please try again later.',
+                'errors'  => [
+                    'email' => ['Too many password reset requests. Please try again later.'],
+                ],
+            ]);
+        });
+    });
+});
+
 describe('Rate Limiting - Refresh Endpoint', function (): void {
     it('should allow up to 10 refresh attempts per minute', function (): void {
         $user = User::factory()->create();

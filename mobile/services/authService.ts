@@ -22,6 +22,21 @@ export interface LoginResponse {
   message: string;
 }
 
+export interface ForgotPasswordResponse {
+  message: string;
+}
+
+export interface ResetPasswordData {
+  token: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+}
+
+export interface ResetPasswordResponse {
+  message: string;
+}
+
 export interface RefreshTokenResponse {
   data: {
     access_token: string;
@@ -174,6 +189,116 @@ export const authService = {
     }
   },
 
+  forgotPassword: async (email: string): Promise<ForgotPasswordResponse> => {
+    try {
+      const response = await apiClient.post<ForgotPasswordResponse>(
+        API_ENDPOINTS.AUTH.FORGOT_PASSWORD,
+        { email }
+      );
+      return response.data;
+    } catch (error) {
+      logger.error('Erro ao solicitar reset de senha:', getErrorMessage(error));
+
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<ApiValidationError>;
+
+        if (!axiosError.response) {
+          throw new AuthServiceError(
+            'Sem conexao com a internet. Verifique sua conexao e tente novamente.',
+            { isNetworkError: true }
+          );
+        }
+
+        const { status, data: responseData } = axiosError.response;
+
+        if (status === 429) {
+          throw new AuthServiceError(
+            'Muitas tentativas. Aguarde alguns minutos e tente novamente.',
+            { isRateLimited: true, statusCode: status }
+          );
+        }
+
+        if (status === 422 && responseData?.errors) {
+          const translatedErrors = translateValidationErrors(responseData.errors);
+
+          throw new AuthServiceError(responseData.message || 'Dados invalidos.', {
+            isValidationError: true,
+            validationErrors: translatedErrors,
+            statusCode: status,
+          });
+        }
+
+        if (status >= 500) {
+          throw new AuthServiceError('Erro no servidor. Tente novamente em alguns instantes.', {
+            isServerError: true,
+            statusCode: status,
+          });
+        }
+
+        throw new AuthServiceError(responseData?.message || 'Ocorreu um erro. Tente novamente.', {
+          statusCode: status,
+        });
+      }
+
+      throw new AuthServiceError('Erro inesperado. Tente novamente.');
+    }
+  },
+
+  resetPassword: async (data: ResetPasswordData): Promise<ResetPasswordResponse> => {
+    try {
+      const response = await apiClient.post<ResetPasswordResponse>(
+        API_ENDPOINTS.AUTH.RESET_PASSWORD,
+        data
+      );
+      return response.data;
+    } catch (error) {
+      logger.error('Erro ao redefinir senha:', getErrorMessage(error));
+
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<ApiValidationError>;
+
+        if (!axiosError.response) {
+          throw new AuthServiceError(
+            'Sem conexao com a internet. Verifique sua conexao e tente novamente.',
+            { isNetworkError: true }
+          );
+        }
+
+        const { status, data: responseData } = axiosError.response;
+
+        if (status === 429) {
+          throw new AuthServiceError(
+            'Muitas tentativas. Aguarde alguns minutos e tente novamente.',
+            { isRateLimited: true, statusCode: status }
+          );
+        }
+
+        if (status === 422 && responseData?.errors) {
+          const translatedErrors = translateValidationErrors(responseData.errors);
+
+          throw new AuthServiceError(responseData.message || 'Dados invalidos.', {
+            isValidationError: true,
+            validationErrors: translatedErrors,
+            statusCode: status,
+          });
+        }
+
+        if (status >= 500) {
+          throw new AuthServiceError('Erro no servidor. Tente novamente em alguns instantes.', {
+            isServerError: true,
+            statusCode: status,
+          });
+        }
+
+        throw new AuthServiceError(responseData?.message || 'Ocorreu um erro. Tente novamente.', {
+          statusCode: status,
+        });
+      }
+
+      throw new AuthServiceError('Erro inesperado. Tente novamente.');
+    }
+  },
+
   logout: async (): Promise<void> => {
     try {
       await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
@@ -186,9 +311,15 @@ export const authService = {
 function translateValidationErrors(errors: Record<string, string[]>): Record<string, string[]> {
   const translations: Record<string, string> = {
     'These credentials do not match our records.': 'E-mail ou senha incorretos.',
-    'The email field is required.': 'O e-mail é obrigatório.',
-    'The password field is required.': 'A senha é obrigatória.',
-    'The email must be a valid email address.': 'O e-mail deve ser válido.',
+    'The email field is required.': 'O e-mail e obrigatorio.',
+    'The password field is required.': 'A senha e obrigatoria.',
+    'The email must be a valid email address.': 'O e-mail deve ser valido.',
+    'The email field must be a valid email address.': 'O e-mail deve ser valido.',
+    'passwords.token': 'Token invalido ou expirado. Solicite um novo link.',
+    'This password reset token is invalid.': 'Token invalido ou expirado. Solicite um novo link.',
+    'passwords.throttled': 'Muitas tentativas. Aguarde antes de tentar novamente.',
+    "We can't find a user with that email address.": 'Nao encontramos um usuario com esse e-mail.',
+    'The password field confirmation does not match.': 'As senhas nao coincidem.',
   };
 
   const translated: Record<string, string[]> = {};

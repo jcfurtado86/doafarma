@@ -321,6 +321,236 @@ describe('authService', () => {
   });
 
   // ============================================
+  // FORGOT PASSWORD
+  // ============================================
+  describe('forgotPassword', () => {
+    const mockEmail = 'user@example.com';
+
+    it('should call POST /v1/auth/forgot-password with email', async () => {
+      (apiClient.post as jest.Mock).mockResolvedValueOnce({
+        data: { message: 'We have emailed your password reset link.' },
+      });
+
+      await authService.forgotPassword(mockEmail);
+
+      expect(apiClient.post).toHaveBeenCalledWith('/v1/auth/forgot-password', {
+        email: mockEmail,
+      });
+    });
+
+    it('should return message on success', async () => {
+      (apiClient.post as jest.Mock).mockResolvedValueOnce({
+        data: { message: 'We have emailed your password reset link.' },
+      });
+
+      const result = await authService.forgotPassword(mockEmail);
+
+      expect(result.message).toBe('We have emailed your password reset link.');
+    });
+
+    it('should throw AuthServiceError with isRateLimited on 429', async () => {
+      const axiosError = {
+        isAxiosError: true,
+        response: {
+          status: 429,
+          data: { message: 'Too Many Attempts.' },
+        },
+      };
+      (apiClient.post as jest.Mock).mockRejectedValueOnce(axiosError);
+      jest.spyOn(axios, 'isAxiosError').mockReturnValue(true);
+
+      try {
+        await authService.forgotPassword(mockEmail);
+        fail('Should have thrown an error');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AuthServiceError);
+        expect((error as AuthServiceError).isRateLimited).toBe(true);
+        expect((error as AuthServiceError).statusCode).toBe(429);
+      }
+    });
+
+    it('should throw AuthServiceError with isNetworkError on network failure', async () => {
+      const networkError = {
+        isAxiosError: true,
+        response: undefined,
+        message: 'Network Error',
+      };
+      (apiClient.post as jest.Mock).mockRejectedValueOnce(networkError);
+      jest.spyOn(axios, 'isAxiosError').mockReturnValue(true);
+
+      try {
+        await authService.forgotPassword(mockEmail);
+        fail('Should have thrown an error');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AuthServiceError);
+        expect((error as AuthServiceError).isNetworkError).toBe(true);
+      }
+    });
+
+    it('should throw AuthServiceError with isValidationError on 422', async () => {
+      const validationError = {
+        isAxiosError: true,
+        response: {
+          status: 422,
+          data: {
+            message: 'The given data was invalid.',
+            errors: { email: ['The email field must be a valid email address.'] },
+          },
+        },
+      };
+      (apiClient.post as jest.Mock).mockRejectedValueOnce(validationError);
+      jest.spyOn(axios, 'isAxiosError').mockReturnValue(true);
+
+      try {
+        await authService.forgotPassword(mockEmail);
+        fail('Should have thrown an error');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AuthServiceError);
+        expect((error as AuthServiceError).isValidationError).toBe(true);
+        expect((error as AuthServiceError).validationErrors).toBeDefined();
+        expect((error as AuthServiceError).statusCode).toBe(422);
+      }
+    });
+
+    it('should throw AuthServiceError with isServerError on 500', async () => {
+      const serverError = {
+        isAxiosError: true,
+        response: {
+          status: 500,
+          data: { message: 'Internal Server Error' },
+        },
+      };
+      (apiClient.post as jest.Mock).mockRejectedValueOnce(serverError);
+      jest.spyOn(axios, 'isAxiosError').mockReturnValue(true);
+
+      try {
+        await authService.forgotPassword(mockEmail);
+        fail('Should have thrown an error');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AuthServiceError);
+        expect((error as AuthServiceError).isServerError).toBe(true);
+        expect((error as AuthServiceError).statusCode).toBe(500);
+      }
+    });
+  });
+
+  // ============================================
+  // RESET PASSWORD
+  // ============================================
+  describe('resetPassword', () => {
+    const mockResetData = {
+      token: 'reset-token-abc123',
+      email: 'user@example.com',
+      password: 'newPassword123',
+      password_confirmation: 'newPassword123',
+    };
+
+    it('should call POST /v1/auth/reset-password with data', async () => {
+      (apiClient.post as jest.Mock).mockResolvedValueOnce({
+        data: { message: 'Your password has been reset.' },
+      });
+
+      await authService.resetPassword(mockResetData);
+
+      expect(apiClient.post).toHaveBeenCalledWith('/v1/auth/reset-password', mockResetData);
+    });
+
+    it('should return message on success', async () => {
+      (apiClient.post as jest.Mock).mockResolvedValueOnce({
+        data: { message: 'Your password has been reset.' },
+      });
+
+      const result = await authService.resetPassword(mockResetData);
+
+      expect(result.message).toBe('Your password has been reset.');
+    });
+
+    it('should throw AuthServiceError with isValidationError on 422 (invalid token)', async () => {
+      const validationError = {
+        isAxiosError: true,
+        response: {
+          status: 422,
+          data: {
+            message: 'The given data was invalid.',
+            errors: { email: ['This password reset token is invalid.'] },
+          },
+        },
+      };
+      (apiClient.post as jest.Mock).mockRejectedValueOnce(validationError);
+      jest.spyOn(axios, 'isAxiosError').mockReturnValue(true);
+
+      try {
+        await authService.resetPassword(mockResetData);
+        fail('Should have thrown an error');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AuthServiceError);
+        expect((error as AuthServiceError).isValidationError).toBe(true);
+        expect((error as AuthServiceError).validationErrors).toBeDefined();
+      }
+    });
+
+    it('should throw AuthServiceError with isRateLimited on 429', async () => {
+      const axiosError = {
+        isAxiosError: true,
+        response: {
+          status: 429,
+          data: { message: 'Too Many Attempts.' },
+        },
+      };
+      (apiClient.post as jest.Mock).mockRejectedValueOnce(axiosError);
+      jest.spyOn(axios, 'isAxiosError').mockReturnValue(true);
+
+      try {
+        await authService.resetPassword(mockResetData);
+        fail('Should have thrown an error');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AuthServiceError);
+        expect((error as AuthServiceError).isRateLimited).toBe(true);
+        expect((error as AuthServiceError).statusCode).toBe(429);
+      }
+    });
+
+    it('should throw AuthServiceError with isNetworkError on network failure', async () => {
+      const networkError = {
+        isAxiosError: true,
+        response: undefined,
+        message: 'Network Error',
+      };
+      (apiClient.post as jest.Mock).mockRejectedValueOnce(networkError);
+      jest.spyOn(axios, 'isAxiosError').mockReturnValue(true);
+
+      try {
+        await authService.resetPassword(mockResetData);
+        fail('Should have thrown an error');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AuthServiceError);
+        expect((error as AuthServiceError).isNetworkError).toBe(true);
+      }
+    });
+
+    it('should throw AuthServiceError with isServerError on 500', async () => {
+      const serverError = {
+        isAxiosError: true,
+        response: {
+          status: 500,
+          data: { message: 'Internal Server Error' },
+        },
+      };
+      (apiClient.post as jest.Mock).mockRejectedValueOnce(serverError);
+      jest.spyOn(axios, 'isAxiosError').mockReturnValue(true);
+
+      try {
+        await authService.resetPassword(mockResetData);
+        fail('Should have thrown an error');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AuthServiceError);
+        expect((error as AuthServiceError).isServerError).toBe(true);
+        expect((error as AuthServiceError).statusCode).toBe(500);
+      }
+    });
+  });
+
+  // ============================================
   // LOGOUT
   // ============================================
   describe('logout', () => {

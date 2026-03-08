@@ -23,8 +23,12 @@ export interface ReceptorRegistrationResponse {
       role: 'doctor' | 'receptor';
       status: 'pending' | 'approved' | 'rejected';
     };
-    token: string;
+    access_token: string;
+    refresh_token: string;
+    expires_in: number;
+    refresh_expires_in: number;
   };
+  message: string;
 }
 
 export interface ApiValidationError {

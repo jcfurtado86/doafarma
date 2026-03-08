@@ -25,8 +25,9 @@ const doctorPersonalDataSchema = z
       .max(255, 'Nome não pode ter mais de 255 caracteres'),
     crm: z
       .string({ required_error: 'CRM é obrigatório' })
-      .length(6, 'CRM deve ter exatamente 6 dígitos')
-      .regex(/^[0-9]{6}$/, 'CRM deve conter apenas 6 dígitos numéricos'),
+      .min(4, 'CRM deve ter no mínimo 4 dígitos')
+      .max(10, 'CRM deve ter no máximo 10 dígitos')
+      .regex(/^[0-9]{4,10}$/, 'CRM deve conter apenas dígitos numéricos (4 a 10)'),
     crm_uf: z
       .string({ required_error: 'UF é obrigatório' })
       .length(2, 'UF deve ter exatamente 2 caracteres'),

@@ -19,7 +19,20 @@ class Doctor extends Model
         'user_id',
         'crm',
         'crm_uf',
+        'crm_verified_at',
+        'crm_source',
+        'specialty',
     ];
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'crm_verified_at' => 'datetime',
+        ];
+    }
 
     /**
      * Get the user that owns the doctor.

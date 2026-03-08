@@ -110,7 +110,7 @@ export const useDoctorRegistrationFormStore = create<DoctorRegistrationFormStore
 
       const responseData = await doctorService.register(formData);
 
-      const { user, token } = responseData;
+      const { user, token } = responseData.data;
 
       await useAuthStore.getState().saveSession(user, token);
 

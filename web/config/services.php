@@ -37,4 +37,12 @@ return [
         ],
     ],
 
+    'consultacrm' => [
+        'key'                => env('CONSULTACRM_API_KEY'),
+        'url'                => env('CONSULTACRM_API_URL', 'https://www.consultacrm.com.br/api/index.php'),
+        'cache_days_valid'   => env('CONSULTACRM_CACHE_DAYS_VALID', 30),
+        'cache_days_invalid' => env('CONSULTACRM_CACHE_DAYS_INVALID', 7),
+        'timeout'            => env('CONSULTACRM_TIMEOUT', 3),
+    ],
+
 ];

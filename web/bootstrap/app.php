@@ -29,13 +29,16 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (ThrottleRequestsException $e, $request) {
             if ($request->wantsJson()) {
-                $isLoginRoute = $request->routeIs('api.v1.auth.login');
+                $isLoginRoute         = $request->routeIs('api.v1.auth.login');
+                $isPasswordResetRoute = $request->routeIs('api.v1.auth.forgot-password', 'api.v1.auth.reset-password');
 
-                $message = $isLoginRoute
-                    ? 'Too many login attempts. Please try again later.'
-                    : 'Too many requests. Please try again later.';
+                $message = match (true) {
+                    $isLoginRoute         => 'Too many login attempts. Please try again later.',
+                    $isPasswordResetRoute => 'Too many password reset requests. Please try again later.',
+                    default               => 'Too many requests. Please try again later.',
+                };
 
-                $errorKey = $isLoginRoute ? 'email' : 'rate_limit';
+                $errorKey = ($isLoginRoute || $isPasswordResetRoute) ? 'email' : 'rate_limit';
 
                 return response()->json([
                     'message' => $message,

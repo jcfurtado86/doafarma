@@ -110,19 +110,22 @@ it('should be able to register a doctor with active CRM', function (): void {
     expect($doctor->crm_verified_at)->not->toBeNull();
 });
 
-it('should return a valid token upon successful registration', function (): void {
+it('should return a valid token pair upon successful registration', function (): void {
     fakeCrmApi();
 
     $response = postJson(route('doctor.register'), validDoctorData());
 
     $response->assertCreated();
-    $response->assertJsonStructure(['data' => ['user', 'token']]);
+    $response->assertJsonStructure([
+        'data' => ['user', 'access_token', 'refresh_token', 'expires_in', 'refresh_expires_in'],
+        'message',
+    ]);
 
-    $token = $response->json('data.token');
+    $token = $response->json('data.access_token');
     expect($token)->not->toBeEmpty();
 
     $user = User::whereEmail('test@example.com')->first();
-    expect($user->tokens)->toHaveCount(1);
+    expect($user->tokens)->toHaveCount(2);
 });
 
 it('should return the correct user data upon successful registration', function (): void {

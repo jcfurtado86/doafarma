@@ -78,9 +78,9 @@ export const useReceptorRegistrationStore = create<ReceptorRegistrationFormStore
 
       const response = await receptorService.register(registrationData);
 
-      const { user, token } = response.data;
+      const { user, access_token, refresh_token, expires_in } = response.data;
 
-      await useAuthStore.getState().saveSession(user, token);
+      await useAuthStore.getState().saveSession(user, access_token, refresh_token, expires_in);
 
       set({ isLoading: false });
       return true;

@@ -5,9 +5,10 @@ declare(strict_types = 1);
 namespace App\Http\Controllers\Auth;
 
 use App\Actions\Auth\CreateReceptorAction;
+use App\Actions\Auth\CreateTokenPairAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ReceptorRegistrationRequest;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\Api\V1\RegistrationResource;
 use Illuminate\Http\JsonResponse;
 
 class ReceptorRegistrationController extends Controller
@@ -20,7 +21,7 @@ class ReceptorRegistrationController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(ReceptorRegistrationRequest $request): JsonResponse
+    public function __invoke(ReceptorRegistrationRequest $request, CreateTokenPairAction $createTokenPairAction): JsonResponse
     {
         $user = $this->createReceptorAction->execute([
             'name'           => $request->validated('name'),
@@ -31,13 +32,10 @@ class ReceptorRegistrationController extends Controller
             'terms_accepted' => $request->validated('terms_accepted'),
         ]);
 
-        $token = $user->createToken($request->validated('device_name'))->plainTextToken;
+        $tokens = $createTokenPairAction->execute($user, $request->validated('device_name'));
 
-        return response()->json([
-            'data' => [
-                'user'  => new UserResource($user),
-                'token' => $token,
-            ],
-        ], JsonResponse::HTTP_CREATED);
+        return (new RegistrationResource(array_merge(['user' => $user], $tokens)))
+            ->response()
+            ->setStatusCode(JsonResponse::HTTP_CREATED);
     }
 }

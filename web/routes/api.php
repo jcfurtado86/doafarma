@@ -38,6 +38,14 @@ Route::prefix('v1')->group(function (): void {
         Route::post('logout', Auth\LogoutController::class)
             ->middleware(['auth:sanctum', 'abilities:access'])
             ->name('api.v1.auth.logout');
+
+        Route::post('forgot-password', Auth\ForgotPasswordController::class)
+            ->middleware(['guest', 'throttle:3,1'])
+            ->name('api.v1.auth.forgot-password');
+
+        Route::post('reset-password', Auth\ResetPasswordController::class)
+            ->middleware(['guest', 'throttle:3,1'])
+            ->name('api.v1.auth.reset-password');
     });
 
     // Routes that require authentication, approval, AND access token ability

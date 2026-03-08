@@ -37,8 +37,12 @@ describe('Receptor Registration - Success Scenarios', function (): void {
         $response->assertJsonStructure([
             'data' => [
                 'user' => ['id', 'name', 'email', 'phone_number', 'role'],
-                'token',
+                'access_token',
+                'refresh_token',
+                'expires_in',
+                'refresh_expires_in',
             ],
+            'message',
         ]);
 
         // Verify user was created in database
@@ -54,7 +58,7 @@ describe('Receptor Registration - Success Scenarios', function (): void {
         assertDatabaseCount('users', 1);
     });
 
-    it('should return a valid Sanctum token upon successful registration', function (): void {
+    it('should return a valid Sanctum token pair upon successful registration', function (): void {
         $response = postJson(route('receptor.register'), [
             'name'                  => 'João Santos',
             'email'                 => 'joao@example.com',
@@ -68,12 +72,11 @@ describe('Receptor Registration - Success Scenarios', function (): void {
 
         $response->assertCreated();
 
-        $token = $response->json('data.token');
+        $token = $response->json('data.access_token');
         expect($token)->not->toBeEmpty();
 
-        // Verify token was created in database
         $user = User::whereEmail('joao@example.com')->first();
-        expect($user->tokens)->toHaveCount(1);
+        expect($user->tokens)->toHaveCount(2);
     });
 
     it('should hash the password correctly', function (): void {
@@ -532,7 +535,7 @@ describe('Receptor Registration - Auto Approval', function (): void {
 
         $response->assertCreated();
 
-        $token = $response->json('data.token');
+        $token = $response->json('data.access_token');
 
         $protectedResponse = $this->withHeader('Authorization', "Bearer {$token}")
             ->getJson('/api/v1/drugs/search?query=test');

@@ -33,7 +33,7 @@ class DoctorRegistrationRequest extends FormRequest
             'name'                      => ['required', 'string', 'max:255'],
             'email'                     => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'phone_number'              => ['required', 'string', 'min:10', 'max:11'],
-            'crm'                       => ['required', 'string', 'size:6', 'regex:/^[0-9]{6}$/', 'unique:' . Doctor::class],
+            'crm'                       => ['required', 'string', 'min:4', 'max:10', 'regex:/^[0-9]{4,10}$/', 'unique:' . Doctor::class],
             'crm_uf'                    => ['required', 'string', 'size:2', new ValidUF()],
             'password'                  => ['required', 'confirmed', Password::defaults()],
             'device_name'               => ['required', 'string', 'max:255'],

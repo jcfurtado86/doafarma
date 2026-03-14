@@ -24,6 +24,7 @@ import { isUserBlocked, UserRole } from '@/types/user';
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import * as Device from 'expo-device';
+import { logger } from '@/utils/logger';
 
 const loginSchema = z.object({
   email: z
@@ -68,11 +69,13 @@ export default function LoginScreen() {
   };
 
   const handleLogin = async (data: LoginFormData) => {
+    logger.debug('[LoginScreen] handleLogin() started');
     setIsLoading(true);
     setError(null);
 
     try {
       const deviceName = await getDeviceName();
+      logger.debug('[LoginScreen] Calling authService.login...');
 
       const response = await authService.login({
         email: data.email.toLowerCase().trim(),
@@ -80,6 +83,7 @@ export default function LoginScreen() {
         device_name: deviceName,
       });
 
+      logger.debug('[LoginScreen] Login response received');
       const { user, access_token, refresh_token, expires_in } = response.data;
 
       await saveSession(user, access_token, refresh_token, expires_in);
@@ -101,6 +105,7 @@ export default function LoginScreen() {
       };
       router.replace(routeByRole[user.role] || ('/(auth)/dashboard' as Href));
     } catch (err) {
+      logger.error('[LoginScreen] handleLogin() error caught:', err);
       if (err instanceof AuthServiceError) {
         if (err.isNetworkError) {
           setError('Sem conexão com a internet. Verifique sua conexão.');
@@ -127,6 +132,7 @@ export default function LoginScreen() {
         setError('Erro ao fazer login. Tente novamente.');
       }
     } finally {
+      logger.debug('[LoginScreen] handleLogin() finished, setting isLoading=false');
       setIsLoading(false);
     }
   };

@@ -82,11 +82,13 @@ export class AuthServiceError extends Error {
 
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<LoginResponse> => {
+    logger.debug('[AuthService] login() called for:', credentials.email);
     try {
       const response = await apiClient.post<LoginResponse>(API_ENDPOINTS.AUTH.LOGIN, credentials);
+      logger.debug('[AuthService] login() success');
       return response.data;
     } catch (error) {
-      logger.error('Erro ao fazer login:', getErrorMessage(error));
+      logger.error('[AuthService] login() error caught:', getErrorMessage(error), error);
 
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<ApiValidationError>;

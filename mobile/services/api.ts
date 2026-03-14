@@ -12,6 +12,7 @@ import axios, {
 import { router } from 'expo-router';
 import { Platform } from 'react-native';
 import Toast from 'react-native-toast-message';
+import { logger } from '@/utils/logger';
 
 const API_HOST = process.env.EXPO_PUBLIC_API_HOST || '192.168.0.1';
 
@@ -29,6 +30,7 @@ const getBaseUrl = () => {
 
 const api = axios.create({
   baseURL: getBaseUrl(),
+  timeout: 15000,
 });
 
 // Axios bug workaround: async error interceptors return config instead of return value.
@@ -65,29 +67,43 @@ function processQueue(error: unknown, token: string | null = null): void {
 
 api.interceptors.request.use(
   async (config) => {
+    logger.debug(`[API Request] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
+
     const { isConnected } = useNetworkStore.getState();
+    logger.debug(`[API Request] Network isConnected: ${isConnected}`);
     if (!isConnected) {
+      logger.warn('[API Request] Blocked — network offline');
       const error = new Error('Você está sem conexão com a internet.');
       Object.assign(error, { isNetworkError: true, isOfflineError: true });
       return Promise.reject(error);
     }
 
     if (config.headers.Authorization) {
+      logger.debug('[API Request] Authorization header already set');
       return config;
     }
 
     const token = await SecureStore.getItemAsync(STORAGE_KEYS.AUTH_TOKEN);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      logger.debug('[API Request] Token attached from SecureStore');
+    } else {
+      logger.debug('[API Request] No stored token — sending unauthenticated');
     }
 
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    logger.error('[API Request Error]', error);
+    return Promise.reject(error);
+  }
 );
 
 api.interceptors.response.use(
   (response) => {
+    logger.debug(
+      `[API Response] ${response.status} ${response.config.method?.toUpperCase()} ${response.config.url}`
+    );
     const configWithResponse = response as unknown as ConfigWithRetryResponse;
     if (
       configWithResponse &&
@@ -100,6 +116,10 @@ api.interceptors.response.use(
   },
   async (error: AxiosError) => {
     const originalRequest = error.config as ConfigWithRetryResponse;
+    logger.error(
+      `[API Response Error] ${error.response?.status ?? 'NO_RESPONSE'} ${originalRequest?.method?.toUpperCase() ?? '?'} ${originalRequest?.url ?? '?'}`,
+      error.message
+    );
 
     if (error.response?.status === 401) {
       if (isLoggingOut) {

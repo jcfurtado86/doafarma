@@ -3,8 +3,17 @@ import {
   DoctorRegistrationFormData,
   useDoctorRegistrationFormStore,
 } from '@/stores/doctorRegistrationFormStore';
-import { useRouter } from 'expo-router';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { useRouter, Href } from 'expo-router';
+import { useAuthStore } from '@/stores/authStore';
+import { isUserBlocked } from '@/types/user';
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
 import { DoctorPersonalDataStep } from '../steps/DoctorPersonalDataStep';
 import { DoctorAddressStep } from '../steps/DoctorAddressStep';
 import { styles } from './styles';
@@ -53,7 +62,12 @@ export function DoctorRegistrationFlow({ currentStep }: DoctorRegistrationFlowPr
     }
 
     if (success) {
-      router.replace('/(auth)/dashboard');
+      const user = useAuthStore.getState().user;
+      if (user && isUserBlocked(user.status)) {
+        router.replace('/(auth)/pending-approval' as Href);
+      } else {
+        router.replace('/(auth)/dashboard' as Href);
+      }
     }
   };
 
@@ -69,7 +83,10 @@ export function DoctorRegistrationFlow({ currentStep }: DoctorRegistrationFlowPr
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
       <ArrowBackButton style={{ marginTop: 56 }} onPress={handlePreviousStep} />
 
       {error && (
@@ -84,8 +101,14 @@ export function DoctorRegistrationFlow({ currentStep }: DoctorRegistrationFlowPr
           <Text style={styles.loadingText}>Registrando médico...</Text>
         </View>
       ) : (
-        renderStep()
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ flexGrow: 1 }}
+        >
+          {renderStep()}
+        </ScrollView>
       )}
-    </View>
+    </KeyboardAvoidingView>
   );
 }

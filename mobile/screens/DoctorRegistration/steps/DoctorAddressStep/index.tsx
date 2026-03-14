@@ -73,7 +73,12 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
   const selectedUf = watch('addresses.0.uf');
   const { cities, isLoading, error: citiesError } = useCitiesByState(selectedUf || null);
 
+  const isInitialMount = useRef(true);
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
     setValue('addresses.0.city', '');
   }, [selectedUf, setValue]);
 

@@ -27,6 +27,8 @@ class CrmValidationService
         $apiKey = config('services.consultacrm.key');
 
         if (empty($apiKey)) {
+            Log::warning('ConsultaCRM API key not configured — skipping CRM validation, user will be set to pending');
+
             return $this->unavailableResult();
         }
 
@@ -123,7 +125,7 @@ class CrmValidationService
         }
 
         $statusRaw   = mb_strtolower(trim((string) ($item['situacao'] ?? '')));
-        $status      = $this->mapStatus($statusRaw);
+        $status      = empty($statusRaw) ? CrmStatus::Active : $this->mapStatus($statusRaw);
         $doctorName  = $item['nome'] ?? null;
         $specialties = $this->extractSpecialties($item);
 

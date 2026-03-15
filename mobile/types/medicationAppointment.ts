@@ -1,3 +1,4 @@
+import { colors } from '@/theme/tokens';
 import { MedicationRequest } from './medicationRequest';
 
 export type MedicationAppointmentStatus = 'proposed' | 'confirmed' | 'completed';
@@ -44,7 +45,7 @@ export const APPOINTMENT_STATUS_LABELS: Record<MedicationAppointmentStatus, stri
 };
 
 export const APPOINTMENT_STATUS_COLORS: Record<MedicationAppointmentStatus, string> = {
-  proposed: '#f59e0b', // amber
-  confirmed: '#3b82f6', // blue
-  completed: '#10b981', // green
+  proposed: colors.statusProposed,
+  confirmed: colors.statusConfirmed,
+  completed: colors.statusCompleted,
 };

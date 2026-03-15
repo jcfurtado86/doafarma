@@ -21,7 +21,7 @@ import { z } from 'zod';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
 import { authService, AuthServiceError } from '@/services/authService';
 import { isUserBlocked, UserRole } from '@/types/user';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { Ionicons } from '@expo/vector-icons';
 import * as Device from 'expo-device';
 import { logger } from '@/utils/logger';
@@ -163,7 +163,7 @@ export default function LoginScreen() {
 
           {error && (
             <View style={styles.errorContainer}>
-              <Ionicons name="alert-circle-outline" size={20} color="#DC2626" />
+              <Ionicons name="alert-circle-outline" size={20} color={colors.error} />
               <Text style={styles.errorText}>{error}</Text>
             </View>
           )}
@@ -212,7 +212,7 @@ export default function LoginScreen() {
                 <Ionicons
                   name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                   size={24}
-                  color={Colors.yellow_green_600}
+                  color={colors.primaryPressed}
                 />
               </TouchableOpacity>
             </View>
@@ -227,7 +227,7 @@ export default function LoginScreen() {
             <View style={styles.buttonContainer}>
               {isLoading ? (
                 <View style={styles.loadingButton}>
-                  <ActivityIndicator color="#FFFFFF" />
+                  <ActivityIndicator color={colors.textInverted} />
                   <Text style={styles.loadingText}>Entrando...</Text>
                 </View>
               ) : (
@@ -267,14 +267,14 @@ const styles = StyleSheet.create({
   errorContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEE2E2',
+    backgroundColor: colors.errorSurface,
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,
     gap: 8,
   },
   errorText: {
-    color: '#DC2626',
+    color: colors.error,
     fontSize: 14,
     flex: 1,
   },
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   forgotPasswordLink: {
-    color: Colors.yellow_green_600,
+    color: colors.primaryPressed,
     fontSize: 14,
     fontWeight: '600',
     textDecorationLine: 'underline',
@@ -307,13 +307,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.yellow_green_400,
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 8,
     gap: 8,
   },
   loadingText: {
-    color: '#FFFFFF',
+    color: colors.textInverted,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -324,11 +324,11 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   registerText: {
-    color: Colors.yellow_green_800,
+    color: colors.primaryPressed,
     fontSize: 14,
   },
   registerLink: {
-    color: Colors.yellow_green_600,
+    color: colors.primaryPressed,
     fontSize: 14,
     fontWeight: '600',
     textDecorationLine: 'underline',

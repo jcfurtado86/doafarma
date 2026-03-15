@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { toast } from '@/utils/toast';
 import { useLocalSearchParams, router } from 'expo-router';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { useDoctorRatingStore } from '@/stores/doctorRatingStore';
 import { RATING_LABELS } from '@/types/doctorRating';
 
@@ -124,7 +124,7 @@ export default function RateDoctorScreen() {
   if (isLoading && !rating) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Colors.yellow_green_500} />
+        <ActivityIndicator size="large" color={colors.primaryPressed} />
         <Text style={styles.loadingText}>Carregando...</Text>
       </View>
     );
@@ -186,7 +186,7 @@ export default function RateDoctorScreen() {
           <TextInput
             style={styles.commentInput}
             placeholder="Conte como foi sua experiência com este doador..."
-            placeholderTextColor="#9ca3af"
+            placeholderTextColor={colors.textMuted}
             value={comment}
             onChangeText={setComment}
             multiline
@@ -222,7 +222,7 @@ export default function RateDoctorScreen() {
           activeOpacity={0.8}
         >
           {isLoading ? (
-            <ActivityIndicator color="#ffffff" />
+            <ActivityIndicator color={colors.textInverted} />
           ) : (
             <Text style={styles.submitButtonText}>
               {isEditMode ? 'Salvar Alterações' : 'Enviar Avaliação'}
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: colors.background,
   },
   contentContainer: {
     padding: 16,
@@ -259,12 +259,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f3f4f6',
+    backgroundColor: colors.background,
     gap: 16,
   },
   loadingText: {
     fontSize: 16,
-    color: '#6b7280',
+    color: colors.textSecondary,
   },
   header: {
     alignItems: 'center',
@@ -278,21 +278,21 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   headerSubtitle: {
     fontSize: 16,
-    color: '#6b7280',
+    color: colors.textSecondary,
     textAlign: 'center',
     paddingHorizontal: 16,
   },
   infoCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -304,22 +304,22 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textSecondary,
     width: 100,
   },
   infoValue: {
     fontSize: 14,
-    color: '#1f2937',
+    color: colors.textPrimary,
     fontWeight: '500',
     flex: 1,
   },
   ratingSection: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 24,
     marginBottom: 16,
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1f2937',
+    color: colors.textPrimary,
     marginBottom: 16,
   },
   starsContainer: {
@@ -341,23 +341,23 @@ const styles = StyleSheet.create({
   },
   star: {
     fontSize: 40,
-    color: '#d1d5db',
+    color: colors.border,
   },
   starSelected: {
-    color: '#fbbf24',
+    color: colors.warning,
   },
   ratingLabel: {
     marginTop: 12,
     fontSize: 16,
     fontWeight: '500',
-    color: Colors.yellow_green_600,
+    color: colors.primaryPressed,
   },
   commentSection: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -365,22 +365,22 @@ const styles = StyleSheet.create({
   },
   commentInput: {
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: colors.border,
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    color: '#1f2937',
+    color: colors.textPrimary,
     minHeight: 100,
-    backgroundColor: '#f9fafb',
+    backgroundColor: colors.background,
   },
   charCount: {
     textAlign: 'right',
     fontSize: 12,
-    color: '#9ca3af',
+    color: colors.textMuted,
     marginTop: 8,
   },
   errorContainer: {
-    backgroundColor: '#fef2f2',
+    backgroundColor: colors.errorSurface,
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
@@ -389,27 +389,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   errorText: {
-    color: '#ef4444',
+    color: colors.error,
     fontSize: 14,
     flex: 1,
   },
   errorDismiss: {
-    color: '#ef4444',
+    color: colors.error,
     fontWeight: '600',
     marginLeft: 8,
   },
   submitButton: {
-    backgroundColor: Colors.yellow_green_500,
+    backgroundColor: colors.primaryPressed,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
     marginBottom: 12,
   },
   submitButtonDisabled: {
-    backgroundColor: '#9ca3af',
+    backgroundColor: colors.textMuted,
   },
   submitButtonText: {
-    color: '#ffffff',
+    color: colors.textInverted,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   skipButtonText: {
-    color: '#6b7280',
+    color: colors.textSecondary,
     fontSize: 14,
   },
 });

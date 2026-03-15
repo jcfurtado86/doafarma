@@ -1,4 +1,4 @@
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { useAuthStore } from '@/stores/authStore';
 import { Redirect, Stack } from 'expo-router';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
@@ -9,7 +9,7 @@ export default function AuthLayout() {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Colors.yellow_green_400} />
+        <ActivityIndicator size="large" color={colors.primary} />
         <Text style={styles.loadingText}>Carregando...</Text>
       </View>
     );
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 12,
-    color: Colors.yellow_green_400,
+    color: colors.primary,
     fontSize: 16,
   },
 });

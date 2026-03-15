@@ -17,7 +17,7 @@ import {
 import { DoctorPersonalDataStep } from '../steps/DoctorPersonalDataStep';
 import { DoctorAddressStep } from '../steps/DoctorAddressStep';
 import { styles } from './styles';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { UseFormSetError } from 'react-hook-form';
 import { logger } from '@/utils/logger';
 
@@ -97,7 +97,7 @@ export function DoctorRegistrationFlow({ currentStep }: DoctorRegistrationFlowPr
 
       {isLoading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.yellow_green_400} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>Registrando médico...</Text>
         </View>
       ) : (

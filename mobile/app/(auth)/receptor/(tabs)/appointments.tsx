@@ -13,7 +13,7 @@ import { getErrorMessage } from '@/types/errors';
 import { useMedicationAppointmentStore } from '@/stores/medicationAppointmentStore';
 import { MedicationAppointmentCard } from '@/components/MedicationAppointmentCard';
 import { FilterButton } from '@/components/FilterButton';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { MedicationAppointment, MedicationAppointmentStatus } from '@/types/medicationAppointment';
 
 type FilterOption = 'all' | MedicationAppointmentStatus;
@@ -189,7 +189,7 @@ export default function ReceptorAppointmentsScreen() {
 
       {isLoading && appointments.length === 0 ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.yellow_green_500} />
+          <ActivityIndicator size="large" color={colors.primaryPressed} />
           <Text style={styles.loadingText}>Carregando agendamentos...</Text>
         </View>
       ) : (
@@ -202,8 +202,8 @@ export default function ReceptorAppointmentsScreen() {
             <RefreshControl
               refreshing={isLoading}
               onRefresh={loadAppointments}
-              colors={[Colors.yellow_green_500]}
-              tintColor={Colors.yellow_green_500}
+              colors={[colors.primaryPressed]}
+              tintColor={colors.primaryPressed}
             />
           }
           ListEmptyComponent={renderEmpty}
@@ -217,15 +217,15 @@ export default function ReceptorAppointmentsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: colors.background,
   },
   filterContainer: {
     flexDirection: 'row',
     padding: 12,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     gap: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: colors.border,
   },
   listContent: {
     padding: 16,
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textSecondary,
   },
   emptyContainer: {
     flex: 1,
@@ -254,18 +254,18 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   emptyText: {
     fontSize: 16,
-    color: '#6b7280',
+    color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: 8,
   },
   emptyHint: {
     fontSize: 14,
-    color: '#9ca3af',
+    color: colors.textMuted,
     textAlign: 'center',
   },
   errorContainer: {
@@ -280,13 +280,13 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
-    color: '#ef4444',
+    color: colors.error,
     textAlign: 'center',
     marginBottom: 16,
   },
   retryText: {
     fontSize: 16,
-    color: Colors.yellow_green_500,
+    color: colors.primaryPressed,
     fontWeight: '600',
   },
 });

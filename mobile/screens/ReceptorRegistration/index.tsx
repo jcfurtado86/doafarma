@@ -21,7 +21,7 @@ import {
   receptorRegistrationSchema,
   ReceptorRegistrationFormData,
 } from '@/utils/validation/receptorValidation';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { styles } from './styles';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -130,7 +130,7 @@ export function ReceptorRegistrationScreen() {
     return (
       <View style={styles.container}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.yellow_green_400} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>Criando sua conta...</Text>
         </View>
       </View>
@@ -260,7 +260,7 @@ export function ReceptorRegistrationScreen() {
               <Ionicons
                 name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                 size={24}
-                color={Colors.yellow_green_600}
+                color={colors.primaryPressed}
               />
             </TouchableOpacity>
           </View>
@@ -289,7 +289,7 @@ export function ReceptorRegistrationScreen() {
               <Ionicons
                 name={showPasswordConfirmation ? 'eye-off-outline' : 'eye-outline'}
                 size={24}
-                color={Colors.yellow_green_600}
+                color={colors.primaryPressed}
               />
             </TouchableOpacity>
           </View>
@@ -300,7 +300,7 @@ export function ReceptorRegistrationScreen() {
             activeOpacity={0.7}
           >
             <View style={[styles.checkbox, termsAccepted && styles.checkboxChecked]}>
-              {termsAccepted && <Ionicons name="checkmark" size={16} color="#FFFFFF" />}
+              {termsAccepted && <Ionicons name="checkmark" size={16} color={colors.textInverted} />}
             </View>
             <Text style={styles.termsText}>
               Li e aceito os <Text style={styles.termsLink}>Termos de Uso</Text> e a{' '}

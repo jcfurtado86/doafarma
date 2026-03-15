@@ -4,7 +4,7 @@ import { useRouter, Href } from 'expo-router';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import PrimaryButton from '@/components/PrimaryButton';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function PasswordResetSentScreen() {
@@ -19,7 +19,7 @@ export default function PasswordResetSentScreen() {
       <View style={styles.container}>
         <View style={styles.content}>
           <View style={styles.iconContainer}>
-            <Ionicons name="mail-outline" size={64} color={Colors.yellow_green_600} />
+            <Ionicons name="mail-outline" size={64} color={colors.primaryPressed} />
           </View>
 
           <Title>E-mail enviado!</Title>
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     marginTop: 32,
   },
   backToLoginLink: {
-    color: Colors.yellow_green_600,
+    color: colors.primaryPressed,
     fontSize: 14,
     fontWeight: '600',
     textDecorationLine: 'underline',

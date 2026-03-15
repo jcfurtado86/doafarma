@@ -13,7 +13,7 @@ import {
 import { toast } from '@/utils/toast';
 import { getErrorMessage } from '@/types/errors';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { ValidationMessages } from '@/constants/ValidationMessages';
 import { useMedicationAppointmentStore } from '@/stores/medicationAppointmentStore';
 import PrimaryButton from '@/components/PrimaryButton';
@@ -99,7 +99,7 @@ export default function ScheduleAppointmentScreen() {
           <TextInput
             style={styles.input}
             placeholder="DD/MM/AAAA"
-            placeholderTextColor={Colors.gray_400}
+            placeholderTextColor={colors.textMuted}
             value={date}
             onChangeText={handleDateChange}
             keyboardType="numeric"
@@ -112,7 +112,7 @@ export default function ScheduleAppointmentScreen() {
           <TextInput
             style={styles.input}
             placeholder="HH:MM"
-            placeholderTextColor={Colors.gray_400}
+            placeholderTextColor={colors.textMuted}
             value={time}
             onChangeText={handleTimeChange}
             keyboardType="numeric"
@@ -132,7 +132,7 @@ export default function ScheduleAppointmentScreen() {
         <View style={styles.actions}>
           {isLoading ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="small" color={Colors.yellow_green_500} />
+              <ActivityIndicator size="small" color={colors.primaryPressed} />
               <Text style={styles.loadingText}>Criando agendamento...</Text>
             </View>
           ) : (
@@ -147,7 +147,7 @@ export default function ScheduleAppointmentScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.gray_100,
+    backgroundColor: colors.background,
   },
   content: {
     padding: 16,
@@ -158,12 +158,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: Colors.gray_800,
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: Colors.gray_500,
+    color: colors.textSecondary,
   },
   section: {
     marginBottom: 20,
@@ -171,40 +171,40 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.gray_500,
+    color: colors.textSecondary,
     letterSpacing: 0.5,
     marginBottom: 8,
   },
   input: {
-    backgroundColor: Colors.white,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.gray_800,
-    shadowColor: Colors.black,
+    color: colors.textPrimary,
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
   infoBox: {
-    backgroundColor: Colors.blue_50,
+    backgroundColor: colors.infoLight,
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
     borderLeftWidth: 4,
-    borderLeftColor: Colors.blue_500,
+    borderLeftColor: colors.info,
   },
   infoTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.blue_700,
+    color: colors.info,
     marginBottom: 8,
   },
   infoText: {
     fontSize: 14,
-    color: Colors.blue_800,
+    color: colors.info,
     lineHeight: 22,
   },
   actions: {
@@ -215,12 +215,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    backgroundColor: Colors.gray_100,
+    backgroundColor: colors.background,
     borderRadius: 8,
     gap: 12,
   },
   loadingText: {
     fontSize: 14,
-    color: Colors.gray_500,
+    color: colors.textSecondary,
   },
 });

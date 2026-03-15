@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.yellow_green_50,
+    backgroundColor: colors.primaryLight,
     paddingHorizontal: 20,
   },
 
@@ -33,14 +33,14 @@ export const styles = StyleSheet.create({
   },
 
   errorContainer: {
-    backgroundColor: '#FEE2E2',
+    backgroundColor: colors.errorSurface,
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,
   },
 
   errorText: {
-    color: '#DC2626',
+    color: colors.error,
     textAlign: 'center',
     fontSize: 14,
   },
@@ -53,7 +53,7 @@ export const styles = StyleSheet.create({
 
   loadingText: {
     marginTop: 16,
-    color: Colors.yellow_green_950,
+    color: colors.textPrimary,
     fontSize: 16,
   },
 
@@ -76,31 +76,31 @@ export const styles = StyleSheet.create({
     height: 24,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: Colors.yellow_green_400,
+    borderColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
   },
 
   checkboxChecked: {
-    backgroundColor: Colors.yellow_green_400,
-    borderColor: Colors.yellow_green_400,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
 
   termsText: {
     flex: 1,
     fontSize: 14,
-    color: Colors.yellow_green_800,
+    color: colors.primaryPressed,
     lineHeight: 20,
   },
 
   termsLink: {
-    color: Colors.yellow_green_600,
+    color: colors.primaryPressed,
     textDecorationLine: 'underline',
   },
 
   termsError: {
-    color: '#DC2626',
+    color: colors.error,
     fontSize: 12,
     marginTop: -8,
     marginBottom: 8,

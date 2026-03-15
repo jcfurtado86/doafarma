@@ -12,7 +12,7 @@ import {
   Keyboard,
 } from 'react-native';
 import { router, Href } from 'expo-router';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { Pagination } from '@/constants/Pagination';
 import { SearchResultCard } from '@/components/SearchResultCard';
 import { ListFooterLoader } from '@/components/ListFooterLoader';
@@ -82,7 +82,7 @@ export default function SearchScreen() {
       case 'loading':
         return (
           <View style={styles.stateContainer}>
-            <ActivityIndicator size="large" color={Colors.yellow_green_400} />
+            <ActivityIndicator size="large" color={colors.primary} />
             <Text style={styles.stateSubtitle}>Carregando medicamentos...</Text>
           </View>
         );
@@ -135,7 +135,7 @@ export default function SearchScreen() {
           <TextInput
             style={styles.searchInput}
             placeholder="Filtrar por nome ou substância"
-            placeholderTextColor="#9ca3af"
+            placeholderTextColor={colors.textMuted}
             value={searchQuery}
             onChangeText={setSearchQuery}
             onSubmitEditing={handleSearch}
@@ -194,15 +194,15 @@ export default function SearchScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: colors.background,
   },
   searchContainer: {
     flexDirection: 'row',
     padding: 16,
     gap: 8,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: colors.border,
   },
   inputWrapper: {
     flex: 1,
@@ -210,12 +210,12 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     height: 48,
-    backgroundColor: '#f7f7f7',
+    backgroundColor: colors.surfaceSecondary,
     borderRadius: 10,
     paddingHorizontal: 16,
     paddingRight: 40,
     fontSize: 16,
-    color: '#1f2937',
+    color: colors.textPrimary,
   },
   clearButton: {
     position: 'absolute',
@@ -228,19 +228,19 @@ const styles = StyleSheet.create({
   },
   clearButtonText: {
     fontSize: 16,
-    color: '#9ca3af',
+    color: colors.textMuted,
     fontWeight: '600',
   },
   searchButton: {
     width: 48,
     height: 48,
-    backgroundColor: Colors.yellow_green_400,
+    backgroundColor: colors.primary,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
   searchButtonDisabled: {
-    backgroundColor: '#d1d5db',
+    backgroundColor: colors.border,
   },
   searchButtonText: {
     fontSize: 20,
@@ -261,25 +261,25 @@ const styles = StyleSheet.create({
   stateTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1f2937',
+    color: colors.textPrimary,
     textAlign: 'center',
     marginBottom: 8,
   },
   stateSubtitle: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textSecondary,
     textAlign: 'center',
     lineHeight: 20,
   },
   retryButton: {
     marginTop: 24,
-    backgroundColor: Colors.yellow_green_400,
+    backgroundColor: colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
   },
   retryButtonText: {
-    color: '#ffffff',
+    color: colors.textInverted,
     fontWeight: '600',
     fontSize: 16,
   },

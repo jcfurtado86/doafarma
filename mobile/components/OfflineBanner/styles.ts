@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 
 export const styles = StyleSheet.create({
   banner: {
@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: Colors.red_600,
+    backgroundColor: colors.error,
     paddingVertical: 8,
     paddingHorizontal: 16,
     flexDirection: 'row',
@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
     zIndex: 9999,
   },
   text: {
-    color: Colors.white,
+    color: colors.white,
     fontSize: 13,
     fontWeight: '500',
   },

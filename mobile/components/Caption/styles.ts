@@ -1,10 +1,10 @@
-import { fontFamily } from '@/constants/styles/font-family';
+import { colors, typography } from '@/theme/tokens';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   caption: {
-    color: '#AFB2BF',
+    color: colors.textPlaceholder,
     fontSize: 16,
-    fontFamily: fontFamily.regular,
+    fontFamily: typography.fontFamily.regular,
   },
 });

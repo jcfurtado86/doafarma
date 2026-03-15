@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { colors } from '@/theme/tokens';
 
 export const styles = StyleSheet.create({
   imageBackground: {
@@ -7,7 +8,7 @@ export const styles = StyleSheet.create({
     height: '100%',
     resizeMode: 'cover',
     position: 'absolute',
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
   },
 
   container: {

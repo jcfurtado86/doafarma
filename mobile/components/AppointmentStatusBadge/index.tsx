@@ -6,13 +6,14 @@ import {
   APPOINTMENT_STATUS_COLORS,
 } from '@/types/medicationAppointment';
 import { a11y } from '@/utils/accessibility';
+import { colors, typography, spacing, radii } from '@/theme/tokens';
 
 interface AppointmentStatusBadgeProps {
   status: MedicationAppointmentStatus;
 }
 
 export function AppointmentStatusBadge({ status }: AppointmentStatusBadgeProps) {
-  const backgroundColor = APPOINTMENT_STATUS_COLORS[status] || '#9ca3af';
+  const backgroundColor = APPOINTMENT_STATUS_COLORS[status] || colors.textMuted;
   const label = APPOINTMENT_STATUS_LABELS[status] || status;
 
   return (
@@ -25,12 +26,12 @@ export function AppointmentStatusBadge({ status }: AppointmentStatusBadgeProps) 
 const styles = StyleSheet.create({
   badge: {
     paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.lg,
   },
   text: {
-    color: '#ffffff',
-    fontSize: 12,
-    fontWeight: '600',
+    color: colors.white,
+    fontSize: typography.caption.fontSize,
+    fontFamily: typography.fontFamily.semibold,
   },
 });

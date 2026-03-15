@@ -1,7 +1,7 @@
 import React, { memo, useMemo } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { MedicationOffering } from '@/types/medicationOffering';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { a11y } from '@/utils/accessibility';
 import { formatShortDate } from '@/utils/dateFormatters';
 
@@ -65,21 +65,21 @@ export const MedicationOfferingCard = memo(function MedicationOfferingCard({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
     borderLeftWidth: 4,
-    borderLeftColor: Colors.yellow_green_400,
+    borderLeftColor: colors.primary,
   },
   expiredCard: {
-    borderLeftColor: '#ef4444',
-    backgroundColor: '#fef2f2',
+    borderLeftColor: colors.error,
+    backgroundColor: colors.errorSurface,
   },
   header: {
     flexDirection: 'row',
@@ -90,14 +90,14 @@ const styles = StyleSheet.create({
   drugName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: colors.textPrimary,
     flex: 1,
   },
   expiredLabel: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#ef4444',
-    backgroundColor: '#fecaca',
+    color: colors.error,
+    backgroundColor: colors.errorSurface,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
@@ -107,16 +107,16 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   expiredText: {
-    color: '#ef4444',
+    color: colors.error,
     fontWeight: 'bold',
   },
   label: {
     fontWeight: '600',
-    color: '#374151',
+    color: colors.textPrimary,
   },
   actions: {
     flexDirection: 'row',
@@ -124,26 +124,26 @@ const styles = StyleSheet.create({
   },
   editButton: {
     flex: 1,
-    backgroundColor: Colors.yellow_green_400,
+    backgroundColor: colors.primary,
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 8,
     alignItems: 'center',
   },
   editButtonText: {
-    color: '#ffffff',
+    color: colors.textInverted,
     fontWeight: '600',
   },
   deleteButton: {
     flex: 1,
-    backgroundColor: '#ef4444',
+    backgroundColor: colors.error,
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 8,
     alignItems: 'center',
   },
   deleteButtonText: {
-    color: '#ffffff',
+    color: colors.textInverted,
     fontWeight: '600',
   },
 });

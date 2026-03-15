@@ -1,19 +1,19 @@
 import { StyleSheet } from 'react-native';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 
 export const styles = StyleSheet.create({
   card: {
-    backgroundColor: Colors.white,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: Colors.black,
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
     borderLeftWidth: 4,
-    borderLeftColor: Colors.blue_500,
+    borderLeftColor: colors.info,
   },
   header: {
     flexDirection: 'row',
@@ -25,13 +25,13 @@ export const styles = StyleSheet.create({
   drugName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: Colors.gray_800,
+    color: colors.textPrimary,
     flex: 1,
   },
   scheduleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.blue_50,
+    backgroundColor: colors.infoLight,
     padding: 12,
     borderRadius: 8,
     marginBottom: 12,
@@ -40,67 +40,67 @@ export const styles = StyleSheet.create({
   scheduleDate: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.blue_700,
+    color: colors.info,
   },
   scheduleTime: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.blue_700,
+    color: colors.info,
   },
   addressContainer: {
     marginBottom: 8,
   },
   addressTitle: {
     fontSize: 12,
-    color: Colors.gray_500,
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   addressName: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.gray_800,
+    color: colors.textPrimary,
   },
   addressText: {
     fontSize: 13,
-    color: Colors.gray_600,
+    color: colors.textSecondary,
   },
   details: {
     marginBottom: 4,
   },
   detailText: {
     fontSize: 14,
-    color: Colors.gray_500,
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   label: {
     fontWeight: '600',
-    color: Colors.gray_700,
+    color: colors.textPrimary,
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.gray_200,
+    backgroundColor: colors.border,
     marginVertical: 8,
   },
   statusContainer: {
-    backgroundColor: Colors.yellow_100,
+    backgroundColor: colors.warningSurface,
     padding: 10,
     borderRadius: 8,
     marginTop: 8,
   },
   statusText: {
     fontSize: 13,
-    color: Colors.amber_900,
+    color: colors.warningText,
     textAlign: 'center',
     fontWeight: '500',
   },
   proposalStatusContainer: {
-    backgroundColor: Colors.amber_50,
+    backgroundColor: colors.warningSurface,
     borderLeftWidth: 3,
-    borderLeftColor: Colors.yellow_500,
+    borderLeftColor: colors.warning,
   },
   proposalStatusText: {
     fontSize: 13,
-    color: Colors.amber_900,
+    color: colors.warningText,
     textAlign: 'center',
     fontWeight: '600',
   },
@@ -117,16 +117,16 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   acceptButton: {
-    backgroundColor: Colors.yellow_green_500,
+    backgroundColor: colors.primaryPressed,
   },
   counterProposeButton: {
-    backgroundColor: Colors.blue_500,
+    backgroundColor: colors.info,
   },
   confirmButton: {
-    backgroundColor: Colors.yellow_green_500,
+    backgroundColor: colors.primaryPressed,
   },
   buttonText: {
-    color: Colors.white,
+    color: colors.textInverted,
     fontWeight: '600',
     fontSize: 14,
   },

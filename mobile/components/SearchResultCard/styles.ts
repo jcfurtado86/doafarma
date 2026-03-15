@@ -1,23 +1,23 @@
 import { StyleSheet } from 'react-native';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 
 export const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
     borderLeftWidth: 4,
-    borderLeftColor: Colors.yellow_green_400,
+    borderLeftColor: colors.primary,
   },
   expiredCard: {
-    borderLeftColor: '#ef4444',
-    backgroundColor: '#fef2f2',
+    borderLeftColor: colors.error,
+    backgroundColor: colors.errorSurface,
   },
   pressableContent: {
     flexDirection: 'row',
@@ -35,21 +35,21 @@ export const styles = StyleSheet.create({
   drugName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: colors.textPrimary,
     flex: 1,
   },
   expiredLabel: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#ef4444',
-    backgroundColor: '#fecaca',
+    color: colors.error,
+    backgroundColor: colors.errorSurface,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
   },
   substance: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textSecondary,
     marginBottom: 8,
   },
   details: {
@@ -57,19 +57,19 @@ export const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: 13,
-    color: '#6b7280',
+    color: colors.textSecondary,
   },
   expiredText: {
-    color: '#ef4444',
+    color: colors.error,
     fontWeight: '600',
   },
   label: {
     fontWeight: '600',
-    color: '#374151',
+    color: colors.textPrimary,
   },
   doctorText: {
     fontSize: 12,
-    color: '#9ca3af',
+    color: colors.textMuted,
     marginTop: 6,
   },
   chevron: {
@@ -77,6 +77,6 @@ export const styles = StyleSheet.create({
   },
   chevronText: {
     fontSize: 18,
-    color: '#9ca3af',
+    color: colors.textMuted,
   },
 });

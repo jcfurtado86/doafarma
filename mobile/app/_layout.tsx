@@ -4,11 +4,12 @@ import { useEffect, useRef } from 'react';
 import 'react-native-reanimated';
 
 import {
-  Roboto_400Regular,
-  Roboto_500Medium,
-  Roboto_700Bold,
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
   useFonts,
-} from '@expo-google-fonts/roboto';
+} from '@expo-google-fonts/inter';
 import { StatusBar } from 'expo-status-bar';
 import { useAuthStore } from '@/stores/authStore';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
@@ -35,9 +36,10 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    Roboto_500Medium,
-    Roboto_400Regular,
-    Roboto_700Bold,
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
   });
 
   const checkAuth = useAuthStore((state) => state.checkAuth);

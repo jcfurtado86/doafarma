@@ -2,7 +2,7 @@ import React, { memo, useMemo } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { MedicationRequest } from '@/types/medicationRequest';
 import { RequestStatusBadge } from '@/components/RequestStatusBadge';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { a11y } from '@/utils/accessibility';
 import { formatShortDate, formatDateTime } from '@/utils/dateFormatters';
 
@@ -115,17 +115,17 @@ export const MedicationRequestCard = memo(function MedicationRequestCard({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
     borderLeftWidth: 4,
-    borderLeftColor: Colors.yellow_green_400,
+    borderLeftColor: colors.primary,
   },
   header: {
     flexDirection: 'row',
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   drugName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: colors.textPrimary,
     flex: 1,
   },
   details: {
@@ -145,21 +145,21 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   label: {
     fontWeight: '600',
-    color: '#374151',
+    color: colors.textPrimary,
   },
   divider: {
     height: 1,
-    backgroundColor: '#e5e7eb',
+    backgroundColor: colors.border,
     marginVertical: 8,
   },
   dateText: {
     fontSize: 12,
-    color: '#9ca3af',
+    color: colors.textMuted,
     marginTop: 8,
   },
   actions: {
@@ -175,28 +175,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   confirmButton: {
-    backgroundColor: Colors.yellow_green_500,
+    backgroundColor: colors.primaryPressed,
   },
   rejectButton: {
-    backgroundColor: '#ef4444',
+    backgroundColor: colors.error,
   },
   scheduleButton: {
-    backgroundColor: '#3b82f6',
+    backgroundColor: colors.info,
   },
   buttonText: {
-    color: '#ffffff',
+    color: colors.textInverted,
     fontWeight: '600',
     fontSize: 14,
   },
   scheduledBadge: {
     marginTop: 12,
-    backgroundColor: '#dbeafe',
+    backgroundColor: colors.infoLight,
     padding: 10,
     borderRadius: 8,
     alignItems: 'center',
   },
   scheduledText: {
-    color: '#1d4ed8',
+    color: colors.info,
     fontWeight: '600',
     fontSize: 13,
   },

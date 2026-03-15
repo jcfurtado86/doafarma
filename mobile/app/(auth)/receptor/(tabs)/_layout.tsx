@@ -1,16 +1,16 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 
 export default function ReceptorTabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors.yellow_green_500,
-        tabBarInactiveTintColor: '#9ca3af',
+        tabBarActiveTintColor: colors.primaryPressed,
+        tabBarInactiveTintColor: colors.textMuted,
         tabBarStyle: {
-          backgroundColor: '#ffffff',
-          borderTopColor: '#e5e7eb',
+          backgroundColor: colors.surface,
+          borderTopColor: colors.border,
           height: 60,
           paddingBottom: 8,
           paddingTop: 8,
@@ -20,10 +20,10 @@ export default function ReceptorTabsLayout() {
           fontWeight: '600',
         },
         headerStyle: {
-          backgroundColor: '#ffffff',
+          backgroundColor: colors.surface,
         },
         headerTitleStyle: {
-          color: '#1f2937',
+          color: colors.textPrimary,
           fontWeight: '600',
         },
       }}

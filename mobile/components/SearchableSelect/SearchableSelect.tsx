@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { Controller, FieldValues, UseControllerProps } from 'react-hook-form';
 import { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { styles } from './styles';
 
 export interface SearchableSelectRef {
@@ -97,7 +97,7 @@ const SearchableSelect = forwardRef<SearchableSelectRef, SearchableSelectProps<a
               >
                 {isLoading ? (
                   <View style={styles.loadingRow}>
-                    <ActivityIndicator size="small" color={Colors.yellow_green_400} />
+                    <ActivityIndicator size="small" color={colors.primary} />
                     <Text style={styles.loadingText}>Carregando cidades...</Text>
                   </View>
                 ) : (
@@ -118,7 +118,7 @@ const SearchableSelect = forwardRef<SearchableSelectRef, SearchableSelectProps<a
                     <TextInput
                       style={styles.searchInput}
                       placeholder="Buscar cidade..."
-                      placeholderTextColor="#AFB2BF"
+                      placeholderTextColor={colors.textPlaceholder}
                       value={searchText}
                       onChangeText={setSearchText}
                       autoFocus

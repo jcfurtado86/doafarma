@@ -27,6 +27,7 @@ export const colors = {
   successSurface: '#f0fdf4',
   warning: '#f59e0b',
   warningSurface: '#fefce8',
+  warningText: '#92400e',
 
   statusProposed: '#f59e0b',
   statusConfirmed: '#4563EA',

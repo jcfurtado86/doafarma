@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
+import { colors } from '@/theme/tokens';
 import { getErrorMessage } from '@/types/errors';
 import { View, StyleSheet, FlatList, Alert } from 'react-native';
 import { toast } from '@/utils/toast';
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
   },
   header: {
     marginTop: 60,

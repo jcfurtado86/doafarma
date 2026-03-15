@@ -1,4 +1,4 @@
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -9,12 +9,12 @@ export const styles = StyleSheet.create({
   },
 
   arrowBackIcon: {
-    color: Colors.yellow_green_400,
+    color: colors.primary,
     alignSelf: 'center',
     marginVertical: 'auto',
   },
 
   arrowBackButtonPressed: {
-    color: Colors.yellow_green_500,
+    color: colors.primaryPressed,
   },
 });

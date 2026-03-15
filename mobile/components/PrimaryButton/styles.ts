@@ -1,10 +1,9 @@
-import { Colors } from '@/constants/Colors';
-import { fontFamily } from '@/constants/styles/font-family';
+import { colors, typography } from '@/theme/tokens';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   buttonPrimary: {
-    backgroundColor: Colors.yellow_green_400,
+    backgroundColor: colors.primary,
     paddingHorizontal: 16,
     borderRadius: 10,
     height: 56,
@@ -14,14 +13,14 @@ export const styles = StyleSheet.create({
   },
 
   buttonHover: {
-    backgroundColor: Colors.yellow_green_500,
+    backgroundColor: colors.primaryPressed,
   },
 
   buttonText: {
-    color: '#fff',
+    color: colors.textInverted,
     fontSize: 16,
     fontWeight: 'bold',
-    fontFamily: fontFamily.bold,
+    fontFamily: typography.fontFamily.bold,
     lineHeight: 56,
   },
 

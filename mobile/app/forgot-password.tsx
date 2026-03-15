@@ -18,7 +18,7 @@ import ArrowBackButton from '@/components/ArrowBackButton';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
 import { authService, AuthServiceError } from '@/services/authService';
 import { forgotPasswordSchema, ForgotPasswordFormData } from '@/utils/validation/authValidation';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function ForgotPasswordScreen() {
@@ -94,7 +94,7 @@ export default function ForgotPasswordScreen() {
 
           {error && (
             <View style={styles.errorContainer}>
-              <Ionicons name="alert-circle-outline" size={20} color="#DC2626" />
+              <Ionicons name="alert-circle-outline" size={20} color={colors.error} />
               <Text style={styles.errorText}>{error}</Text>
             </View>
           )}
@@ -120,7 +120,7 @@ export default function ForgotPasswordScreen() {
             <View style={styles.buttonContainer}>
               {isLoading ? (
                 <View style={styles.loadingButton}>
-                  <ActivityIndicator color="#FFFFFF" />
+                  <ActivityIndicator color={colors.textInverted} />
                   <Text style={styles.loadingText}>Enviando...</Text>
                 </View>
               ) : (
@@ -162,14 +162,14 @@ const styles = StyleSheet.create({
   errorContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEE2E2',
+    backgroundColor: colors.errorSurface,
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,
     gap: 8,
   },
   errorText: {
-    color: '#DC2626',
+    color: colors.error,
     fontSize: 14,
     flex: 1,
   },
@@ -183,13 +183,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.yellow_green_400,
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 8,
     gap: 8,
   },
   loadingText: {
-    color: '#FFFFFF',
+    color: colors.textInverted,
     fontSize: 16,
     fontWeight: '600',
   },

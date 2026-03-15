@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { useMedicationRequestStore } from '@/stores/medicationRequestStore';
 import { useMedicationAppointmentStore } from '@/stores/medicationAppointmentStore';
 import { MedicationRequestCard } from '@/components/MedicationRequestCard';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { MedicationRequest } from '@/types/medicationRequest';
 
 export default function ReceptorRequestsScreen() {
@@ -77,7 +77,7 @@ export default function ReceptorRequestsScreen() {
     <View style={styles.container}>
       {isLoading && requests.length === 0 ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.yellow_green_500} />
+          <ActivityIndicator size="large" color={colors.primaryPressed} />
           <Text style={styles.loadingText}>Carregando solicitações...</Text>
         </View>
       ) : (
@@ -90,8 +90,8 @@ export default function ReceptorRequestsScreen() {
             <RefreshControl
               refreshing={isLoading}
               onRefresh={handleRefresh}
-              colors={[Colors.yellow_green_500]}
-              tintColor={Colors.yellow_green_500}
+              colors={[colors.primaryPressed]}
+              tintColor={colors.primaryPressed}
             />
           }
           ListEmptyComponent={renderEmpty}
@@ -105,7 +105,7 @@ export default function ReceptorRequestsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: colors.background,
   },
   listContent: {
     padding: 16,
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textSecondary,
   },
   emptyContainer: {
     flex: 1,
@@ -134,18 +134,18 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   emptyText: {
     fontSize: 16,
-    color: '#6b7280',
+    color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: 8,
   },
   emptyHint: {
     fontSize: 14,
-    color: '#9ca3af',
+    color: colors.textMuted,
     textAlign: 'center',
   },
   errorContainer: {
@@ -160,13 +160,13 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
-    color: '#ef4444',
+    color: colors.error,
     textAlign: 'center',
     marginBottom: 16,
   },
   retryText: {
     fontSize: 16,
-    color: Colors.yellow_green_500,
+    color: colors.primaryPressed,
     fontWeight: '600',
   },
 });

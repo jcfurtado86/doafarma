@@ -1,4 +1,4 @@
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -14,22 +14,22 @@ export const styles = StyleSheet.create({
     height: 48,
     borderRadius: 10,
     fontSize: 16,
-    outlineColor: Colors.yellow_green_400,
-    backgroundColor: '#F7F7F7',
+    outlineColor: colors.primary,
+    backgroundColor: colors.surfaceSecondary,
   },
 
   selectContainerFocused: {
     borderWidth: 1,
-    borderColor: Colors.yellow_green_400,
+    borderColor: colors.primary,
   },
 
   selectContainerError: {
     borderWidth: 1,
-    borderColor: '#E53935',
+    borderColor: colors.errorBorder,
   },
 
   errorText: {
-    color: '#E53935',
+    color: colors.errorBorder,
     fontSize: 12,
     marginTop: 2,
     marginLeft: 4,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, Text, StyleSheet } from 'react-native';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 
 interface FilterButtonProps<T extends string> {
   value: T;
@@ -36,18 +36,18 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 8,
-    backgroundColor: Colors.gray_100,
+    backgroundColor: colors.background,
     alignItems: 'center',
   },
   filterButtonActive: {
-    backgroundColor: Colors.yellow_green_500,
+    backgroundColor: colors.primaryPressed,
   },
   filterButtonText: {
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.gray_500,
+    color: colors.textSecondary,
   },
   filterButtonTextActive: {
-    color: Colors.white,
+    color: colors.textInverted,
   },
 });

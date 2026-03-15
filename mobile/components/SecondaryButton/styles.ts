@@ -1,10 +1,9 @@
-import { Colors } from '@/constants/Colors';
-import { fontFamily } from '@/constants/styles/font-family';
+import { colors, typography } from '@/theme/tokens';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   buttonSecondary: {
-    backgroundColor: Colors.yellow_green_100,
+    backgroundColor: colors.primaryLight,
     paddingHorizontal: 16,
     borderRadius: 10,
     height: 56,
@@ -14,18 +13,18 @@ export const styles = StyleSheet.create({
   },
 
   buttonHoverSecondary: {
-    backgroundColor: Colors.yellow_green_200,
+    backgroundColor: colors.primaryLight,
   },
 
   buttonTextSecondary: {
-    color: Colors.yellow_green_400,
+    color: colors.primary,
     fontSize: 16,
-    fontFamily: fontFamily.bold,
+    fontFamily: typography.fontFamily.bold,
     lineHeight: 56,
   },
 
   buttonTextSecondaryHover: {
-    color: Colors.yellow_green_500,
+    color: colors.primaryPressed,
   },
 
   buttonDisabled: {

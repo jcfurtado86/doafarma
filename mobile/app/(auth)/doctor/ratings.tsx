@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
 import { useDoctorRatingStore } from '@/stores/doctorRatingStore';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { formatLongDate } from '@/utils/dateFormatters';
 import { DoctorRating, RATING_LABELS } from '@/types/doctorRating';
 
@@ -123,7 +123,7 @@ export default function DoctorRatingsScreen() {
     <View style={styles.container}>
       {isLoading && myRatings.length === 0 ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.yellow_green_500} />
+          <ActivityIndicator size="large" color={colors.primaryPressed} />
           <Text style={styles.loadingText}>Carregando avaliacoes...</Text>
         </View>
       ) : (
@@ -137,8 +137,8 @@ export default function DoctorRatingsScreen() {
             <RefreshControl
               refreshing={isLoading}
               onRefresh={fetchMyRatings}
-              colors={[Colors.yellow_green_500]}
-              tintColor={Colors.yellow_green_500}
+              colors={[colors.primaryPressed]}
+              tintColor={colors.primaryPressed}
             />
           }
           ListEmptyComponent={renderEmpty}
@@ -152,18 +152,18 @@ export default function DoctorRatingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: colors.background,
   },
   listContent: {
     padding: 16,
     flexGrow: 1,
   },
   summaryContainer: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   averageNumber: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: colors.textPrimary,
   },
   starsContainer: {
     flexDirection: 'row',
@@ -187,11 +187,11 @@ const styles = StyleSheet.create({
   },
   star: {
     fontSize: 20,
-    color: '#fbbf24',
+    color: colors.warning,
   },
   totalRatings: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textSecondary,
     marginTop: 4,
   },
   distributionContainer: {
@@ -204,33 +204,33 @@ const styles = StyleSheet.create({
   },
   distributionStar: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textSecondary,
     width: 40,
   },
   barContainer: {
     flex: 1,
     height: 8,
-    backgroundColor: '#e5e7eb',
+    backgroundColor: colors.border,
     borderRadius: 4,
     overflow: 'hidden',
   },
   barFill: {
     height: '100%',
-    backgroundColor: '#fbbf24',
+    backgroundColor: colors.warning,
     borderRadius: 4,
   },
   distributionCount: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textSecondary,
     width: 30,
     textAlign: 'right',
   },
   card: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -249,27 +249,27 @@ const styles = StyleSheet.create({
   },
   ratingLabel: {
     fontSize: 14,
-    color: '#1f2937',
+    color: colors.textPrimary,
     fontWeight: '500',
   },
   date: {
     fontSize: 12,
-    color: '#9ca3af',
+    color: colors.textMuted,
   },
   comment: {
     fontSize: 14,
-    color: '#4b5563',
+    color: colors.textSecondary,
     lineHeight: 20,
     marginBottom: 12,
   },
   cardFooter: {
     borderTopWidth: 1,
-    borderTopColor: '#f3f4f6',
+    borderTopColor: colors.background,
     paddingTop: 12,
   },
   receptorName: {
     fontSize: 12,
-    color: '#6b7280',
+    color: colors.textSecondary,
   },
   loadingContainer: {
     flex: 1,
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textSecondary,
   },
   emptyContainer: {
     flex: 1,
@@ -295,18 +295,18 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   emptyText: {
     fontSize: 16,
-    color: '#6b7280',
+    color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: 8,
   },
   emptyHint: {
     fontSize: 14,
-    color: '#9ca3af',
+    color: colors.textMuted,
     textAlign: 'center',
   },
   errorContainer: {
@@ -321,13 +321,13 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
-    color: '#ef4444',
+    color: colors.error,
     textAlign: 'center',
     marginBottom: 16,
   },
   retryText: {
     fontSize: 16,
-    color: Colors.yellow_green_500,
+    color: colors.primaryPressed,
     fontWeight: '600',
   },
 });

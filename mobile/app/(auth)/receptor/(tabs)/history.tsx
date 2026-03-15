@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { router } from 'expo-router';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { Pagination } from '@/constants/Pagination';
 import { formatLongDate } from '@/utils/dateFormatters';
 import { MedicationAppointment } from '@/types/medicationAppointment';
@@ -165,7 +165,7 @@ export default function ReceptorHistoryScreen() {
 
       {isLoading && history.length === 0 ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.yellow_green_500} />
+          <ActivityIndicator size="large" color={colors.primaryPressed} />
           <Text style={styles.loadingText}>Carregando histórico...</Text>
         </View>
       ) : (
@@ -178,8 +178,8 @@ export default function ReceptorHistoryScreen() {
             <RefreshControl
               refreshing={false}
               onRefresh={refresh}
-              colors={[Colors.yellow_green_500]}
-              tintColor={Colors.yellow_green_500}
+              colors={[colors.primaryPressed]}
+              tintColor={colors.primaryPressed}
             />
           }
           onEndReached={loadMore}
@@ -196,22 +196,22 @@ export default function ReceptorHistoryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: colors.border,
   },
   headerTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1f2937',
+    color: colors.textPrimary,
   },
   headerSubtitle: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textSecondary,
     marginTop: 4,
   },
   listContent: {
@@ -219,10 +219,10 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   card: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     marginBottom: 12,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -234,25 +234,25 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#f0fdf4',
+    backgroundColor: colors.successSurface,
     borderBottomWidth: 1,
-    borderBottomColor: '#dcfce7',
+    borderBottomColor: colors.successSurface,
   },
   medicationName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1f2937',
+    color: colors.textPrimary,
     flex: 1,
     marginRight: 8,
   },
   statusBadge: {
-    backgroundColor: '#22c55e',
+    backgroundColor: colors.success,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
   },
   statusText: {
-    color: '#ffffff',
+    color: colors.textInverted,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -265,17 +265,17 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textSecondary,
     width: 100,
   },
   infoValue: {
     fontSize: 14,
-    color: '#1f2937',
+    color: colors.textPrimary,
     flex: 1,
   },
   divider: {
     height: 1,
-    backgroundColor: '#e5e7eb',
+    backgroundColor: colors.border,
     marginVertical: 12,
   },
   dateRow: {
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textSecondary,
   },
   loadingContainer: {
     flex: 1,
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textSecondary,
   },
   emptyContainer: {
     flex: 1,
@@ -313,18 +313,18 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   emptyText: {
     fontSize: 16,
-    color: '#6b7280',
+    color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: 8,
   },
   emptyHint: {
     fontSize: 14,
-    color: '#9ca3af',
+    color: colors.textMuted,
     textAlign: 'center',
   },
   errorContainer: {
@@ -339,20 +339,20 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
-    color: '#ef4444',
+    color: colors.error,
     textAlign: 'center',
     marginBottom: 16,
   },
   retryText: {
     fontSize: 16,
-    color: Colors.yellow_green_500,
+    color: colors.primaryPressed,
     fontWeight: '600',
   },
   rateButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.yellow_green_500,
+    backgroundColor: colors.primaryPressed,
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   rateButtonText: {
-    color: '#ffffff',
+    color: colors.textInverted,
     fontSize: 14,
     fontWeight: '600',
   },

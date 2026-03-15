@@ -1,10 +1,11 @@
 import { StyleSheet } from 'react-native';
+import { colors } from '@/theme/tokens';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
   },
   loadingContainer: {
     flex: 1,
@@ -14,16 +15,16 @@ export const styles = StyleSheet.create({
   loadingText: {
     marginTop: 12,
     fontSize: 16,
-    color: '#333',
+    color: colors.textPrimary,
   },
   errorContainer: {
-    backgroundColor: '#FFEBEE',
+    backgroundColor: colors.errorSurface,
     padding: 10,
     borderRadius: 8,
     marginVertical: 12,
   },
   errorText: {
-    color: '#E53935',
+    color: colors.errorBorder,
     fontSize: 14,
     textAlign: 'center',
   },

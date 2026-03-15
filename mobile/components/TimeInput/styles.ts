@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 
 export const styles = StyleSheet.create({
   container: {
@@ -7,18 +7,18 @@ export const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: Colors.gray_300,
+    borderColor: colors.border,
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    color: Colors.gray_800,
-    backgroundColor: Colors.white,
+    color: colors.textPrimary,
+    backgroundColor: colors.surface,
   },
   inputError: {
-    borderColor: Colors.red_500,
+    borderColor: colors.error,
   },
   errorText: {
-    color: Colors.red_500,
+    color: colors.error,
     fontSize: 12,
     marginTop: 4,
   },

@@ -14,7 +14,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { a11y } from '@/utils/accessibility';
 
 interface SelectProps<T extends FieldValues = FieldValues> {
@@ -109,7 +109,7 @@ const Select = forwardRef<Picker<string | number> | { focus: () => void } | null
                   <Picker.Item
                     label={selectProps.placeholder}
                     value=""
-                    color={selectProps.selectedValue ? undefined : '#AFB2BF'}
+                    color={selectProps.selectedValue ? undefined : colors.textPlaceholder}
                     enabled={!isFocused}
                   />
                   {children}
@@ -156,7 +156,7 @@ const Select = forwardRef<Picker<string | number> | { focus: () => void } | null
                     style={[
                       selectStyle,
                       {
-                        color: field.value ? '#222' : '#AFB2BF',
+                        color: field.value ? colors.textPrimary : colors.textPlaceholder,
                         paddingVertical: 12,
                         paddingLeft: 16,
                       },
@@ -182,7 +182,7 @@ const Select = forwardRef<Picker<string | number> | { focus: () => void } | null
                   >
                     <View
                       style={{
-                        backgroundColor: '#fff',
+                        backgroundColor: colors.surface,
                         borderRadius: 12,
                         maxHeight: '70%',
                         paddingVertical: 8,
@@ -199,7 +199,7 @@ const Select = forwardRef<Picker<string | number> | { focus: () => void } | null
                                 paddingVertical: 16,
                                 paddingHorizontal: 20,
                                 borderBottomWidth: 1,
-                                borderBottomColor: '#eee',
+                                borderBottomColor: colors.border,
                               }}
                               onPress={() => {
                                 field.onChange(item.value);
@@ -212,7 +212,7 @@ const Select = forwardRef<Picker<string | number> | { focus: () => void } | null
                               <Text
                                 style={{
                                   fontSize: 16,
-                                  color: isSelected ? Colors.yellow_green_500 : '#222',
+                                  color: isSelected ? colors.primaryPressed : colors.textPrimary,
                                   fontWeight: isSelected ? 'bold' : 'normal',
                                 }}
                               >
@@ -231,7 +231,7 @@ const Select = forwardRef<Picker<string | number> | { focus: () => void } | null
                             accessibilityRole="button"
                             accessibilityLabel="Cancelar seleção"
                           >
-                            <Text style={{ color: '#AFB2BF' }}>Cancelar</Text>
+                            <Text style={{ color: colors.textPlaceholder }}>Cancelar</Text>
                           </TouchableOpacity>
                         }
                       />

@@ -23,7 +23,7 @@ import { useFeatureForm } from '@/hooks/useFeatureForm';
 import { authService, AuthServiceError } from '@/services/authService';
 import { resetPasswordSchema, ResetPasswordFormData } from '@/utils/validation/authValidation';
 import { parseResetLink } from '@/utils/parseResetLink';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function ResetPasswordScreen() {
@@ -160,7 +160,7 @@ export default function ResetPasswordScreen() {
 
           {error && (
             <View style={styles.errorContainer}>
-              <Ionicons name="alert-circle-outline" size={20} color="#DC2626" />
+              <Ionicons name="alert-circle-outline" size={20} color={colors.error} />
               <Text style={styles.errorText}>{error}</Text>
             </View>
           )}
@@ -169,7 +169,7 @@ export default function ResetPasswordScreen() {
             {isManual && !linkPasted && (
               <View style={styles.pasteContainer}>
                 <TouchableOpacity style={styles.pasteButton} onPress={handlePasteLink}>
-                  <Ionicons name="clipboard-outline" size={20} color={Colors.yellow_green_600} />
+                  <Ionicons name="clipboard-outline" size={20} color={colors.primaryPressed} />
                   <Text style={styles.pasteButtonText}>Colar link</Text>
                 </TouchableOpacity>
                 <Text style={styles.pasteHint}>
@@ -180,7 +180,7 @@ export default function ResetPasswordScreen() {
 
             {isManual && linkPasted && (
               <View style={styles.successBadge}>
-                <Ionicons name="checkmark-circle-outline" size={20} color={Colors.green_600} />
+                <Ionicons name="checkmark-circle-outline" size={20} color={colors.success} />
                 <Text style={styles.successBadgeText}>Link lido com sucesso</Text>
               </View>
             )}
@@ -227,7 +227,7 @@ export default function ResetPasswordScreen() {
                 <Ionicons
                   name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                   size={24}
-                  color={Colors.yellow_green_600}
+                  color={colors.primaryPressed}
                 />
               </TouchableOpacity>
             </View>
@@ -257,7 +257,7 @@ export default function ResetPasswordScreen() {
                 <Ionicons
                   name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'}
                   size={24}
-                  color={Colors.yellow_green_600}
+                  color={colors.primaryPressed}
                 />
               </TouchableOpacity>
             </View>
@@ -265,7 +265,7 @@ export default function ResetPasswordScreen() {
             <View style={styles.buttonContainer}>
               {isLoading ? (
                 <View style={styles.loadingButton}>
-                  <ActivityIndicator color="#FFFFFF" />
+                  <ActivityIndicator color={colors.textInverted} />
                   <Text style={styles.loadingText}>Redefinindo...</Text>
                 </View>
               ) : (
@@ -307,14 +307,14 @@ const styles = StyleSheet.create({
   errorContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEE2E2',
+    backgroundColor: colors.errorSurface,
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,
     gap: 8,
   },
   errorText: {
-    color: '#DC2626',
+    color: colors.error,
     fontSize: 14,
     flex: 1,
   },
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: Colors.yellow_green_600,
+    borderColor: colors.primaryPressed,
     borderStyle: 'dashed',
     borderRadius: 8,
     paddingVertical: 16,
@@ -337,12 +337,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   pasteButtonText: {
-    color: Colors.yellow_green_600,
+    color: colors.primaryPressed,
     fontSize: 16,
     fontWeight: '600',
   },
   pasteHint: {
-    color: Colors.gray_500,
+    color: colors.textSecondary,
     fontSize: 12,
     marginTop: 8,
     textAlign: 'center',
@@ -350,14 +350,14 @@ const styles = StyleSheet.create({
   successBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.green_50,
+    backgroundColor: colors.successSurface,
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,
     gap: 8,
   },
   successBadgeText: {
-    color: Colors.green_600,
+    color: colors.success,
     fontSize: 14,
   },
   passwordContainer: {
@@ -376,13 +376,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.yellow_green_400,
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 8,
     gap: 8,
   },
   loadingText: {
-    color: '#FFFFFF',
+    color: colors.textInverted,
     fontSize: 16,
     fontWeight: '600',
   },

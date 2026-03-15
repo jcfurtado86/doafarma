@@ -6,7 +6,7 @@ import { UserStatus } from '@/types/user';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import SecondaryButton from '@/components/SecondaryButton';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function PendingApprovalScreen() {
@@ -31,7 +31,7 @@ export default function PendingApprovalScreen() {
           <Ionicons
             name={isRejected ? 'close-circle-outline' : 'time-outline'}
             size={80}
-            color={isRejected ? '#DC2626' : Colors.yellow_green_600}
+            color={isRejected ? colors.error : colors.primaryPressed}
           />
         </View>
 
@@ -46,11 +46,11 @@ export default function PendingApprovalScreen() {
 
         <View style={styles.infoContainer}>
           <View style={styles.infoItem}>
-            <Ionicons name="person-outline" size={20} color={Colors.yellow_green_600} />
+            <Ionicons name="person-outline" size={20} color={colors.primaryPressed} />
             <Caption>{user?.name}</Caption>
           </View>
           <View style={styles.infoItem}>
-            <Ionicons name="mail-outline" size={20} color={Colors.yellow_green_600} />
+            <Ionicons name="mail-outline" size={20} color={colors.primaryPressed} />
             <Caption>{user?.email}</Caption>
           </View>
         </View>

@@ -3,7 +3,7 @@ import { useRouter, Href } from 'expo-router';
 import { useAuthStore } from '@/stores/authStore';
 import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
   },
   content: {
     flex: 1,
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   },
   email: {
     fontSize: 16,
-    color: Colors.yellow_green_500,
+    color: colors.primaryPressed,
     marginTop: 8,
   },
   footer: {

@@ -13,7 +13,7 @@ import { toast } from '@/utils/toast';
 import { useMedicationRequestStore } from '@/stores/medicationRequestStore';
 import { MedicationRequestCard } from '@/components/MedicationRequestCard';
 import { FilterButton } from '@/components/FilterButton';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { MedicationRequest, MedicationRequestStatus } from '@/types/medicationRequest';
 
 type FilterOption = 'all' | MedicationRequestStatus;
@@ -170,7 +170,7 @@ export default function DoctorReceivedRequestsScreen() {
 
       {isLoading && receivedRequests.length === 0 ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.yellow_green_500} />
+          <ActivityIndicator size="large" color={colors.primaryPressed} />
           <Text style={styles.loadingText}>Carregando solicitações...</Text>
         </View>
       ) : (
@@ -183,8 +183,8 @@ export default function DoctorReceivedRequestsScreen() {
             <RefreshControl
               refreshing={isLoading}
               onRefresh={loadRequests}
-              colors={[Colors.yellow_green_500]}
-              tintColor={Colors.yellow_green_500}
+              colors={[colors.primaryPressed]}
+              tintColor={colors.primaryPressed}
             />
           }
           ListEmptyComponent={renderEmpty}
@@ -198,15 +198,15 @@ export default function DoctorReceivedRequestsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: colors.background,
   },
   filterContainer: {
     flexDirection: 'row',
     padding: 12,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     gap: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: colors.border,
   },
   listContent: {
     padding: 16,
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textSecondary,
   },
   emptyContainer: {
     flex: 1,
@@ -235,12 +235,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   emptyText: {
     fontSize: 16,
-    color: '#6b7280',
+    color: colors.textSecondary,
     textAlign: 'center',
   },
   errorContainer: {
@@ -255,13 +255,13 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
-    color: '#ef4444',
+    color: colors.error,
     textAlign: 'center',
     marginBottom: 16,
   },
   retryText: {
     fontSize: 16,
-    color: Colors.yellow_green_500,
+    color: colors.primaryPressed,
     fontWeight: '600',
   },
 });

@@ -1,4 +1,4 @@
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -11,17 +11,17 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: 48,
     borderRadius: 10,
-    backgroundColor: '#F7F7F7',
+    backgroundColor: colors.surfaceSecondary,
   },
 
   triggerFocused: {
     borderWidth: 1,
-    borderColor: Colors.yellow_green_400,
+    borderColor: colors.primary,
   },
 
   triggerError: {
     borderWidth: 1,
-    borderColor: '#E53935',
+    borderColor: colors.errorBorder,
   },
 
   triggerDisabled: {
@@ -30,13 +30,13 @@ export const styles = StyleSheet.create({
 
   triggerText: {
     fontSize: 16,
-    color: '#222',
+    color: colors.textPrimary,
     paddingVertical: 12,
     paddingLeft: 16,
   },
 
   placeholderText: {
-    color: '#AFB2BF',
+    color: colors.textPlaceholder,
   },
 
   loadingRow: {
@@ -48,18 +48,18 @@ export const styles = StyleSheet.create({
 
   loadingText: {
     fontSize: 14,
-    color: '#AFB2BF',
+    color: colors.textPlaceholder,
   },
 
   errorText: {
-    color: '#E53935',
+    color: colors.errorBorder,
     fontSize: 12,
     marginTop: 2,
     marginLeft: 4,
   },
 
   loadErrorText: {
-    color: '#E53935',
+    color: colors.errorBorder,
     fontSize: 12,
     marginTop: 2,
     marginLeft: 4,
@@ -67,13 +67,13 @@ export const styles = StyleSheet.create({
 
   modalOverlay: {
     flex: 1,
-    backgroundColor: Colors.overlay,
+    backgroundColor: colors.overlay,
     justifyContent: 'center',
     padding: 24,
   },
 
   modalContent: {
-    backgroundColor: Colors.white,
+    backgroundColor: colors.white,
     borderRadius: 12,
     maxHeight: '70%',
     overflow: 'hidden',
@@ -82,26 +82,26 @@ export const styles = StyleSheet.create({
   searchInput: {
     height: 48,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: colors.border,
     paddingHorizontal: 16,
     fontSize: 16,
-    color: '#222',
+    color: colors.textPrimary,
   },
 
   optionItem: {
     paddingVertical: 16,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: colors.border,
   },
 
   optionText: {
     fontSize: 16,
-    color: '#222',
+    color: colors.textPrimary,
   },
 
   optionTextSelected: {
-    color: Colors.yellow_green_500,
+    color: colors.primaryPressed,
     fontWeight: 'bold',
   },
 
@@ -112,18 +112,18 @@ export const styles = StyleSheet.create({
 
   emptyText: {
     fontSize: 14,
-    color: '#AFB2BF',
+    color: colors.textPlaceholder,
   },
 
   cancelButton: {
     paddingVertical: 16,
     alignItems: 'center',
     borderTopWidth: 1,
-    borderTopColor: '#eee',
+    borderTopColor: colors.border,
   },
 
   cancelText: {
-    color: '#AFB2BF',
+    color: colors.textPlaceholder,
     fontSize: 14,
   },
 });

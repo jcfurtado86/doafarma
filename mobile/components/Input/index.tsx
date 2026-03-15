@@ -11,6 +11,7 @@ import { styles } from './styles';
 import { Controller, FieldValues, UseControllerProps } from 'react-hook-form';
 import { forwardRef, useState } from 'react';
 import { a11y } from '@/utils/accessibility';
+import { colors } from '@/theme/tokens';
 
 interface InputProps<T extends FieldValues = FieldValues> {
   formProps: UseControllerProps<T>;
@@ -48,7 +49,7 @@ const Input = forwardRef<TextInput, InputProps<any>>(
               onChangeText={field.onChange}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-              placeholderTextColor={inputProps.placeholderTextColor ?? '#AFB2BF'}
+              placeholderTextColor={inputProps.placeholderTextColor ?? colors.textPlaceholder}
               {...inputProps}
             />
           )}

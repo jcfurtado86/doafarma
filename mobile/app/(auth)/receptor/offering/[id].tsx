@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { getErrorMessage } from '@/types/errors';
 import { View, Text, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Colors } from '@/constants/Colors';
+import { colors } from '@/theme/tokens';
 import { formatShortDate } from '@/utils/dateFormatters';
 import { MedicationOfferingSearchResult } from '@/types/medicationOffering';
 import { useMedicationRequestStore } from '@/stores/medicationRequestStore';
@@ -124,7 +124,7 @@ export default function OfferingDetailScreen() {
         {isAvailable ? (
           isRequesting ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="small" color={Colors.yellow_green_500} />
+              <ActivityIndicator size="small" color={colors.primaryPressed} />
               <Text style={styles.loadingText}>Enviando solicitação...</Text>
             </View>
           ) : (
@@ -147,7 +147,7 @@ export default function OfferingDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: colors.background,
   },
   content: {
     padding: 16,
@@ -158,44 +158,44 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#6b7280',
+    color: colors.textSecondary,
     letterSpacing: 0.5,
     marginBottom: 8,
   },
   card: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
     borderLeftWidth: 4,
-    borderLeftColor: Colors.yellow_green_400,
+    borderLeftColor: colors.primary,
   },
   expiredCard: {
-    borderLeftColor: '#ef4444',
+    borderLeftColor: colors.error,
   },
   drugName: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   drugSubstance: {
     fontSize: 16,
-    color: '#374151',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   drugDetail: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textSecondary,
     marginBottom: 2,
   },
   expiredBadge: {
     marginTop: 12,
-    backgroundColor: '#fecaca',
+    backgroundColor: colors.errorSurface,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 4,
@@ -204,32 +204,32 @@ const styles = StyleSheet.create({
   expiredBadgeText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#ef4444',
+    color: colors.error,
   },
   detailRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#f3f4f6',
+    borderBottomColor: colors.background,
   },
   detailLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#374151',
+    color: colors.textPrimary,
   },
   detailValue: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textSecondary,
   },
   expiredText: {
-    color: '#ef4444',
+    color: colors.error,
     fontWeight: '600',
   },
   doctorName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1f2937',
+    color: colors.textPrimary,
   },
   actionsContainer: {
     marginTop: 8,
@@ -240,25 +240,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: colors.background,
     borderRadius: 8,
     gap: 12,
   },
   loadingText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textSecondary,
   },
   unavailableBadge: {
     padding: 16,
-    backgroundColor: '#fef2f2',
+    backgroundColor: colors.errorSurface,
     borderRadius: 8,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#fecaca',
+    borderColor: colors.errorSurface,
   },
   unavailableText: {
     fontSize: 14,
-    color: '#ef4444',
+    color: colors.error,
     fontWeight: '500',
   },
   errorContainer: {
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 32,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: colors.background,
   },
   errorIcon: {
     fontSize: 48,
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
-    color: '#6b7280',
+    color: colors.textSecondary,
     textAlign: 'center',
   },
 });

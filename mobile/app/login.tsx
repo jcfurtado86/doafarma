@@ -15,8 +15,8 @@ import { useRouter, Href } from 'expo-router';
 import { useAuthStore } from '@/stores/authStore';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
-import { Input } from '@/components/Input';
-import { Button } from '@/components/ui';
+import { Button, Input } from '@/components/ui';
+import { Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
 import { authService, AuthServiceError } from '@/services/authService';
@@ -169,40 +169,46 @@ export default function LoginScreen() {
           )}
 
           <View style={styles.form}>
-            <Input
-              formProps={{
-                name: 'email',
-                control: control,
-              }}
-              inputProps={{
-                placeholder: 'E-mail',
-                keyboardType: 'email-address',
-                autoCapitalize: 'none',
-                autoComplete: 'email',
-                returnKeyType: 'next',
-                onSubmitEditing: () => passwordRef.current?.focus(),
-                editable: !isLoading,
-              }}
-              error={errors.email?.message}
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  placeholder="E-mail"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  returnKeyType="next"
+                  onSubmitEditing={() => passwordRef.current?.focus()}
+                  disabled={isLoading}
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={errors.email?.message}
+                />
+              )}
             />
 
             <View style={styles.passwordContainer}>
-              <Input
-                ref={passwordRef}
-                formProps={{
-                  name: 'password',
-                  control: control,
-                }}
-                inputProps={{
-                  placeholder: 'Senha',
-                  secureTextEntry: !showPassword,
-                  autoComplete: 'password',
-                  autoCapitalize: 'none',
-                  returnKeyType: 'done',
-                  onSubmitEditing: () => handleSubmit(handleLogin)(),
-                  editable: !isLoading,
-                }}
-                error={errors.password?.message}
+              <Controller
+                control={control}
+                name="password"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    ref={passwordRef}
+                    placeholder="Senha"
+                    secureTextEntry={!showPassword}
+                    autoComplete="password"
+                    autoCapitalize="none"
+                    returnKeyType="done"
+                    onSubmitEditing={() => handleSubmit(handleLogin)()}
+                    disabled={isLoading}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    error={errors.password?.message}
+                  />
+                )}
               />
               <TouchableOpacity
                 style={styles.eyeButton}

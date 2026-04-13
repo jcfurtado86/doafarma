@@ -7,9 +7,9 @@ import { useRouter } from 'expo-router';
 import { useMedicationOfferingStore } from '@/stores/medicationOfferingStore';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
-import { Input } from '@/components/Input';
+import { Button, Input } from '@/components/ui';
 import { Select, SelectItem } from '@/components/Select';
-import { Button } from '@/components/ui';
+import { Controller } from 'react-hook-form';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
 import api from '@/services/api';
 import { Drug } from '@/types/medicationOffering';
@@ -30,7 +30,6 @@ export default function CreateMedicationOfferingScreen() {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
-    setValue,
   } = useFeatureForm<CreateMedicationOfferingFormData>({
     schema: createMedicationOfferingSchema,
   });
@@ -107,54 +106,59 @@ export default function CreateMedicationOfferingScreen() {
           </Select>
         </InputRow>
 
-        <Input
-          ref={lotNumberRef}
-          formProps={{
-            name: 'lot_number',
-            control: control,
-          }}
-          inputProps={{
-            placeholder: 'Número do lote',
-            autoCapitalize: 'characters',
-            returnKeyType: 'next',
-            onSubmitEditing: () => expiresAtRef.current?.focus(),
-          }}
-          error={errors.lot_number?.message}
+        <Controller
+          control={control}
+          name="lot_number"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              ref={lotNumberRef}
+              placeholder="Número do lote"
+              autoCapitalize="characters"
+              returnKeyType="next"
+              onSubmitEditing={() => expiresAtRef.current?.focus()}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.lot_number?.message}
+            />
+          )}
         />
 
-        <Input
-          ref={expiresAtRef}
-          formProps={{
-            name: 'expires_at',
-            control: control,
-          }}
-          inputProps={{
-            placeholder: 'DD/MM/AAAA',
-            keyboardType: 'numeric',
-            maxLength: 10,
-            returnKeyType: 'next',
-            onSubmitEditing: () => quantityRef.current?.focus(),
-            onChangeText: (text) => {
-              const formatted = formatDateInput(text);
-              setValue('expires_at', formatted);
-            },
-          }}
-          error={errors.expires_at?.message}
+        <Controller
+          control={control}
+          name="expires_at"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              ref={expiresAtRef}
+              placeholder="DD/MM/AAAA"
+              keyboardType="numeric"
+              maxLength={10}
+              returnKeyType="next"
+              onSubmitEditing={() => quantityRef.current?.focus()}
+              value={value}
+              onChangeText={(text) => onChange(formatDateInput(text))}
+              onBlur={onBlur}
+              error={errors.expires_at?.message}
+            />
+          )}
         />
 
-        <Input
-          ref={quantityRef}
-          formProps={{
-            name: 'quantity',
-            control: control,
-          }}
-          inputProps={{
-            placeholder: 'Quantidade',
-            keyboardType: 'numeric',
-            returnKeyType: 'done',
-            onSubmitEditing: () => handleSubmit(handleCreateOffering)(),
-          }}
-          error={errors.quantity?.message}
+        <Controller
+          control={control}
+          name="quantity"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              ref={quantityRef}
+              placeholder="Quantidade"
+              keyboardType="numeric"
+              returnKeyType="done"
+              onSubmitEditing={() => handleSubmit(handleCreateOffering)()}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.quantity?.message}
+            />
+          )}
         />
 
         <View style={styles.buttonContainer}>

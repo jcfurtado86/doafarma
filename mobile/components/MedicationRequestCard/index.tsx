@@ -2,6 +2,7 @@ import React, { memo, useMemo } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { MedicationRequest } from '@/types/medicationRequest';
 import { RequestStatusBadge } from '@/components/RequestStatusBadge';
+import { Card } from '@/components/ui';
 import { colors } from '@/theme/tokens';
 import { a11y } from '@/utils/accessibility';
 import { formatShortDate, formatDateTime } from '@/utils/dateFormatters';
@@ -27,7 +28,7 @@ export const MedicationRequestCard = memo(function MedicationRequestCard({
   const isPending = useMemo(() => request.status === 'pending', [request.status]);
 
   return (
-    <View style={styles.card}>
+    <Card accent="primary" style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.drugName} numberOfLines={1}>
           {offering?.drug?.product_name || 'Medicamento'}
@@ -109,23 +110,13 @@ export const MedicationRequestCard = memo(function MedicationRequestCard({
           <Text style={styles.scheduledText}>Agendamento realizado</Text>
         </View>
       )}
-    </View>
+    </Card>
   );
 });
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 16,
+  container: {
     marginBottom: 12,
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.primary,
   },
   header: {
     flexDirection: 'row',

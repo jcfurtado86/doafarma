@@ -1,6 +1,7 @@
 import React, { memo, useMemo } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
 import { MedicationOfferingSearchResult } from '@/types/medicationOffering';
+import { Card } from '@/components/ui';
 import { formatShortDate } from '@/utils/dateFormatters';
 import { styles } from './styles';
 
@@ -8,8 +9,6 @@ interface SearchResultCardProps {
   offering: MedicationOfferingSearchResult;
   onPress: () => void;
 }
-
-const PRESSED_STYLE = { opacity: 0.8 } as const;
 
 export const SearchResultCard = memo(function SearchResultCard({
   offering,
@@ -21,15 +20,11 @@ export const SearchResultCard = memo(function SearchResultCard({
   );
 
   return (
-    <Pressable
-      style={({ pressed }) => [
-        styles.card,
-        isExpired && styles.expiredCard,
-        pressed && PRESSED_STYLE,
-      ]}
+    <Card
+      accent={isExpired ? 'error' : 'primary'}
       onPress={onPress}
+      style={[styles.container, isExpired && styles.expiredBackground]}
       accessibilityLabel={`${offering.drug.product_name}, ${offering.quantity} unidades, oferecido por ${offering.doctor.name}`}
-      accessibilityRole="button"
     >
       <View style={styles.pressableContent}>
         <View style={styles.content}>
@@ -60,6 +55,6 @@ export const SearchResultCard = memo(function SearchResultCard({
           <Text style={styles.chevronText}>›</Text>
         </View>
       </View>
-    </Pressable>
+    </Card>
   );
 });

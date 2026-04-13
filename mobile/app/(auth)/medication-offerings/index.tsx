@@ -7,7 +7,7 @@ import { useRouter } from 'expo-router';
 import { useMedicationOfferingStore } from '@/stores/medicationOfferingStore';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
-import PrimaryButton from '@/components/PrimaryButton';
+import { Button } from '@/components/ui';
 import { MedicationOfferingCard } from '@/components/MedicationOfferingCard';
 import type { MedicationOffering } from '@/types/medicationOffering';
 
@@ -97,7 +97,7 @@ export default function MedicationOfferingsScreen() {
       </View>
 
       <View style={styles.footer}>
-        <PrimaryButton
+        <Button
           label="Nova Oferta"
           onPress={() => router.push('/(auth)/medication-offerings/create')}
         />

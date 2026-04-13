@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, TextInput } from 'react-native';
 import { Input } from '@/components/Input';
-import PrimaryButton from '@/components/PrimaryButton';
+import { Button } from '@/components/ui';
 import { styles } from './styles';
 import { UseFormSetError } from 'react-hook-form';
 import { Title } from '@/components/Title';
@@ -220,7 +220,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <PrimaryButton onPress={() => handleSubmit(handleFinishRegistration)()} label="Próximo" />
+        <Button onPress={() => handleSubmit(handleFinishRegistration)()} label="Próximo" />
       </View>
     </>
   );

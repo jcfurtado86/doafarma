@@ -6,7 +6,7 @@ import { colors } from '@/theme/tokens';
 import { formatShortDate } from '@/utils/dateFormatters';
 import { MedicationOfferingSearchResult } from '@/types/medicationOffering';
 import { useMedicationRequestStore } from '@/stores/medicationRequestStore';
-import PrimaryButton from '@/components/PrimaryButton';
+import { Button } from '@/components/ui';
 
 export default function OfferingDetailScreen() {
   const { offering: offeringParam } = useLocalSearchParams<{ id: string; offering: string }>();
@@ -128,7 +128,7 @@ export default function OfferingDetailScreen() {
               <Text style={styles.loadingText}>Enviando solicitação...</Text>
             </View>
           ) : (
-            <PrimaryButton label="Solicitar Medicamento" onPress={handleRequestMedication} />
+            <Button label="Solicitar Medicamento" onPress={handleRequestMedication} />
           )
         ) : (
           <View style={styles.unavailableBadge}>

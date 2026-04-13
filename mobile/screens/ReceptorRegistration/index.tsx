@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useRouter, Href } from 'expo-router';
 import { Input } from '@/components/Input';
-import PrimaryButton from '@/components/PrimaryButton';
+import { Button } from '@/components/ui';
 import ArrowBackButton from '@/components/ArrowBackButton';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
@@ -313,7 +313,7 @@ export function ReceptorRegistrationScreen() {
         </View>
 
         <View style={styles.buttonContainer}>
-          <PrimaryButton onPress={() => handleSubmit(onSubmit)()} label="Criar Conta" />
+          <Button onPress={() => handleSubmit(onSubmit)()} label="Criar Conta" />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

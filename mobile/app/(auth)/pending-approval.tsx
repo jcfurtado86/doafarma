@@ -5,7 +5,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { UserStatus } from '@/types/user';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
-import SecondaryButton from '@/components/SecondaryButton';
+import { Button } from '@/components/ui';
 import { colors } from '@/theme/tokens';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -56,7 +56,7 @@ export default function PendingApprovalScreen() {
         </View>
 
         <View style={styles.buttonContainer}>
-          <SecondaryButton label="Sair" onPress={handleLogout} />
+          <Button variant="secondary" label="Sair" onPress={handleLogout} />
         </View>
       </View>
     </ImageBackground>

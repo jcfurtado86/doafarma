@@ -16,7 +16,7 @@ import { useRouter, useLocalSearchParams, Href } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
-import { Input } from '@/components/Input';
+import { Input } from '@/components/ui/Input';
 import PrimaryButton from '@/components/PrimaryButton';
 import ArrowBackButton from '@/components/ArrowBackButton';
 import { useFeatureForm } from '@/hooks/useFeatureForm';

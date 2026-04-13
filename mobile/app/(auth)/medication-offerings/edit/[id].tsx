@@ -7,7 +7,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useMedicationOfferingStore } from '@/stores/medicationOfferingStore';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
-import { Input } from '@/components/Input';
+import { Input } from '@/components/ui/Input';
 import { Select, SelectItem } from '@/components/Select';
 import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';

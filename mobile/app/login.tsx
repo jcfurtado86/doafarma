@@ -15,7 +15,7 @@ import { useRouter, Href } from 'expo-router';
 import { useAuthStore } from '@/stores/authStore';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
-import { Input } from '@/components/Input';
+import { Input } from '@/components/ui/Input';
 import PrimaryButton from '@/components/PrimaryButton';
 import { z } from 'zod';
 import { useFeatureForm } from '@/hooks/useFeatureForm';

@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { View, TextInput } from 'react-native';
-import { Input } from '@/components/Input';
+import { Input } from '@/components/ui/Input';
 import PrimaryButton from '@/components/PrimaryButton';
 import { styles } from './styles';
 import { UseFormSetError } from 'react-hook-form';

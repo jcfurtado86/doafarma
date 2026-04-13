@@ -10,7 +10,7 @@ import {
   Platform,
 } from 'react-native';
 import { useRouter, Href } from 'expo-router';
-import { Input } from '@/components/Input';
+import { Input } from '@/components/ui/Input';
 import PrimaryButton from '@/components/PrimaryButton';
 import ArrowBackButton from '@/components/ArrowBackButton';
 import { Title } from '@/components/Title';

@@ -8,7 +8,7 @@ import { useMedicationOfferingStore } from '@/stores/medicationOfferingStore';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import { Button, Input } from '@/components/ui';
-import { Select, SelectItem } from '@/components/Select';
+import { Select, SelectItem } from '@/components/ui/Select';
 import { Controller } from 'react-hook-form';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
 import api from '@/services/api';

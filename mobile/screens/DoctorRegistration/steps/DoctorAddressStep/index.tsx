@@ -6,7 +6,7 @@ import { Controller, UseFormSetError } from 'react-hook-form';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import { InputRow } from '@/components/InputRow';
-import { Select, SelectItem } from '@/components/Select';
+import { Select, SelectItem } from '@/components/ui/Select';
 import { SearchableSelect, SearchableSelectRef } from '@/components/SearchableSelect';
 import { Picker } from '@react-native-picker/picker';
 import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';

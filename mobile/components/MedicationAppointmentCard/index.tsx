@@ -3,6 +3,7 @@ import { View, Text, Pressable } from 'react-native';
 import { MedicationAppointment, Address } from '@/types/medicationAppointment';
 import { AppointmentStatusBadge } from '@/components/AppointmentStatusBadge';
 import { CounterProposeModal } from '@/components/CounterProposeModal';
+import { Card } from '@/components/ui';
 import {
   canRespond,
   canConfirm,
@@ -54,7 +55,7 @@ export const MedicationAppointmentCard = memo(function MedicationAppointmentCard
 
   return (
     <>
-      <View style={styles.card}>
+      <Card accent="info" style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.drugName} numberOfLines={1}>
             {offering?.drug?.product_name || 'Medicamento'}
@@ -158,7 +159,7 @@ export const MedicationAppointmentCard = memo(function MedicationAppointmentCard
             </Pressable>
           </View>
         )}
-      </View>
+      </Card>
 
       <CounterProposeModal
         visible={showCounterProposeModal}

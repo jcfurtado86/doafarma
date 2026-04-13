@@ -6,9 +6,8 @@ import { Controller, UseFormSetError } from 'react-hook-form';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import { InputRow } from '@/components/InputRow';
-import { Select, SelectItem } from '@/components/ui/Select';
+import { Select, SelectItem, type SelectHandle } from '@/components/ui/Select';
 import { SearchableSelect, SearchableSelectRef } from '@/components/SearchableSelect';
-import { Picker } from '@react-native-picker/picker';
 import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
 import { BRAZILIAN_STATES } from '@/constants/BrazilianStates';
 import { z } from 'zod';
@@ -86,7 +85,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
   }
 
   const cepRef = useRef<TextInput>(null);
-  const ufRef = useRef<Picker<string | number>>(null);
+  const ufRef = useRef<SelectHandle>(null);
   const cityRef = useRef<SearchableSelectRef | null>(null);
   const neighborhoodRef = useRef<TextInput>(null);
   const streetRef = useRef<TextInput>(null);
@@ -134,23 +133,28 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
           )}
         />
         <InputRow>
-          <Select
-            ref={ufRef}
-            formProps={{
-              name: 'addresses[0].uf',
-              control: control,
-            }}
-            selectProps={{
-              placeholder: 'Estado',
-            }}
-            error={errors.addresses?.[0]?.uf?.message}
-            containerStyle={{ flex: 1 }}
-            nextRef={cityRef}
-          >
-            {BRAZILIAN_STATES.map((state) => (
-              <SelectItem key={state.value} label={state.label} value={state.value} />
-            ))}
-          </Select>
+          <Controller
+            control={control}
+            name="addresses.0.uf"
+            render={({ field: { value, onChange, onBlur } }) => (
+              <Select
+                ref={ufRef}
+                value={value}
+                onValueChange={(next) => {
+                  onChange(next);
+                  if (next) cityRef.current?.focus();
+                }}
+                onBlur={onBlur}
+                placeholder="Estado"
+                error={errors.addresses?.[0]?.uf?.message}
+                containerStyle={{ flex: 1 }}
+              >
+                {BRAZILIAN_STATES.map((state) => (
+                  <SelectItem key={state.value} label={state.label} value={state.value} />
+                ))}
+              </Select>
+            )}
+          />
           <SearchableSelect
             ref={cityRef}
             formProps={{

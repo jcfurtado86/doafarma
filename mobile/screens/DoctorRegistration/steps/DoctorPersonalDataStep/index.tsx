@@ -6,8 +6,7 @@ import { Controller, UseFormSetError } from 'react-hook-form';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import { InputRow } from '@/components/InputRow';
-import { Select, SelectItem } from '@/components/ui/Select';
-import { Picker } from '@react-native-picker/picker';
+import { Select, SelectItem, type SelectHandle } from '@/components/ui/Select';
 import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
 import { BRAZILIAN_STATES } from '@/constants/BrazilianStates';
 import { z } from 'zod';
@@ -68,7 +67,7 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
   }
 
   const crmRef = useRef<TextInput>(null);
-  const crmUf = useRef<Picker<string | number>>(null);
+  const crmUf = useRef<SelectHandle>(null);
   const dddRef = useRef<TextInput>(null);
   const phoneRef = useRef<TextInput>(null);
   const emailRef = useRef<TextInput>(null);
@@ -117,23 +116,28 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
               />
             )}
           />
-          <Select
-            ref={crmUf}
-            formProps={{
-              name: 'crm_uf',
-              control: control,
-            }}
-            selectProps={{
-              placeholder: 'UF',
-            }}
-            error={errors.crm_uf?.message}
-            containerStyle={{ flex: 1 }}
-            nextRef={dddRef}
-          >
-            {BRAZILIAN_STATES.map((state) => (
-              <SelectItem key={state.value} label={state.label} value={state.value} />
-            ))}
-          </Select>
+          <Controller
+            control={control}
+            name="crm_uf"
+            render={({ field: { value, onChange, onBlur } }) => (
+              <Select
+                ref={crmUf}
+                value={value}
+                onValueChange={(next) => {
+                  onChange(next);
+                  if (next) dddRef.current?.focus();
+                }}
+                onBlur={onBlur}
+                placeholder="UF"
+                error={errors.crm_uf?.message}
+                containerStyle={{ flex: 1 }}
+              >
+                {BRAZILIAN_STATES.map((state) => (
+                  <SelectItem key={state.value} label={state.label} value={state.value} />
+                ))}
+              </Select>
+            )}
+          />
         </InputRow>
         <InputRow>
           <Controller

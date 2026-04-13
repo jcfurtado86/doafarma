@@ -1,253 +1,255 @@
-import { styles } from './styles';
-import { Controller, FieldValues, UseControllerProps } from 'react-hook-form';
-import { forwardRef, useImperativeHandle, useState } from 'react';
-import { Picker, PickerProps } from '@react-native-picker/picker';
+import {
+  Children,
+  forwardRef,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import {
   FlatList,
   Modal,
   Platform,
   Pressable,
-  StyleProp,
+  type StyleProp,
   Text,
-  TextStyle,
   TouchableOpacity,
   View,
-  ViewStyle,
+  type ViewStyle,
 } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import { colors } from '@/theme/tokens';
-import { a11y } from '@/utils/accessibility';
+import { styles } from './styles';
 
-interface SelectProps<T extends FieldValues = FieldValues> {
-  formProps: UseControllerProps<T>;
-  selectProps: PickerProps;
-  children: React.ReactNode;
-  containerStyle?: StyleProp<ViewStyle>;
-  selectViewStyle?: StyleProp<ViewStyle>;
-  selectStyle?: StyleProp<TextStyle>;
-  nextRef?: React.RefObject<{ focus: () => void } | null>;
-  error?: string;
+export type SelectSize = 'sm' | 'md' | 'lg';
+
+export interface SelectHandle {
+  focus: () => void;
+  blur: () => void;
 }
 
-/**
- * Select - Componente multiplataforma para seleção de opções.
- *
- * - No Android, utiliza o Picker nativo e o ref é do tipo Picker.
- * - No iOS, utiliza um Modal customizado e o ref expõe apenas o método `focus()`, para navegação entre campos.
- * - O tipo do ref é polimórfico para garantir integração fluida com formulários e navegação por teclado.
- *
- * Caso novas plataformas sejam adicionadas, adapte a lógica de ref conforme a necessidade.
- */
-const Select = forwardRef<Picker<string | number> | { focus: () => void } | null, SelectProps<any>>(
+export interface SelectProps {
+  value: string;
+  onValueChange: (value: string) => void;
+  onBlur?: () => void;
+  onFocus?: () => void;
+  placeholder?: string;
+  label?: string;
+  error?: string;
+  helperText?: string;
+  size?: SelectSize;
+  disabled?: boolean;
+  children: ReactNode;
+  containerStyle?: StyleProp<ViewStyle>;
+  accessibilityLabel?: string;
+  testID?: string;
+}
+
+const triggerSizeMap = {
+  sm: styles.triggerSm,
+  md: styles.triggerMd,
+  lg: styles.triggerLg,
+} as const;
+
+type SelectItemElement = ReactElement<{ label: string; value: string }>;
+
+const extractOptions = (children: ReactNode): { label: string; value: string }[] =>
+  Children.toArray(children)
+    .filter((child): child is SelectItemElement => {
+      if (!isValidElement(child)) return false;
+      const props = (child as SelectItemElement).props;
+      return typeof props?.label === 'string' && typeof props?.value === 'string';
+    })
+    .map((child) => ({ label: child.props.label, value: child.props.value }));
+
+export const Select = forwardRef<SelectHandle, SelectProps>(
   (
     {
-      formProps,
-      selectProps,
+      value,
+      onValueChange,
+      onBlur,
+      onFocus,
+      placeholder,
+      label,
+      error,
+      helperText,
+      size = 'md',
+      disabled = false,
       children,
       containerStyle,
-      selectViewStyle,
-      selectStyle,
-      nextRef,
-      error,
+      accessibilityLabel,
+      testID,
     },
     ref
   ) => {
+    const pickerRef = useRef<Picker<string>>(null);
     const [isFocused, setIsFocused] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
-    const hasError = !!error;
+    const hasError = Boolean(error);
 
-    useImperativeHandle(ref, () => ({
-      // No iOS, expõe apenas o método focus para abrir o modal ao navegar com "next"
-      focus: () => setModalVisible(true),
-    }));
+    useImperativeHandle(
+      ref,
+      () => ({
+        focus: () => {
+          if (Platform.OS === 'android') {
+            pickerRef.current?.focus();
+          } else {
+            setModalVisible(true);
+          }
+        },
+        blur: () => {
+          if (Platform.OS === 'android') {
+            pickerRef.current?.blur();
+          } else {
+            setModalVisible(false);
+          }
+        },
+      }),
+      []
+    );
 
-    const options = Array.isArray(children)
-      ? (children as React.ReactElement<{ label: string; value: string | number }>[]).map(
-          (child) => ({
-            label: child.props.label,
-            value: child.props.value,
-          })
-        )
-      : [];
+    const options = extractOptions(children);
+    const selectedLabel = options.find((opt) => opt.value === value)?.label ?? '';
+    const showPlaceholder = !value || !selectedLabel;
+    const displayText = showPlaceholder ? (placeholder ?? '') : selectedLabel;
+    const a11yLabel = label ?? accessibilityLabel ?? placeholder ?? 'Selecione uma opção';
+    const isTriggerFocused = Platform.OS === 'android' ? isFocused : modalVisible;
+
+    const triggerStyle = [
+      styles.trigger,
+      triggerSizeMap[size],
+      isTriggerFocused && !hasError && !disabled && styles.triggerFocused,
+      hasError && styles.triggerError,
+      disabled && styles.triggerDisabled,
+    ];
+
+    const renderFeedback = () => {
+      if (hasError) return <Text style={styles.errorText}>{error}</Text>;
+      if (helperText) return <Text style={styles.helperText}>{helperText}</Text>;
+      return null;
+    };
 
     if (Platform.OS === 'android') {
-      // ...dentro do bloco Android...
       return (
-        <View
-          style={[
-            styles.container,
-            hasError ? { marginBottom: 8 } : { marginBottom: 16 },
-            containerStyle,
-          ]}
-        >
-          <Controller
-            render={({ field }) => (
-              <View
-                style={[
-                  styles.selectContainer,
-                  isFocused && styles.selectContainerFocused,
-                  hasError && styles.selectContainerError,
-                  selectViewStyle,
-                ]}
-                {...a11y.input(selectProps.placeholder ?? 'Selecione uma opção')}
-              >
-                <Picker
-                  // No Android, o ref é passado para o Picker para suportar navegação entre campos
-                  ref={ref as React.Ref<Picker<string | number>>}
-                  style={[selectStyle]}
-                  onFocus={() => setIsFocused(true)}
-                  onBlur={() => setIsFocused(false)}
-                  onValueChange={(itemValue) => {
-                    field.onChange(itemValue);
-
-                    if (nextRef && itemValue) {
-                      nextRef.current?.focus();
-                    }
-                  }}
-                  selectedValue={field.value}
-                  {...selectProps}
-                >
-                  <Picker.Item
-                    label={selectProps.placeholder}
-                    value=""
-                    color={selectProps.selectedValue ? undefined : colors.textPlaceholder}
-                    enabled={!isFocused}
-                  />
-                  {children}
-                </Picker>
-              </View>
-            )}
-            {...formProps}
-          />
-          {hasError && <Text style={styles.errorText}>{error}</Text>}
+        <View style={[styles.container, containerStyle]} testID={testID}>
+          {label && <Text style={styles.label}>{label}</Text>}
+          <View
+            style={triggerStyle}
+            accessibilityLabel={a11yLabel}
+            accessibilityState={{ disabled }}
+          >
+            <Picker
+              ref={pickerRef}
+              enabled={!disabled}
+              selectedValue={value}
+              onValueChange={(itemValue) => onValueChange(String(itemValue ?? ''))}
+              onFocus={() => {
+                setIsFocused(true);
+                onFocus?.();
+              }}
+              onBlur={() => {
+                setIsFocused(false);
+                onBlur?.();
+              }}
+            >
+              {placeholder && (
+                <Picker.Item label={placeholder} value="" color={colors.textPlaceholder} />
+              )}
+              {children}
+            </Picker>
+          </View>
+          {renderFeedback()}
         </View>
       );
     }
 
-    return (
-      // ...dentro do bloco iOS...
-      <View
-        style={[
-          styles.container,
-          hasError ? { marginBottom: 8 } : { marginBottom: 16 },
-          containerStyle,
-        ]}
-      >
-        <Controller
-          {...formProps}
-          render={({ field }) => {
-            const selectedLabel =
-              options.find((opt) => opt.value === field.value)?.label ||
-              selectProps.placeholder ||
-              '';
+    const closeModal = (didSelect: boolean, selectedValue?: string) => {
+      if (didSelect && selectedValue !== undefined) {
+        onValueChange(selectedValue);
+      }
+      setModalVisible(false);
+      onBlur?.();
+    };
 
-            return (
-              <>
-                <TouchableOpacity
-                  style={[
-                    styles.selectContainer,
-                    selectViewStyle,
-                    hasError && styles.selectContainerError,
-                    modalVisible && styles.selectContainerFocused,
-                  ]}
-                  onPress={() => setModalVisible(true)}
-                  activeOpacity={0.7}
-                >
-                  <Text
-                    style={[
-                      selectStyle,
-                      {
-                        color: field.value ? colors.textPrimary : colors.textPlaceholder,
-                        paddingVertical: 12,
-                        paddingLeft: 16,
-                      },
-                    ]}
-                  >
-                    {selectedLabel}
-                  </Text>
-                </TouchableOpacity>
-                <Modal
-                  visible={modalVisible}
-                  animationType="fade"
-                  transparent
-                  onRequestClose={() => setModalVisible(false)}
-                >
-                  <Pressable
-                    style={{
-                      flex: 1,
-                      backgroundColor: 'rgba(0,0,0,0.3)',
-                      justifyContent: 'center',
-                      padding: 24,
-                    }}
-                    onPress={() => setModalVisible(false)}
-                  >
-                    <View
-                      style={{
-                        backgroundColor: colors.surface,
-                        borderRadius: 12,
-                        maxHeight: '70%',
-                        paddingVertical: 8,
-                      }}
-                    >
-                      <FlatList
-                        data={options}
-                        keyExtractor={(item) => String(item.value)}
-                        renderItem={({ item }) => {
-                          const isSelected = field.value === item.value;
-                          return (
-                            <TouchableOpacity
-                              style={{
-                                paddingVertical: 16,
-                                paddingHorizontal: 20,
-                                borderBottomWidth: 1,
-                                borderBottomColor: colors.border,
-                              }}
-                              onPress={() => {
-                                field.onChange(item.value);
-                                setModalVisible(false);
-                                if (nextRef) nextRef.current?.focus();
-                              }}
-                              accessibilityRole="button"
-                              accessibilityLabel={`Selecionar opção: ${item.label}`}
-                            >
-                              <Text
-                                style={{
-                                  fontSize: 16,
-                                  color: isSelected ? colors.primaryPressed : colors.textPrimary,
-                                  fontWeight: isSelected ? 'bold' : 'normal',
-                                }}
-                              >
-                                {item.label}
-                              </Text>
-                            </TouchableOpacity>
-                          );
-                        }}
-                        ListFooterComponent={
-                          <TouchableOpacity
-                            style={{
-                              paddingVertical: 16,
-                              alignItems: 'center',
-                            }}
-                            onPress={() => setModalVisible(false)}
-                            accessibilityRole="button"
-                            accessibilityLabel="Cancelar seleção"
-                          >
-                            <Text style={{ color: colors.textPlaceholder }}>Cancelar</Text>
-                          </TouchableOpacity>
-                        }
-                      />
-                    </View>
-                  </Pressable>
-                </Modal>
-              </>
-            );
+    return (
+      <View style={[styles.container, containerStyle]} testID={testID}>
+        {label && <Text style={styles.label}>{label}</Text>}
+        <TouchableOpacity
+          style={triggerStyle}
+          disabled={disabled}
+          activeOpacity={0.7}
+          onPress={() => {
+            setModalVisible(true);
+            onFocus?.();
           }}
-        />
-        {hasError && <Text style={styles.errorText}>{error}</Text>}
+          accessibilityRole="button"
+          accessibilityLabel={a11yLabel}
+          accessibilityState={{ disabled }}
+        >
+          <Text
+            style={[
+              styles.triggerText,
+              showPlaceholder && styles.triggerTextPlaceholder,
+              disabled && styles.triggerTextDisabled,
+            ]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {displayText}
+          </Text>
+        </TouchableOpacity>
+        <Modal
+          visible={modalVisible}
+          animationType="fade"
+          transparent
+          onRequestClose={() => closeModal(false)}
+        >
+          <Pressable
+            style={styles.modalBackdrop}
+            onPress={() => closeModal(false)}
+            accessibilityLabel="Fechar seleção"
+          >
+            <View style={styles.modalContent}>
+              <FlatList
+                data={options}
+                keyExtractor={(item) => item.value}
+                renderItem={({ item }) => {
+                  const isSelected = value === item.value;
+                  return (
+                    <TouchableOpacity
+                      style={styles.modalItem}
+                      onPress={() => closeModal(true, item.value)}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Selecionar opção: ${item.label}`}
+                    >
+                      <Text
+                        style={[styles.modalItemText, isSelected && styles.modalItemTextSelected]}
+                      >
+                        {item.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                }}
+                ListFooterComponent={
+                  <TouchableOpacity
+                    style={styles.modalCancelButton}
+                    onPress={() => closeModal(false)}
+                    accessibilityRole="button"
+                    accessibilityLabel="Cancelar seleção"
+                  >
+                    <Text style={styles.modalCancelText}>Cancelar</Text>
+                  </TouchableOpacity>
+                }
+              />
+            </View>
+          </Pressable>
+        </Modal>
+        {renderFeedback()}
       </View>
     );
   }
 );
 
 Select.displayName = 'Select';
-
-export { Select };

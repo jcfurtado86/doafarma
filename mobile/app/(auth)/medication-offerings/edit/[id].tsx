@@ -8,7 +8,7 @@ import { useMedicationOfferingStore } from '@/stores/medicationOfferingStore';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import { Button, Input } from '@/components/ui';
-import { Select, SelectItem } from '@/components/ui/Select';
+import { Select, SelectItem, type SelectHandle } from '@/components/ui/Select';
 import { Controller } from 'react-hook-form';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
 import api from '@/services/api';
@@ -43,7 +43,7 @@ export default function EditMedicationOfferingScreen() {
     schema: updateMedicationOfferingSchema,
   });
 
-  const drugRef = useRef<any>(null);
+  const drugRef = useRef<SelectHandle>(null);
   const lotNumberRef = useRef<TextInput>(null);
   const expiresAtRef = useRef<TextInput>(null);
   const quantityRef = useRef<TextInput>(null);
@@ -124,23 +124,30 @@ export default function EditMedicationOfferingScreen() {
 
       <View style={styles.form}>
         <InputRow>
-          <Select
-            ref={drugRef}
-            formProps={{
-              name: 'drug_id',
-              control: control,
-            }}
-            selectProps={{
-              placeholder: loadingDrugs ? 'Carregando medicamentos...' : 'Selecione o medicamento',
-              enabled: false,
-            }}
-            nextRef={lotNumberRef}
-            error={errors.drug_id?.message}
-          >
-            {drugs.map((drug) => (
-              <SelectItem key={drug.id} label={drug.product_name} value={drug.id.toString()} />
-            ))}
-          </Select>
+          <Controller
+            control={control}
+            name="drug_id"
+            render={({ field: { value, onChange, onBlur } }) => (
+              <Select
+                ref={drugRef}
+                value={value}
+                onValueChange={(next) => {
+                  onChange(next);
+                  if (next) lotNumberRef.current?.focus();
+                }}
+                onBlur={onBlur}
+                placeholder={
+                  loadingDrugs ? 'Carregando medicamentos...' : 'Selecione o medicamento'
+                }
+                disabled
+                error={errors.drug_id?.message}
+              >
+                {drugs.map((drug) => (
+                  <SelectItem key={drug.id} label={drug.product_name} value={drug.id.toString()} />
+                ))}
+              </Select>
+            )}
+          />
         </InputRow>
 
         <Controller

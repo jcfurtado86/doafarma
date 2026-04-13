@@ -15,6 +15,7 @@ import { Caption } from '@/components/Caption';
 import { Input } from '@/components/ui/Input';
 import PrimaryButton from '@/components/PrimaryButton';
 import ArrowBackButton from '@/components/ArrowBackButton';
+import { Controller } from 'react-hook-form';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
 import { authService, AuthServiceError } from '@/services/authService';
 import { forgotPasswordSchema, ForgotPasswordFormData } from '@/utils/validation/authValidation';
@@ -100,21 +101,24 @@ export default function ForgotPasswordScreen() {
           )}
 
           <View style={styles.form}>
-            <Input
-              formProps={{
-                name: 'email',
-                control: control,
-              }}
-              inputProps={{
-                placeholder: 'E-mail',
-                keyboardType: 'email-address',
-                autoCapitalize: 'none',
-                autoComplete: 'email',
-                returnKeyType: 'done',
-                onSubmitEditing: () => handleSubmit(handleForgotPassword)(),
-                editable: !isLoading,
-              }}
-              error={errors.email?.message}
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  placeholder="E-mail"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  returnKeyType="done"
+                  onSubmitEditing={() => handleSubmit(handleForgotPassword)()}
+                  disabled={isLoading}
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={errors.email?.message}
+                />
+              )}
             />
 
             <View style={styles.buttonContainer}>

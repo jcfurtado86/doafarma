@@ -29,6 +29,7 @@
     "collectCoverageFrom": [
       "stores/**/*.{ts,tsx}",
       "services/**/*.{ts,tsx}",
+      "components/ui/**/*.{ts,tsx}",
       "!**/*.d.ts"
     ]
   },

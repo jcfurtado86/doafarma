@@ -1,5 +1,7 @@
 import { useNetworkStore, onReconnect } from '@/stores/networkStore';
 
+jest.mock('@/stores/networkStore', () => jest.requireActual('@/stores/networkStore'));
+
 describe('networkStore', () => {
   beforeEach(() => {
     // Reset store to initial state before each test

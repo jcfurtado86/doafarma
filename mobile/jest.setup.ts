@@ -45,6 +45,29 @@ jest.mock('@/services/pushNotificationService', () => ({
   removePushTokenFromBackend: jest.fn(),
 }));
 
+// Mock network store (used by <Button disableWhenOffline /> and services/api.ts)
+jest.mock('@/stores/networkStore', () => {
+  const state = {
+    isConnected: true,
+    isInternetReachable: null as boolean | null,
+    setNetworkState: jest.fn(),
+  };
+  const useNetworkStore = jest.fn((selector?: (s: typeof state) => unknown) =>
+    selector ? selector(state) : state
+  ) as jest.Mock & {
+    getState: jest.Mock;
+    setState: jest.Mock;
+    subscribe: jest.Mock;
+  };
+  useNetworkStore.getState = jest.fn(() => state);
+  useNetworkStore.setState = jest.fn();
+  useNetworkStore.subscribe = jest.fn(() => jest.fn());
+  return {
+    useNetworkStore,
+    onReconnect: jest.fn(() => jest.fn()),
+  };
+});
+
 // Silence console.error in tests (optional - can be removed if you want to see errors)
 // const originalError = console.error;
 // beforeAll(() => {

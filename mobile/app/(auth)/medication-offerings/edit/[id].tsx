@@ -9,8 +9,7 @@ import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import { Input } from '@/components/Input';
 import { Select, SelectItem } from '@/components/Select';
-import PrimaryButton from '@/components/PrimaryButton';
-import SecondaryButton from '@/components/SecondaryButton';
+import { Button } from '@/components/ui';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
 import api from '@/services/api';
 import { Drug } from '@/types/medicationOffering';
@@ -196,13 +195,13 @@ export default function EditMedicationOfferingScreen() {
         />
 
         <View style={styles.buttonContainer}>
-          <PrimaryButton
+          <Button
             label={isSubmitting ? 'Salvando...' : 'Salvar Alterações'}
             onPress={() => handleSubmit(handleUpdateOffering)()}
             disabled={isSubmitting}
           />
 
-          <SecondaryButton label="Cancelar" onPress={handleGoBack} />
+          <Button variant="secondary" label="Cancelar" onPress={handleGoBack} />
         </View>
       </View>
     </View>

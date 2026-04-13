@@ -13,7 +13,7 @@ import { useRouter, Href } from 'expo-router';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import { Input } from '@/components/Input';
-import PrimaryButton from '@/components/PrimaryButton';
+import { Button } from '@/components/ui';
 import ArrowBackButton from '@/components/ArrowBackButton';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
 import { authService, AuthServiceError } from '@/services/authService';
@@ -124,7 +124,7 @@ export default function ForgotPasswordScreen() {
                   <Text style={styles.loadingText}>Enviando...</Text>
                 </View>
               ) : (
-                <PrimaryButton
+                <Button
                   label="Enviar"
                   onPress={() => handleSubmit(handleForgotPassword)()}
                   disableWhenOffline

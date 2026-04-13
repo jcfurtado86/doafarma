@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { View, TextInput } from 'react-native';
 import { Input } from '@/components/Input';
-import PrimaryButton from '@/components/PrimaryButton';
+import { Button } from '@/components/ui';
 import { styles } from './styles';
 import { UseFormSetError } from 'react-hook-form';
 import { Title } from '@/components/Title';
@@ -206,7 +206,7 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
         />
       </View>
       <View style={styles.buttonContainer}>
-        <PrimaryButton onPress={() => handleSubmit(handleNextStep)()} label="Próximo" />
+        <Button onPress={() => handleSubmit(handleNextStep)()} label="Próximo" />
       </View>
     </>
   );

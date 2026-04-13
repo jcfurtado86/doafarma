@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, TouchableOpacity, ImageBackground } from 'react
 import { useRouter, Href } from 'expo-router';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
-import PrimaryButton from '@/components/PrimaryButton';
+import { Button } from '@/components/ui';
 import { colors } from '@/theme/tokens';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -28,7 +28,7 @@ export default function PasswordResetSentScreen() {
           </Caption>
 
           <View style={styles.buttonContainer}>
-            <PrimaryButton
+            <Button
               label="Ja tenho o codigo"
               onPress={() => router.push('/password-reset/manual' as Href)}
             />

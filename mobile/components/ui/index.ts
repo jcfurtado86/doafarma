@@ -5,5 +5,7 @@ export { Card } from './Card';
 export type { CardAccent, CardProps, CardVariant } from './Card';
 export { Input } from './Input';
 export type { InputProps, InputSize } from './Input';
+export { Modal } from './Modal';
+export type { ModalAnimation, ModalProps } from './Modal';
 export { Select, SelectItem } from './Select';
 export type { SelectHandle, SelectProps, SelectSize } from './Select';

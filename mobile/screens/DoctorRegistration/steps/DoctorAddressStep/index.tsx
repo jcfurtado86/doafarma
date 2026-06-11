@@ -104,7 +104,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
       <View style={styles.inputContainer}>
         <Input
           formProps={{
-            name: 'addresses[0].location_name',
+            name: 'addresses.0.location_name',
             control: control,
           }}
           inputProps={{
@@ -117,7 +117,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
         <Input
           ref={cepRef}
           formProps={{
-            name: 'addresses[0].cep',
+            name: 'addresses.0.cep',
             control: control,
           }}
           inputProps={{
@@ -132,7 +132,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
           <Select
             ref={ufRef}
             formProps={{
-              name: 'addresses[0].uf',
+              name: 'addresses.0.uf',
               control: control,
             }}
             selectProps={{
@@ -149,7 +149,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
           <SearchableSelect
             ref={cityRef}
             formProps={{
-              name: 'addresses[0].city',
+              name: 'addresses.0.city',
               control: control,
             }}
             placeholder="Cidade"
@@ -164,7 +164,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
         <Input
           ref={neighborhoodRef}
           formProps={{
-            name: 'addresses[0].neighborhood',
+            name: 'addresses.0.neighborhood',
             control: control,
           }}
           inputProps={{
@@ -178,7 +178,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
           <Input
             ref={streetRef}
             formProps={{
-              name: 'addresses[0].full_address',
+              name: 'addresses.0.full_address',
               control: control,
             }}
             inputProps={{
@@ -192,7 +192,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
           <Input
             ref={numberRef}
             formProps={{
-              name: 'addresses[0].number',
+              name: 'addresses.0.number',
               control: control,
             }}
             inputProps={{
@@ -208,7 +208,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
         <Input
           ref={complementRef}
           formProps={{
-            name: 'addresses[0].complement',
+            name: 'addresses.0.complement',
             control: control,
           }}
           inputProps={{

@@ -30,6 +30,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Override;
 
+/**
+ * @extends Resource<User>
+ */
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;

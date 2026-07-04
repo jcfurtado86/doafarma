@@ -74,26 +74,18 @@ describe('Activity Log Privacy', function (): void {
 
         $user->update(['cpf' => '14538220620']);
 
-        // Check activity log
-        $activity = DB::table('activity_log')
+        $activities = DB::table('activity_log')
             ->where('subject_type', User::class)
             ->where('subject_id', $user->id)
-            ->latest()
-            ->first();
+            ->get();
 
-        // If there's an activity log, CPF should not be in properties
-        if ($activity && $activity->properties) {
-            $properties = json_decode((string) $activity->properties, true);
-            expect($properties)->not->toHaveKey('old.cpf');
-            expect($properties)->not->toHaveKey('attributes.cpf');
+        expect($activities)->not->toBeEmpty();
 
-            if (isset($properties['old'])) {
-                expect($properties['old'])->not->toHaveKey('cpf');
-            }
+        foreach ($activities as $activity) {
+            $changes = json_decode((string) $activity->attribute_changes, true) ?? [];
 
-            if (isset($properties['attributes'])) {
-                expect($properties['attributes'])->not->toHaveKey('cpf');
-            }
+            expect($changes['old'] ?? [])->not->toHaveKey('cpf');
+            expect($changes['attributes'] ?? [])->not->toHaveKey('cpf');
         }
     });
 
@@ -104,24 +96,18 @@ describe('Activity Log Privacy', function (): void {
 
         $user->update(['phone_number' => '21987654321']);
 
-        // Check activity log
-        $activity = DB::table('activity_log')
+        $activities = DB::table('activity_log')
             ->where('subject_type', User::class)
             ->where('subject_id', $user->id)
-            ->latest()
-            ->first();
+            ->get();
 
-        // If there's an activity log, phone_number should not be in properties
-        if ($activity && $activity->properties) {
-            $properties = json_decode((string) $activity->properties, true);
+        expect($activities)->not->toBeEmpty();
 
-            if (isset($properties['old'])) {
-                expect($properties['old'])->not->toHaveKey('phone_number');
-            }
+        foreach ($activities as $activity) {
+            $changes = json_decode((string) $activity->attribute_changes, true) ?? [];
 
-            if (isset($properties['attributes'])) {
-                expect($properties['attributes'])->not->toHaveKey('phone_number');
-            }
+            expect($changes['old'] ?? [])->not->toHaveKey('phone_number');
+            expect($changes['attributes'] ?? [])->not->toHaveKey('phone_number');
         }
     });
 });

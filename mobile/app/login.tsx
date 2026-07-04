@@ -28,10 +28,11 @@ import { logger } from '@/utils/logger';
 
 const loginSchema = z.object({
   email: z
-    .string({ required_error: 'E-mail é obrigatório' })
-    .email('E-mail inválido')
+    .email({
+      error: (issue) => (issue.input === undefined ? 'E-mail é obrigatório' : 'E-mail inválido'),
+    })
     .max(255, 'E-mail não pode ter mais de 255 caracteres'),
-  password: z.string({ required_error: 'Senha é obrigatória' }).min(1, 'Senha é obrigatória'),
+  password: z.string({ error: 'Senha é obrigatória' }).min(1, 'Senha é obrigatória'),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;

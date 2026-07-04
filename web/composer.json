@@ -76,7 +76,10 @@
             "./vendor/bin/pest --parallel"
         ],
         "t": "@php -dxdebug.mode=off ./vendor/bin/pest",
-        "tp": "@php -dxdebug.mode=off ./vendor/bin/pest --parallel",
+        "tp": [
+            "@php -dxdebug.mode=off ./vendor/bin/pest --display-deprecations",
+            "@php -dxdebug.mode=off ./vendor/bin/pest --parallel --display-deprecations"
+        ],
         "td": "@php -dxdebug.mode=off ./vendor/bin/pest --dirty",
         "tr": "@php -dxdebug.mode=off ./vendor/bin/pest --retry",
         "tf": "@php -dxdebug.mode=off ./vendor/bin/pest --filter ",

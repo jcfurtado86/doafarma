@@ -12,6 +12,7 @@ use Spatie\Activitylog\Models\Activity;
 
 class ListActivityLogs extends ListRecords
 {
+    #[Override]
     protected static string $resource = ActivityLogResource::class;
 
     #[Override]

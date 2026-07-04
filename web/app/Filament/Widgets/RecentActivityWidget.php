@@ -15,12 +15,16 @@ use Spatie\Activitylog\Models\Activity;
 
 class RecentActivityWidget extends BaseWidget
 {
+    #[\Override]
     protected static ?int $sort = 2;
 
+    #[\Override]
     protected int | string | array $columnSpan = 'full';
 
+    #[\Override]
     protected static ?string $heading = 'Atividades Recentes';
 
+    #[\Override]
     public function table(Table $table): Table
     {
         return $table

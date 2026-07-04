@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @property Carbon $expires_at
@@ -24,8 +24,10 @@ class MedicationOffering extends Model
     use HasFactory;
     use LogsActivity;
 
+    #[\Override]
     protected $table = 'medication_offerings';
 
+    #[\Override]
     protected $fillable = [
         'doctor_id',
         'drug_id',
@@ -38,6 +40,7 @@ class MedicationOffering extends Model
     /**
      * The attributes that should be cast.
      */
+    #[\Override]
     public function casts(): array
     {
         return [
@@ -127,7 +130,7 @@ class MedicationOffering extends Model
         return LogOptions::defaults()
             ->logOnly(['doctor_id', 'drug_id', 'lot_number', 'expires_at', 'quantity', 'status'])
             ->logOnlyDirty()
-            ->dontSubmitEmptyLogs()
+            ->dontLogEmptyChanges()
             ->setDescriptionForEvent(fn (string $eventName): string => match ($eventName) {
                 'created' => "Oferta de medicamento #{$this->id} criada",
                 'updated' => "Oferta de medicamento #{$this->id} atualizada",

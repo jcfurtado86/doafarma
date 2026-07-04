@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class MedicationRequest extends Model
 {
@@ -19,8 +19,10 @@ class MedicationRequest extends Model
     use HasFactory;
     use LogsActivity;
 
+    #[\Override]
     protected $table = 'medication_requests';
 
+    #[\Override]
     protected $fillable = [
         'receptor_id',
         'medication_offering_id',
@@ -98,7 +100,7 @@ class MedicationRequest extends Model
         return LogOptions::defaults()
             ->logOnly(['receptor_id', 'medication_offering_id', 'status'])
             ->logOnlyDirty()
-            ->dontSubmitEmptyLogs()
+            ->dontLogEmptyChanges()
             ->setDescriptionForEvent(fn (string $eventName): string => match ($eventName) {
                 'created' => "Solicitação de medicamento #{$this->id} criada",
                 'updated' => "Solicitação de medicamento #{$this->id} atualizada",

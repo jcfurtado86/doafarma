@@ -39,8 +39,8 @@ describe('User Activity Logging', function (): void {
             ->first();
 
         expect($activity)->not->toBeNull()
-            ->and($activity->properties['old']['name'])->toBe('Old Name')
-            ->and($activity->properties['attributes']['name'])->toBe('New Name');
+            ->and($activity->attribute_changes['old']['name'])->toBe('Old Name')
+            ->and($activity->attribute_changes['attributes']['name'])->toBe('New Name');
     });
 
     it('does not log when unchanged fields are saved', function (): void {
@@ -89,8 +89,8 @@ describe('MedicationOffering Activity Logging', function (): void {
             ->first();
 
         expect($activity)->not->toBeNull()
-            ->and($activity->properties['old']['status'])->toBe('available')
-            ->and($activity->properties['attributes']['status'])->toBe('reserved');
+            ->and($activity->attribute_changes['old']['status'])->toBe('available')
+            ->and($activity->attribute_changes['attributes']['status'])->toBe('reserved');
     });
 });
 
@@ -127,8 +127,8 @@ describe('MedicationRequest Activity Logging', function (): void {
             ->first();
 
         expect($activity)->not->toBeNull()
-            ->and($activity->properties['old']['status'])->toBe('pending')
-            ->and($activity->properties['attributes']['status'])->toBe('confirmed');
+            ->and($activity->attribute_changes['old']['status'])->toBe('pending')
+            ->and($activity->attribute_changes['attributes']['status'])->toBe('confirmed');
     });
 });
 

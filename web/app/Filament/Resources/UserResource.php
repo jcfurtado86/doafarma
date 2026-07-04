@@ -35,14 +35,19 @@ use Override;
  */
 class UserResource extends Resource
 {
+    #[Override]
     protected static ?string $model = User::class;
 
+    #[Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-users';
 
+    #[Override]
     protected static ?string $modelLabel = 'Usuário';
 
+    #[Override]
     protected static ?string $pluralModelLabel = 'Usuários';
 
+    #[Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Gerenciamento';
 
     #[Override]
@@ -200,7 +205,7 @@ class UserResource extends Resource
                         activity()
                             ->performedOn($record)
                             ->causedBy(Auth::user())
-                            ->withProperties([
+                            ->withChanges([
                                 'old'        => ['status' => $oldStatus->value],
                                 'attributes' => ['status' => UserStatus::Approved->value],
                             ])
@@ -233,7 +238,7 @@ class UserResource extends Resource
                         activity()
                             ->performedOn($record)
                             ->causedBy(Auth::user())
-                            ->withProperties([
+                            ->withChanges([
                                 'old'        => ['status' => $oldStatus->value],
                                 'attributes' => ['status' => UserStatus::Rejected->value],
                             ])
@@ -269,7 +274,7 @@ class UserResource extends Resource
                                     activity()
                                         ->performedOn($record)
                                         ->causedBy(Auth::user())
-                                        ->withProperties([
+                                        ->withChanges([
                                             'old'        => ['status' => $oldStatus->value],
                                             'attributes' => ['status' => UserStatus::Approved->value],
                                         ])
@@ -304,7 +309,7 @@ class UserResource extends Resource
                                     activity()
                                         ->performedOn($record)
                                         ->causedBy(Auth::user())
-                                        ->withProperties([
+                                        ->withChanges([
                                             'old'        => ['status' => $oldStatus->value],
                                             'attributes' => ['status' => UserStatus::Rejected->value],
                                         ])

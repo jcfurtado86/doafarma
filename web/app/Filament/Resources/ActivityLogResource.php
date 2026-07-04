@@ -28,16 +28,22 @@ use Spatie\Activitylog\Models\Activity;
 
 class ActivityLogResource extends Resource
 {
+    #[Override]
     protected static ?string $model = Activity::class;
 
+    #[Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-list';
 
+    #[Override]
     protected static ?string $modelLabel = 'Registro de Atividade';
 
+    #[Override]
     protected static ?string $pluralModelLabel = 'Registros de Atividades';
 
+    #[Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Monitoramento';
 
+    #[Override]
     protected static ?int $navigationSort = 1;
 
     #[Override]
@@ -187,12 +193,12 @@ class ActivityLogResource extends Resource
                     ->columns(2),
                 \Filament\Schemas\Components\Section::make('Alterações')
                     ->schema([
-                        TextEntry::make('properties.old')
+                        TextEntry::make('attribute_changes.old')
                             ->label('Valores Anteriores')
                             ->formatStateUsing(fn ($state) => $state ? json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : 'N/A')
                             ->markdown()
                             ->columnSpanFull(),
-                        TextEntry::make('properties.attributes')
+                        TextEntry::make('attribute_changes.attributes')
                             ->label('Novos Valores')
                             ->formatStateUsing(fn ($state) => $state ? json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : 'N/A')
                             ->markdown()

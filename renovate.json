@@ -1,0 +1,57 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "config:recommended"
+    ],
+    "baseBranches": [
+        "develop"
+    ],
+    "dependencyDashboard": true,
+    "dependencyDashboardTitle": "Painel de dependências (Renovate)",
+    "dependencyDashboardApproval": true,
+    "timezone": "America/Sao_Paulo",
+    "labels": [
+        "dependencies"
+    ],
+    "packageRules": [
+        {
+            "description": "Agrupa pacotes do ecossistema Laravel num PR só",
+            "matchDatasources": ["packagist"],
+            "matchPackageNames": ["laravel/**", "illuminate/**"],
+            "groupName": "laravel"
+        },
+        {
+            "description": "Agrupa pacotes do Filament num PR só",
+            "matchDatasources": ["packagist"],
+            "matchPackageNames": ["filament/**"],
+            "groupName": "filament"
+        },
+        {
+            "description": "Mobile preso no Expo SDK 54 por decisão de projeto (Expo Go da loja não suporta SDK novo). Majors desses pacotes sobem juntos numa futura migração de SDK, não isoladamente.",
+            "matchFileNames": ["mobile/**"],
+            "matchUpdateTypes": ["major"],
+            "matchPackageNames": [
+                "expo*",
+                "@expo/**",
+                "react-native*",
+                "@react-native/**",
+                "@react-native-community/**",
+                "@react-native-async-storage/**",
+                "@react-native-picker/**",
+                "react",
+                "react-dom",
+                "react-test-renderer",
+                "@types/react",
+                "jest",
+                "jest-expo",
+                "@types/jest",
+                "babel-preset-expo",
+                "@babel/**",
+                "eslint",
+                "eslint-config-expo",
+                "@testing-library/react-native"
+            ],
+            "enabled": false
+        }
+    ]
+}

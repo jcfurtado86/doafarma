@@ -12,8 +12,10 @@ use Override;
 
 class RequestStatsWidget extends BaseWidget
 {
+    #[Override]
     protected static ?int $sort = 2;
 
+    #[Override]
     protected ?string $pollingInterval = '30s';
 
     #[Override]

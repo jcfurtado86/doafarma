@@ -15,6 +15,7 @@ class Doctor extends Model
     /** @use HasFactory<DoctorFactory> */
     use HasFactory;
 
+    #[\Override]
     protected $fillable = [
         'user_id',
         'crm',
@@ -27,6 +28,7 @@ class Doctor extends Model
     /**
      * @return array<string, string>
      */
+    #[\Override]
     protected function casts(): array
     {
         return [

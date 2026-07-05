@@ -10,7 +10,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ListReceptorHistoryAction
 {
-    private const PER_PAGE = 15;
+    private const int PER_PAGE = 15;
 
     /**
      * Execute the action to list receptor's completed appointments (medication history) with pagination.

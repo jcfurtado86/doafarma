@@ -16,6 +16,7 @@ class SendAppointmentRemindersCommand extends Command
      *
      * @var string
      */
+    #[\Override]
     protected $signature = 'appointments:send-reminders';
 
     /**
@@ -23,6 +24,7 @@ class SendAppointmentRemindersCommand extends Command
      *
      * @var string
      */
+    #[\Override]
     protected $description = 'Send reminder notifications for upcoming appointments';
 
     /**

@@ -10,7 +10,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ListDoctorDonationHistoryAction
 {
-    private const PER_PAGE = 15;
+    private const int PER_PAGE = 15;
 
     /**
      * Execute the action to list doctor's completed donations (history) with pagination.

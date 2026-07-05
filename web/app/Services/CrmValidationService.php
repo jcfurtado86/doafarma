@@ -11,16 +11,11 @@ use Illuminate\Support\Facades\Log;
 
 class CrmValidationService
 {
-    /**
-     * @param  string  $crm
-     * @param  string  $uf
-     * @return CrmValidationResult
-     */
     public function validate(string $crm, string $uf): CrmValidationResult
     {
         $cached = $this->getCachedRecord($crm, $uf);
 
-        if ($cached !== null) {
+        if ($cached instanceof CrmRecord) {
             return $this->buildResultFromRecord($cached);
         }
 
@@ -45,11 +40,6 @@ class CrmValidationService
         }
     }
 
-    /**
-     * @param  string  $crm
-     * @param  string  $uf
-     * @return CrmRecord|null
-     */
     private function getCachedRecord(string $crm, string $uf): ?CrmRecord
     {
         $record = CrmRecord::where('crm', $crm)->where('uf', $uf)->first();
@@ -61,10 +51,6 @@ class CrmValidationService
         return $record;
     }
 
-    /**
-     * @param  CrmRecord  $record
-     * @return CrmValidationResult
-     */
     private function buildResultFromRecord(CrmRecord $record): CrmValidationResult
     {
         return new CrmValidationResult(
@@ -76,12 +62,6 @@ class CrmValidationService
         );
     }
 
-    /**
-     * @param  string  $crm
-     * @param  string  $uf
-     * @param  string  $apiKey
-     * @return CrmValidationResult
-     */
     private function queryApi(string $crm, string $uf, string $apiKey): CrmValidationResult
     {
         $url     = config('services.consultacrm.url');
@@ -102,12 +82,6 @@ class CrmValidationService
         return $this->parseApiResponse($data, $crm, $uf);
     }
 
-    /**
-     * @param  mixed  $data
-     * @param  string  $crm
-     * @param  string  $uf
-     * @return CrmValidationResult
-     */
     private function parseApiResponse(mixed $data, string $crm, string $uf): CrmValidationResult
     {
         $item = $data['item'][0] ?? null;
@@ -125,7 +99,7 @@ class CrmValidationService
         }
 
         $statusRaw   = mb_strtolower(trim((string) ($item['situacao'] ?? '')));
-        $status      = empty($statusRaw) ? CrmStatus::Active : $this->mapStatus($statusRaw);
+        $status      = $statusRaw === '' || $statusRaw === '0' ? CrmStatus::Active : $this->mapStatus($statusRaw);
         $doctorName  = $item['nome'] ?? null;
         $specialties = $this->extractSpecialties($item);
 
@@ -140,10 +114,6 @@ class CrmValidationService
         );
     }
 
-    /**
-     * @param  string  $statusRaw
-     * @return CrmStatus
-     */
     private function mapStatus(string $statusRaw): CrmStatus
     {
         return match (true) {
@@ -171,12 +141,7 @@ class CrmValidationService
     }
 
     /**
-     * @param  string  $crm
-     * @param  string  $uf
-     * @param  CrmStatus  $status
-     * @param  string|null  $doctorName
      * @param  array<int, string>  $specialties
-     * @param  mixed  $rawResponse
      */
     private function upsertRecord(
         string $crm,
@@ -204,9 +169,6 @@ class CrmValidationService
         );
     }
 
-    /**
-     * @return CrmValidationResult
-     */
     private function unavailableResult(): CrmValidationResult
     {
         return new CrmValidationResult(

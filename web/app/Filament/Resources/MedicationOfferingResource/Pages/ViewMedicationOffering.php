@@ -9,5 +9,6 @@ use Filament\Resources\Pages\ViewRecord;
 
 class ViewMedicationOffering extends ViewRecord
 {
+    #[\Override]
     protected static string $resource = MedicationOfferingResource::class;
 }

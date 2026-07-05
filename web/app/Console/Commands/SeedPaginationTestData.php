@@ -23,8 +23,10 @@ use Illuminate\Support\Facades\DB;
  */
 class SeedPaginationTestData extends Command
 {
+    #[\Override]
     protected $signature = 'test:seed-pagination {--rollback : Remove os dados de teste}';
 
+    #[\Override]
     protected $description = 'Cria dados de teste para verificar paginação (temporário)';
 
     public function handle(): int
@@ -75,9 +77,9 @@ class SeedPaginationTestData extends Command
                 MedicationOffering::create([
                     'doctor_id'  => $doctor->id,
                     'drug_id'    => $drugs->random()->id,
-                    'quantity'   => rand(1, 10),
+                    'quantity'   => random_int(1, 10),
                     'lot_number' => 'TEST' . str_pad((string) $i, 4, '0', STR_PAD_LEFT),
-                    'expires_at' => now()->addMonths(rand(1, 12)),
+                    'expires_at' => now()->addMonths(random_int(1, 12)),
                     'notes'      => '[TESTE PAGINAÇÃO] Oferta de teste #' . $i,
                     'status'     => 'available',
                 ]);
@@ -93,7 +95,7 @@ class SeedPaginationTestData extends Command
                     'drug_id'    => $drugs->random()->id,
                     'quantity'   => 0, // Já foi doado
                     'lot_number' => 'HIST' . str_pad((string) $i, 4, '0', STR_PAD_LEFT),
-                    'expires_at' => now()->addMonths(rand(1, 6)),
+                    'expires_at' => now()->addMonths(random_int(1, 6)),
                     'notes'      => '[TESTE PAGINAÇÃO] Histórico #' . $i,
                     'status'     => 'completed',
                 ]);
@@ -110,12 +112,12 @@ class SeedPaginationTestData extends Command
                 MedicationAppointment::create([
                     'medication_request_id' => $request->id,
                     'address_id'            => $address->id,
-                    'scheduled_date'        => now()->subDays(rand(1, 30)),
-                    'scheduled_time'        => sprintf('%02d:00', rand(8, 18)),
+                    'scheduled_date'        => now()->subDays(random_int(1, 30)),
+                    'scheduled_time'        => sprintf('%02d:00', random_int(8, 18)),
                     'status'                => 'completed',
                     'receptor_confirmed'    => true,
                     'doctor_confirmed'      => true,
-                    'updated_at'            => now()->subDays(rand(1, 30)), // Variação para testar ordenação
+                    'updated_at'            => now()->subDays(random_int(1, 30)), // Variação para testar ordenação
                 ]);
             }
 

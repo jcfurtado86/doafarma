@@ -11,8 +11,10 @@ use Override;
 
 class DonationStatsWidget extends BaseWidget
 {
+    #[Override]
     protected static ?int $sort = 1;
 
+    #[Override]
     protected ?string $pollingInterval = '30s';
 
     #[Override]

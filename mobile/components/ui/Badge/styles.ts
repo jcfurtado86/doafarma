@@ -16,7 +16,7 @@ const sizeStyles: Record<Size, { container: ViewStyle; text: TextStyle }> = {
   sm: {
     container: {
       paddingHorizontal: spacing.sm,
-      paddingVertical: 2,
+      paddingVertical: spacing['2xs'],
       borderRadius: radii.md,
     },
     text: {

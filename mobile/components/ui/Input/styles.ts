@@ -26,19 +26,19 @@ export const styles = StyleSheet.create({
   sizeSm: {
     height: SIZE_HEIGHTS.sm,
     paddingHorizontal: spacing.sm,
-    fontSize: 14,
+    fontSize: typography.label.fontSize,
   },
 
   sizeMd: {
     height: SIZE_HEIGHTS.md,
     paddingHorizontal: spacing.md,
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
   },
 
   sizeLg: {
     height: SIZE_HEIGHTS.lg,
     paddingHorizontal: spacing.md,
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
   },
 
   focused: {
@@ -57,14 +57,14 @@ export const styles = StyleSheet.create({
   helperText: {
     ...typography.caption,
     color: colors.textMuted,
-    marginTop: 2,
+    marginTop: spacing['2xs'],
     marginLeft: spacing.xs,
   },
 
   errorText: {
     ...typography.caption,
     color: colors.errorBorder,
-    marginTop: 2,
+    marginTop: spacing['2xs'],
     marginLeft: spacing.xs,
   },
 });

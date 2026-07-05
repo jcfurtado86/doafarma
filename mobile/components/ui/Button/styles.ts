@@ -35,15 +35,15 @@ export const baseStyles = StyleSheet.create({
 export const sizeStyles: Record<ButtonSize, SizeStyles> = {
   sm: {
     container: { height: 40, paddingHorizontal: spacing.sm },
-    text: { fontSize: 14 },
+    text: { fontSize: typography.label.fontSize },
   },
   md: {
     container: { height: 48, paddingHorizontal: spacing.md },
-    text: { fontSize: 16 },
+    text: { fontSize: typography.body.fontSize },
   },
   lg: {
     container: { height: 56, paddingHorizontal: spacing.md },
-    text: { fontSize: 16 },
+    text: { fontSize: typography.body.fontSize },
   },
 };
 

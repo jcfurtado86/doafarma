@@ -51,7 +51,7 @@ export const styles = StyleSheet.create({
   },
 
   triggerText: {
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
     color: colors.textPrimary,
   },
 
@@ -66,20 +66,20 @@ export const styles = StyleSheet.create({
   helperText: {
     ...typography.caption,
     color: colors.textMuted,
-    marginTop: 2,
+    marginTop: spacing['2xs'],
     marginLeft: spacing.xs,
   },
 
   errorText: {
     ...typography.caption,
     color: colors.errorBorder,
-    marginTop: 2,
+    marginTop: spacing['2xs'],
     marginLeft: spacing.xs,
   },
 
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: colors.overlay,
     justifyContent: 'center',
     padding: spacing.lg,
   },
@@ -99,13 +99,13 @@ export const styles = StyleSheet.create({
   },
 
   modalItemText: {
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
     color: colors.textPrimary,
   },
 
   modalItemTextSelected: {
     color: colors.primaryPressed,
-    fontWeight: 'bold',
+    fontFamily: typography.fontFamily.bold,
   },
 
   modalCancelButton: {

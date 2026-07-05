@@ -12,6 +12,7 @@ use Override;
 
 class ListMedicationOfferings extends ListRecords
 {
+    #[Override]
     protected static string $resource = MedicationOfferingResource::class;
 
     #[Override]

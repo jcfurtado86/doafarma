@@ -14,6 +14,7 @@ class PushToken extends Model
     /** @use HasFactory<PushTokenFactory> */
     use HasFactory;
 
+    #[\Override]
     protected $fillable = [
         'user_id',
         'token',

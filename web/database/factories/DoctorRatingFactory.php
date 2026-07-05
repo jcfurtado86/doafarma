@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class DoctorRatingFactory extends Factory
 {
+    #[\Override]
     protected $model = DoctorRating::class;
 
     /**

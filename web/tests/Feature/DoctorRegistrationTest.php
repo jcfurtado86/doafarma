@@ -240,7 +240,7 @@ it('should reject registration when CRM is suspended', function (): void {
 
 it('should set user status to pending when API times out', function (): void {
     Http::fake([
-        '*consultacrm*' => function () {
+        '*consultacrm*' => function (): void {
             throw new Illuminate\Http\Client\ConnectionException('Connection timed out');
         },
     ]);

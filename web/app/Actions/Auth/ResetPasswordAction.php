@@ -16,7 +16,6 @@ class ResetPasswordAction
     /**
      * Execute the password reset action.
      *
-     * @param  ResetPasswordRequest  $request
      * @return string The password broker status
      */
     public function execute(ResetPasswordRequest $request): string

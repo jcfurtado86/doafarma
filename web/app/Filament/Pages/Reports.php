@@ -14,14 +14,19 @@ use Override;
 
 class Reports extends Page
 {
+    #[Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chart-bar';
 
+    #[Override]
     protected static ?string $navigationLabel = 'Relatórios';
 
+    #[Override]
     protected static ?string $title = 'Relatórios e Métricas';
 
+    #[Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Monitoramento';
 
+    #[Override]
     protected static ?int $navigationSort = 2;
 
     /**

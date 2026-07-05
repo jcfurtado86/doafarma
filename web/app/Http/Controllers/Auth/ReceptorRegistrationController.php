@@ -34,7 +34,7 @@ class ReceptorRegistrationController extends Controller
 
         $tokens = $createTokenPairAction->execute($user, $request->validated('device_name'));
 
-        return (new RegistrationResource(array_merge(['user' => $user], $tokens)))
+        return new RegistrationResource(array_merge(['user' => $user], $tokens))
             ->response()
             ->setStatusCode(JsonResponse::HTTP_CREATED);
     }

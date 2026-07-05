@@ -16,6 +16,7 @@ class SendExpirationAlertsCommand extends Command
      *
      * @var string
      */
+    #[\Override]
     protected $signature = 'medications:send-expiration-alerts';
 
     /**
@@ -23,6 +24,7 @@ class SendExpirationAlertsCommand extends Command
      *
      * @var string
      */
+    #[\Override]
     protected $description = 'Send notifications to doctors about medications near expiration date';
 
     /**

@@ -11,14 +11,18 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class TopDrugsWidget extends BaseWidget
 {
+    #[\Override]
     protected static ?int $sort = 5;
 
+    #[\Override]
     protected int | string | array $columnSpan = 'half';
 
+    #[\Override]
     protected static ?string $heading = 'Medicamentos Mais Doados';
 
     protected static ?string $pollingInterval = '60s';
 
+    #[\Override]
     public function table(Table $table): Table
     {
         return $table

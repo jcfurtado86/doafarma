@@ -80,10 +80,6 @@ class CreateDoctorAction
         });
     }
 
-    /**
-     * @param  CrmValidationResult  $result
-     * @return UserStatus
-     */
     private function determineUserStatus(CrmValidationResult $result): UserStatus
     {
         return $result->isApproved() ? UserStatus::Approved : UserStatus::Pending;

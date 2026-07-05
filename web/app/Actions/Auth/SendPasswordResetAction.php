@@ -11,8 +11,6 @@ class SendPasswordResetAction
 {
     /**
      * Send a password reset link to the given email.
-     *
-     * @param  ForgotPasswordRequest  $request
      */
     public function execute(ForgotPasswordRequest $request): void
     {

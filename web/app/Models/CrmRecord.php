@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CrmRecord extends Model
 {
+    #[\Override]
     protected $fillable = [
         'crm',
         'uf',
@@ -30,6 +31,7 @@ class CrmRecord extends Model
     /**
      * @return array<string, string>
      */
+    #[\Override]
     protected function casts(): array
     {
         return [
@@ -40,17 +42,11 @@ class CrmRecord extends Model
         ];
     }
 
-    /**
-     * @return bool
-     */
     public function isExpired(): bool
     {
         return $this->expires_at->isPast();
     }
 
-    /**
-     * @return bool
-     */
     public function isActive(): bool
     {
         return $this->status === 'ativo';

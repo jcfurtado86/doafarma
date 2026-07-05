@@ -10,12 +10,16 @@ use Override;
 
 class OfferingsLineChart extends ChartWidget
 {
+    #[Override]
     protected static bool $isDiscovered = false;
 
+    #[Override]
     protected ?string $heading = 'Ofertas - Últimos 7 dias';
 
+    #[Override]
     protected ?string $maxHeight = '250px';
 
+    #[Override]
     protected int | string | array $columnSpan = 1;
 
     #[Override]

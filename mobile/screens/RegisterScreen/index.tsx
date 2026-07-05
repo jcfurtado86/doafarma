@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter, Href } from 'expo-router';
 import { View, Image, ImageBackground } from 'react-native';
-import PrimaryButton from '@/components/PrimaryButton';
+import { Button } from '@/components/ui';
 import { styles } from './styles';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
@@ -25,15 +25,12 @@ export function RegisterScreen() {
         <View style={styles.choiceContainer}>
           <View style={styles.imageContainer}>
             <Image source={require('@/assets/images/Paciente.png')} style={styles.patientImage} />
-            <PrimaryButton
-              onPress={() => router.push('/register/receptor' as Href)}
-              label="Paciente"
-            />
+            <Button onPress={() => router.push('/register/receptor' as Href)} label="Paciente" />
           </View>
 
           <View style={styles.imageContainer}>
             <Image source={require('@/assets/images/Medico.png')} style={styles.doctorImage} />
-            <PrimaryButton onPress={() => router.push('/register/doctor?step=1')} label="Médico" />
+            <Button onPress={() => router.push('/register/doctor?step=1')} label="Médico" />
           </View>
         </View>
       </View>

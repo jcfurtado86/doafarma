@@ -10,9 +10,9 @@ import {
   Platform,
 } from 'react-native';
 import { useRouter, Href } from 'expo-router';
-import { Input } from '@/components/Input';
-import PrimaryButton from '@/components/PrimaryButton';
+import { Button, Input } from '@/components/ui';
 import ArrowBackButton from '@/components/ArrowBackButton';
+import { Controller } from 'react-hook-form';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
@@ -161,96 +161,99 @@ export function ReceptorRegistrationScreen() {
         )}
 
         <View style={styles.inputContainer}>
-          <Input
-            formProps={{
-              name: 'name',
-              control: control,
-            }}
-            inputProps={{
-              returnKeyType: 'next',
-              placeholder: 'Nome Completo',
-              autoCapitalize: 'words',
-              onSubmitEditing: () => emailRef.current?.focus(),
-            }}
-            error={errors.name?.message}
+          <Controller
+            control={control}
+            name="name"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                returnKeyType="next"
+                placeholder="Nome Completo"
+                autoCapitalize="words"
+                onSubmitEditing={() => emailRef.current?.focus()}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.name?.message}
+              />
+            )}
           />
 
-          <Input
-            ref={emailRef}
-            formProps={{
-              name: 'email',
-              control: control,
-            }}
-            inputProps={{
-              returnKeyType: 'next',
-              placeholder: 'Email',
-              keyboardType: 'email-address',
-              autoCapitalize: 'none',
-              autoComplete: 'email',
-              onSubmitEditing: () => cpfRef.current?.focus(),
-            }}
-            error={errors.email?.message}
+          <Controller
+            control={control}
+            name="email"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                ref={emailRef}
+                returnKeyType="next"
+                placeholder="Email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoComplete="email"
+                onSubmitEditing={() => cpfRef.current?.focus()}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.email?.message}
+              />
+            )}
           />
 
-          <Input
-            ref={cpfRef}
-            formProps={{
-              name: 'cpf',
-              control: control,
-              rules: {
-                onChange: (e: { target: { value: string } }) => {
-                  const formatted = formatCPF(e.target.value);
-                  setValue('cpf', formatted);
-                },
-              },
-            }}
-            inputProps={{
-              returnKeyType: 'next',
-              placeholder: 'CPF (000.000.000-00)',
-              keyboardType: 'numeric',
-              maxLength: 14,
-              onSubmitEditing: () => phoneRef.current?.focus(),
-            }}
-            error={errors.cpf?.message}
+          <Controller
+            control={control}
+            name="cpf"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                ref={cpfRef}
+                returnKeyType="next"
+                placeholder="CPF (000.000.000-00)"
+                keyboardType="numeric"
+                maxLength={14}
+                onSubmitEditing={() => phoneRef.current?.focus()}
+                value={value}
+                onChangeText={(text) => onChange(formatCPF(text))}
+                onBlur={onBlur}
+                error={errors.cpf?.message}
+              />
+            )}
           />
 
-          <Input
-            ref={phoneRef}
-            formProps={{
-              name: 'phone_number',
-              control: control,
-              rules: {
-                onChange: (e: { target: { value: string } }) => {
-                  const formatted = formatPhone(e.target.value);
-                  setValue('phone_number', formatted);
-                },
-              },
-            }}
-            inputProps={{
-              returnKeyType: 'next',
-              placeholder: 'Telefone (00) 00000-0000',
-              keyboardType: 'phone-pad',
-              maxLength: 15,
-              onSubmitEditing: () => passwordRef.current?.focus(),
-            }}
-            error={errors.phone_number?.message}
+          <Controller
+            control={control}
+            name="phone_number"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                ref={phoneRef}
+                returnKeyType="next"
+                placeholder="Telefone (00) 00000-0000"
+                keyboardType="phone-pad"
+                maxLength={15}
+                onSubmitEditing={() => passwordRef.current?.focus()}
+                value={value}
+                onChangeText={(text) => onChange(formatPhone(text))}
+                onBlur={onBlur}
+                error={errors.phone_number?.message}
+              />
+            )}
           />
 
           <View style={styles.passwordContainer}>
-            <Input
-              ref={passwordRef}
-              formProps={{
-                name: 'password',
-                control: control,
-              }}
-              inputProps={{
-                returnKeyType: 'next',
-                placeholder: 'Senha (mínimo 8 caracteres)',
-                secureTextEntry: !showPassword,
-                autoCapitalize: 'none',
-                onSubmitEditing: () => passwordConfirmationRef.current?.focus(),
-              }}
-              error={errors.password?.message}
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  ref={passwordRef}
+                  returnKeyType="next"
+                  placeholder="Senha (mínimo 8 caracteres)"
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  onSubmitEditing={() => passwordConfirmationRef.current?.focus()}
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={errors.password?.message}
+                />
+              )}
             />
             <TouchableOpacity
               style={styles.eyeButton}
@@ -266,20 +269,23 @@ export function ReceptorRegistrationScreen() {
           </View>
 
           <View style={styles.passwordContainer}>
-            <Input
-              ref={passwordConfirmationRef}
-              formProps={{
-                name: 'password_confirmation',
-                control: control,
-              }}
-              inputProps={{
-                returnKeyType: 'done',
-                placeholder: 'Confirmar Senha',
-                secureTextEntry: !showPasswordConfirmation,
-                autoCapitalize: 'none',
-                onSubmitEditing: () => handleSubmit(onSubmit)(),
-              }}
-              error={errors.password_confirmation?.message}
+            <Controller
+              control={control}
+              name="password_confirmation"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  ref={passwordConfirmationRef}
+                  returnKeyType="done"
+                  placeholder="Confirmar Senha"
+                  secureTextEntry={!showPasswordConfirmation}
+                  autoCapitalize="none"
+                  onSubmitEditing={() => handleSubmit(onSubmit)()}
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={errors.password_confirmation?.message}
+                />
+              )}
             />
             <TouchableOpacity
               style={styles.eyeButton}
@@ -313,7 +319,7 @@ export function ReceptorRegistrationScreen() {
         </View>
 
         <View style={styles.buttonContainer}>
-          <PrimaryButton onPress={() => handleSubmit(onSubmit)()} label="Criar Conta" />
+          <Button onPress={() => handleSubmit(onSubmit)()} label="Criar Conta" />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

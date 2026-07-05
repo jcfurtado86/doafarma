@@ -1,8 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { useRouter, Href } from 'expo-router';
 import { useAuthStore } from '@/stores/authStore';
-import PrimaryButton from '@/components/PrimaryButton';
-import SecondaryButton from '@/components/SecondaryButton';
+import { Button } from '@/components/ui';
 import { colors } from '@/theme/tokens';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
@@ -61,28 +60,37 @@ export default function Dashboard() {
       <View style={styles.menu}>
         {isDoctor && (
           <>
-            <PrimaryButton label="Minhas Ofertas" onPress={handleMedicationOfferings} />
-            <SecondaryButton
+            <Button label="Minhas Ofertas" onPress={handleMedicationOfferings} />
+            <Button
+              variant="secondary"
               label="Nova Oferta"
               onPress={() => router.push('/(auth)/medication-offerings/create')}
             />
-            <SecondaryButton label="Solicitações Recebidas" onPress={handleReceivedRequests} />
-            <SecondaryButton label="Agendamentos" onPress={handleReceivedAppointments} />
-            <SecondaryButton label="Histórico de Doações" onPress={handleDonationHistory} />
-            <SecondaryButton label="Minhas Avaliações" onPress={handleMyRatings} />
+            <Button
+              variant="secondary"
+              label="Solicitações Recebidas"
+              onPress={handleReceivedRequests}
+            />
+            <Button variant="secondary" label="Agendamentos" onPress={handleReceivedAppointments} />
+            <Button
+              variant="secondary"
+              label="Histórico de Doações"
+              onPress={handleDonationHistory}
+            />
+            <Button variant="secondary" label="Minhas Avaliações" onPress={handleMyRatings} />
           </>
         )}
 
         {isReceptor && (
           <>
-            <PrimaryButton label="Buscar Medicamentos" onPress={handleSearchMedications} />
-            <SecondaryButton label="Minhas Solicitações" onPress={handleMyRequests} />
+            <Button label="Buscar Medicamentos" onPress={handleSearchMedications} />
+            <Button variant="secondary" label="Minhas Solicitações" onPress={handleMyRequests} />
           </>
         )}
       </View>
 
       <View style={styles.footer}>
-        <SecondaryButton label="Sair" onPress={handleLogout} />
+        <Button variant="secondary" label="Sair" onPress={handleLogout} />
       </View>
     </View>
   );

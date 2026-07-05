@@ -55,7 +55,10 @@ export const typography = {
   caption: { fontSize: 12, lineHeight: 16, fontFamily: 'Inter_400Regular' },
 } as const;
 
+// Escala fixa: 2/4/8/16/24/32/48. Valor fora dela pede discussão, não token novo.
+// '2xs' é para micro-ajuste interno de componente, não para espaçar seções de tela.
 export const spacing = {
+  '2xs': 2,
   xs: 4,
   sm: 8,
   md: 16,

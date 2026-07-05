@@ -1,11 +1,10 @@
 import React from 'react';
 import { View, Image, ImageBackground, Text } from 'react-native';
 import { useRouter } from 'expo-router';
-import PrimaryButton from '@/components/PrimaryButton';
+import { Button } from '@/components/ui';
 import { styles } from './styles';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
-import SecondaryButton from '@/components/SecondaryButton';
 
 export function InitialScreen() {
   const router = useRouter();
@@ -28,8 +27,8 @@ export function InitialScreen() {
             <Text>API Host: {process.env.EXPO_PUBLIC_API_HOST}</Text>
           </View>
           <View style={styles.buttonContainer}>
-            <PrimaryButton onPress={() => router.push('/register')} label="Registrar" />
-            <SecondaryButton onPress={() => router.push('/login')} label="Entrar" />
+            <Button onPress={() => router.push('/register')} label="Registrar" />
+            <Button variant="secondary" onPress={() => router.push('/login')} label="Entrar" />
           </View>
         </View>
       </View>

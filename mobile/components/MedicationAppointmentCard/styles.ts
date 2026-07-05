@@ -2,18 +2,8 @@ import { StyleSheet } from 'react-native';
 import { colors } from '@/theme/tokens';
 
 export const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 16,
+  container: {
     marginBottom: 12,
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.info,
   },
   header: {
     flexDirection: 'row',

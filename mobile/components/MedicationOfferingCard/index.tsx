@@ -1,6 +1,7 @@
 import React, { memo, useMemo } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { MedicationOffering } from '@/types/medicationOffering';
+import { Card } from '@/components/ui';
 import { colors } from '@/theme/tokens';
 import { a11y } from '@/utils/accessibility';
 import { formatShortDate } from '@/utils/dateFormatters';
@@ -22,7 +23,10 @@ export const MedicationOfferingCard = memo(function MedicationOfferingCard({
   );
 
   return (
-    <View style={[styles.card, isExpired && styles.expiredCard]}>
+    <Card
+      accent={isExpired ? 'error' : 'primary'}
+      style={[styles.container, isExpired && styles.expiredBackground]}
+    >
       <View style={styles.header}>
         <Text style={styles.drugName}>{offering.drug?.product_name || 'Medicamento'}</Text>
         {isExpired && <Text style={styles.expiredLabel}>VENCIDO</Text>}
@@ -59,26 +63,15 @@ export const MedicationOfferingCard = memo(function MedicationOfferingCard({
           <Text style={styles.deleteButtonText}>Excluir</Text>
         </Pressable>
       </View>
-    </View>
+    </Card>
   );
 });
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 16,
+  container: {
     marginBottom: 12,
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.primary,
   },
-  expiredCard: {
-    borderLeftColor: colors.error,
+  expiredBackground: {
     backgroundColor: colors.errorSurface,
   },
   header: {

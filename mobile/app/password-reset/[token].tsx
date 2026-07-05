@@ -16,9 +16,9 @@ import { useRouter, useLocalSearchParams, Href } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
-import { Input } from '@/components/Input';
-import PrimaryButton from '@/components/PrimaryButton';
+import { Button, Input } from '@/components/ui';
 import ArrowBackButton from '@/components/ArrowBackButton';
+import { Controller } from 'react-hook-form';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
 import { authService, AuthServiceError } from '@/services/authService';
 import { resetPasswordSchema, ResetPasswordFormData } from '@/utils/validation/authValidation';
@@ -185,39 +185,45 @@ export default function ResetPasswordScreen() {
               </View>
             )}
 
-            <Input
-              formProps={{
-                name: 'email',
-                control: control,
-              }}
-              inputProps={{
-                placeholder: 'E-mail',
-                keyboardType: 'email-address',
-                autoCapitalize: 'none',
-                autoComplete: 'email',
-                returnKeyType: 'next',
-                onSubmitEditing: () => passwordRef.current?.focus(),
-                editable: !isLoading,
-              }}
-              error={errors.email?.message}
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  placeholder="E-mail"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  returnKeyType="next"
+                  onSubmitEditing={() => passwordRef.current?.focus()}
+                  disabled={isLoading}
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={errors.email?.message}
+                />
+              )}
             />
 
             <View style={styles.passwordContainer}>
-              <Input
-                ref={passwordRef}
-                formProps={{
-                  name: 'password',
-                  control: control,
-                }}
-                inputProps={{
-                  placeholder: 'Nova senha',
-                  secureTextEntry: !showPassword,
-                  autoCapitalize: 'none',
-                  returnKeyType: 'next',
-                  onSubmitEditing: () => confirmPasswordRef.current?.focus(),
-                  editable: !isLoading,
-                }}
-                error={errors.password?.message}
+              <Controller
+                control={control}
+                name="password"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    ref={passwordRef}
+                    placeholder="Nova senha"
+                    secureTextEntry={!showPassword}
+                    autoCapitalize="none"
+                    returnKeyType="next"
+                    onSubmitEditing={() => confirmPasswordRef.current?.focus()}
+                    disabled={isLoading}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    error={errors.password?.message}
+                  />
+                )}
               />
               <TouchableOpacity
                 style={styles.eyeButton}
@@ -233,21 +239,24 @@ export default function ResetPasswordScreen() {
             </View>
 
             <View style={styles.passwordContainer}>
-              <Input
-                ref={confirmPasswordRef}
-                formProps={{
-                  name: 'password_confirmation',
-                  control: control,
-                }}
-                inputProps={{
-                  placeholder: 'Confirmar nova senha',
-                  secureTextEntry: !showConfirmPassword,
-                  autoCapitalize: 'none',
-                  returnKeyType: 'done',
-                  onSubmitEditing: () => handleSubmit(handleResetPassword)(),
-                  editable: !isLoading,
-                }}
-                error={errors.password_confirmation?.message}
+              <Controller
+                control={control}
+                name="password_confirmation"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    ref={confirmPasswordRef}
+                    placeholder="Confirmar nova senha"
+                    secureTextEntry={!showConfirmPassword}
+                    autoCapitalize="none"
+                    returnKeyType="done"
+                    onSubmitEditing={() => handleSubmit(handleResetPassword)()}
+                    disabled={isLoading}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    error={errors.password_confirmation?.message}
+                  />
+                )}
               />
               <TouchableOpacity
                 style={styles.eyeButton}
@@ -269,7 +278,7 @@ export default function ResetPasswordScreen() {
                   <Text style={styles.loadingText}>Redefinindo...</Text>
                 </View>
               ) : (
-                <PrimaryButton
+                <Button
                   label="Redefinir senha"
                   onPress={() => handleSubmit(handleResetPassword)()}
                   disableWhenOffline

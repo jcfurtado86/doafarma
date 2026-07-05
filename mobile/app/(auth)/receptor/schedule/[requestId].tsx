@@ -16,7 +16,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { colors } from '@/theme/tokens';
 import { ValidationMessages } from '@/constants/ValidationMessages';
 import { useMedicationAppointmentStore } from '@/stores/medicationAppointmentStore';
-import PrimaryButton from '@/components/PrimaryButton';
+import { Button } from '@/components/ui';
 import { formatDateInput, convertDateToAPI, isDateInPast } from '@/utils/validation/dateHelpers';
 import { formatTimeInput, isValidTimeFormat } from '@/utils/validation/timeHelpers';
 
@@ -136,7 +136,7 @@ export default function ScheduleAppointmentScreen() {
               <Text style={styles.loadingText}>Criando agendamento...</Text>
             </View>
           ) : (
-            <PrimaryButton label="Confirmar Agendamento" onPress={handleSchedule} />
+            <Button label="Confirmar Agendamento" onPress={handleSchedule} />
           )}
         </View>
       </ScrollView>

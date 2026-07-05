@@ -7,10 +7,9 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useMedicationOfferingStore } from '@/stores/medicationOfferingStore';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
-import { Input } from '@/components/Input';
-import { Select, SelectItem } from '@/components/Select';
-import PrimaryButton from '@/components/PrimaryButton';
-import SecondaryButton from '@/components/SecondaryButton';
+import { Button, Input } from '@/components/ui';
+import { Select, SelectItem, type SelectHandle } from '@/components/ui/Select';
+import { Controller } from 'react-hook-form';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
 import api from '@/services/api';
 import { Drug } from '@/types/medicationOffering';
@@ -40,12 +39,11 @@ export default function EditMedicationOfferingScreen() {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-    setValue,
   } = useFeatureForm<UpdateMedicationOfferingFormData>({
     schema: updateMedicationOfferingSchema,
   });
 
-  const drugRef = useRef<any>(null);
+  const drugRef = useRef<SelectHandle>(null);
   const lotNumberRef = useRef<TextInput>(null);
   const expiresAtRef = useRef<TextInput>(null);
   const quantityRef = useRef<TextInput>(null);
@@ -126,83 +124,95 @@ export default function EditMedicationOfferingScreen() {
 
       <View style={styles.form}>
         <InputRow>
-          <Select
-            ref={drugRef}
-            formProps={{
-              name: 'drug_id',
-              control: control,
-            }}
-            selectProps={{
-              placeholder: loadingDrugs ? 'Carregando medicamentos...' : 'Selecione o medicamento',
-              enabled: false,
-            }}
-            nextRef={lotNumberRef}
-            error={errors.drug_id?.message}
-          >
-            {drugs.map((drug) => (
-              <SelectItem key={drug.id} label={drug.product_name} value={drug.id.toString()} />
-            ))}
-          </Select>
+          <Controller
+            control={control}
+            name="drug_id"
+            render={({ field: { value, onChange, onBlur } }) => (
+              <Select
+                ref={drugRef}
+                value={value}
+                onValueChange={(next) => {
+                  onChange(next);
+                  if (next) lotNumberRef.current?.focus();
+                }}
+                onBlur={onBlur}
+                placeholder={
+                  loadingDrugs ? 'Carregando medicamentos...' : 'Selecione o medicamento'
+                }
+                disabled
+                error={errors.drug_id?.message}
+              >
+                {drugs.map((drug) => (
+                  <SelectItem key={drug.id} label={drug.product_name} value={drug.id.toString()} />
+                ))}
+              </Select>
+            )}
+          />
         </InputRow>
 
-        <Input
-          ref={lotNumberRef}
-          formProps={{
-            name: 'lot_number',
-            control: control,
-          }}
-          inputProps={{
-            placeholder: 'Número do lote',
-            autoCapitalize: 'characters',
-            returnKeyType: 'next',
-            onSubmitEditing: () => expiresAtRef.current?.focus(),
-          }}
-          error={errors.lot_number?.message}
+        <Controller
+          control={control}
+          name="lot_number"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              ref={lotNumberRef}
+              placeholder="Número do lote"
+              autoCapitalize="characters"
+              returnKeyType="next"
+              onSubmitEditing={() => expiresAtRef.current?.focus()}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.lot_number?.message}
+            />
+          )}
         />
 
-        <Input
-          ref={expiresAtRef}
-          formProps={{
-            name: 'expires_at',
-            control: control,
-          }}
-          inputProps={{
-            placeholder: 'DD/MM/AAAA',
-            keyboardType: 'numeric',
-            maxLength: 10,
-            returnKeyType: 'next',
-            onSubmitEditing: () => quantityRef.current?.focus(),
-            onChangeText: (text) => {
-              const formatted = formatDateInput(text);
-              setValue('expires_at', formatted);
-            },
-          }}
-          error={errors.expires_at?.message}
+        <Controller
+          control={control}
+          name="expires_at"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              ref={expiresAtRef}
+              placeholder="DD/MM/AAAA"
+              keyboardType="numeric"
+              maxLength={10}
+              returnKeyType="next"
+              onSubmitEditing={() => quantityRef.current?.focus()}
+              value={value}
+              onChangeText={(text) => onChange(formatDateInput(text))}
+              onBlur={onBlur}
+              error={errors.expires_at?.message}
+            />
+          )}
         />
 
-        <Input
-          ref={quantityRef}
-          formProps={{
-            name: 'quantity',
-            control: control,
-          }}
-          inputProps={{
-            placeholder: 'Quantidade',
-            keyboardType: 'numeric',
-            returnKeyType: 'done',
-            onSubmitEditing: () => handleSubmit(handleUpdateOffering)(),
-          }}
-          error={errors.quantity?.message}
+        <Controller
+          control={control}
+          name="quantity"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              ref={quantityRef}
+              placeholder="Quantidade"
+              keyboardType="numeric"
+              returnKeyType="done"
+              onSubmitEditing={() => handleSubmit(handleUpdateOffering)()}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.quantity?.message}
+            />
+          )}
         />
 
         <View style={styles.buttonContainer}>
-          <PrimaryButton
+          <Button
             label={isSubmitting ? 'Salvando...' : 'Salvar Alterações'}
             onPress={() => handleSubmit(handleUpdateOffering)()}
             disabled={isSubmitting}
           />
 
-          <SecondaryButton label="Cancelar" onPress={handleGoBack} />
+          <Button variant="secondary" label="Cancelar" onPress={handleGoBack} />
         </View>
       </View>
     </View>

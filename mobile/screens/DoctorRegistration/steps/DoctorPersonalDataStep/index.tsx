@@ -1,14 +1,12 @@
 import React, { useRef } from 'react';
 import { View, TextInput } from 'react-native';
-import { Input } from '@/components/Input';
-import PrimaryButton from '@/components/PrimaryButton';
+import { Button, Input } from '@/components/ui';
 import { styles } from './styles';
-import { UseFormSetError } from 'react-hook-form';
+import { Controller, UseFormSetError } from 'react-hook-form';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import { InputRow } from '@/components/InputRow';
-import { Select, SelectItem } from '@/components/Select';
-import { Picker } from '@react-native-picker/picker';
+import { Select, SelectItem, type SelectHandle } from '@/components/ui/Select';
 import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
 import { BRAZILIAN_STATES } from '@/constants/BrazilianStates';
 import { z } from 'zod';
@@ -70,7 +68,7 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
   }
 
   const crmRef = useRef<TextInput>(null);
-  const crmUf = useRef<Picker<string | number>>(null);
+  const crmUf = useRef<SelectHandle>(null);
   const dddRef = useRef<TextInput>(null);
   const phoneRef = useRef<TextInput>(null);
   const emailRef = useRef<TextInput>(null);
@@ -84,130 +82,156 @@ export function DoctorPersonalDataStep({ onSubmit }: DoctorPersonalDataStepProps
         <Caption>Preencha seus dados pessoais</Caption>
       </View>
       <View style={styles.inputContainer}>
-        <Input
-          formProps={{
-            name: 'name',
-            control: control,
-          }}
-          inputProps={{
-            returnKeyType: 'next',
-            placeholder: 'Nome Completo',
-            onSubmitEditing: () => crmRef.current?.focus(),
-          }}
-          error={errors.name?.message}
+        <Controller
+          control={control}
+          name="name"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              returnKeyType="next"
+              placeholder="Nome Completo"
+              onSubmitEditing={() => crmRef.current?.focus()}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.name?.message}
+            />
+          )}
         />
 
         <InputRow>
-          <Input
-            ref={crmRef}
-            formProps={{
-              name: 'crm',
-              control: control,
-            }}
-            inputProps={{
-              returnKeyType: 'next',
-              placeholder: 'CRM',
-              keyboardType: 'numeric',
-              onSubmitEditing: () => crmUf.current?.focus(),
-            }}
-            error={errors.crm?.message}
-            containerStyle={{ flex: 2 }}
+          <Controller
+            control={control}
+            name="crm"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                ref={crmRef}
+                returnKeyType="next"
+                placeholder="CRM"
+                keyboardType="numeric"
+                onSubmitEditing={() => crmUf.current?.focus()}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.crm?.message}
+                containerStyle={{ flex: 2 }}
+              />
+            )}
           />
-          <Select
-            ref={crmUf}
-            formProps={{
-              name: 'crm_uf',
-              control: control,
-            }}
-            selectProps={{
-              placeholder: 'UF',
-            }}
-            error={errors.crm_uf?.message}
-            containerStyle={{ flex: 1 }}
-            nextRef={dddRef}
-          >
-            {BRAZILIAN_STATES.map((state) => (
-              <SelectItem key={state.value} label={state.label} value={state.value} />
-            ))}
-          </Select>
+          <Controller
+            control={control}
+            name="crm_uf"
+            render={({ field: { value, onChange, onBlur } }) => (
+              <Select
+                ref={crmUf}
+                value={value}
+                onValueChange={(next) => {
+                  onChange(next);
+                  if (next) dddRef.current?.focus();
+                }}
+                onBlur={onBlur}
+                placeholder="UF"
+                error={errors.crm_uf?.message}
+                containerStyle={{ flex: 1 }}
+              >
+                {BRAZILIAN_STATES.map((state) => (
+                  <SelectItem key={state.value} label={state.label} value={state.value} />
+                ))}
+              </Select>
+            )}
+          />
         </InputRow>
         <InputRow>
-          <Input
-            ref={dddRef}
-            formProps={{
-              name: 'ddd',
-              control: control,
-            }}
-            inputProps={{
-              returnKeyType: 'next',
-              placeholder: 'DDD',
-              keyboardType: 'numeric',
-              onSubmitEditing: () => phoneRef.current?.focus(),
-            }}
-            error={errors.ddd?.message}
-            containerStyle={{ flex: 1 }}
+          <Controller
+            control={control}
+            name="ddd"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                ref={dddRef}
+                returnKeyType="next"
+                placeholder="DDD"
+                keyboardType="numeric"
+                onSubmitEditing={() => phoneRef.current?.focus()}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.ddd?.message}
+                containerStyle={{ flex: 1 }}
+              />
+            )}
           />
-          <Input
-            ref={phoneRef}
-            formProps={{
-              name: 'phone_number',
-              control: control,
-            }}
-            inputProps={{
-              placeholder: 'Telefone',
-              returnKeyType: 'next',
-              keyboardType: 'numeric',
-              onSubmitEditing: () => emailRef.current?.focus(),
-            }}
-            error={errors.phone_number?.message}
-            containerStyle={{ flex: 3 }}
+          <Controller
+            control={control}
+            name="phone_number"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                ref={phoneRef}
+                placeholder="Telefone"
+                returnKeyType="next"
+                keyboardType="numeric"
+                onSubmitEditing={() => emailRef.current?.focus()}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.phone_number?.message}
+                containerStyle={{ flex: 3 }}
+              />
+            )}
           />
         </InputRow>
 
-        <Input
-          ref={emailRef}
-          formProps={{
-            name: 'email',
-            control: control,
-          }}
-          inputProps={{
-            placeholder: 'Email',
-            returnKeyType: 'next',
-            onSubmitEditing: () => passwordRef.current?.focus(),
-          }}
-          error={errors.email?.message}
+        <Controller
+          control={control}
+          name="email"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              ref={emailRef}
+              placeholder="Email"
+              returnKeyType="next"
+              onSubmitEditing={() => passwordRef.current?.focus()}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.email?.message}
+            />
+          )}
         />
-        <Input
-          ref={passwordRef}
-          formProps={{
-            name: 'password',
-            control: control,
-          }}
-          inputProps={{
-            placeholder: 'Senha',
-            secureTextEntry: true,
-            returnKeyType: 'next',
-            onSubmitEditing: () => passwordConfirmationRef.current?.focus(),
-          }}
-          error={errors.password?.message}
+        <Controller
+          control={control}
+          name="password"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              ref={passwordRef}
+              placeholder="Senha"
+              secureTextEntry
+              returnKeyType="next"
+              onSubmitEditing={() => passwordConfirmationRef.current?.focus()}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.password?.message}
+            />
+          )}
         />
-        <Input
-          ref={passwordConfirmationRef}
-          formProps={{
-            name: 'password_confirmation',
-            control: control,
-          }}
-          inputProps={{
-            placeholder: 'Confirmar Senha',
-            secureTextEntry: true,
-            returnKeyType: 'done',
-            onSubmitEditing: () => handleSubmit(handleNextStep)(),
-          }}
-          error={errors.password_confirmation?.message}
+        <Controller
+          control={control}
+          name="password_confirmation"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              ref={passwordConfirmationRef}
+              placeholder="Confirmar Senha"
+              secureTextEntry
+              returnKeyType="done"
+              onSubmitEditing={() => handleSubmit(handleNextStep)()}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.password_confirmation?.message}
+            />
+          )}
         />
       </View>
       <View style={styles.buttonContainer}>
-        <PrimaryButton onPress={() => handleSubmit(handleNextStep)()} label="Próximo" />
+        <Button onPress={() => handleSubmit(handleNextStep)()} label="Próximo" />
       </View>
     </>
   );

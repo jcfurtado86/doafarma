@@ -1,15 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import { View, TextInput } from 'react-native';
-import { Input } from '@/components/Input';
-import PrimaryButton from '@/components/PrimaryButton';
+import { Button, Input } from '@/components/ui';
 import { styles } from './styles';
-import { UseFormSetError } from 'react-hook-form';
+import { Controller, UseFormSetError } from 'react-hook-form';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
 import { InputRow } from '@/components/InputRow';
-import { Select, SelectItem } from '@/components/Select';
+import { Select, SelectItem, type SelectHandle } from '@/components/ui/Select';
 import { SearchableSelect, SearchableSelectRef } from '@/components/SearchableSelect';
-import { Picker } from '@react-native-picker/picker';
 import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
 import { BRAZILIAN_STATES } from '@/constants/BrazilianStates';
 import { z } from 'zod';
@@ -83,7 +81,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
   }
 
   const cepRef = useRef<TextInput>(null);
-  const ufRef = useRef<Picker<string | number>>(null);
+  const ufRef = useRef<SelectHandle>(null);
   const cityRef = useRef<SearchableSelectRef | null>(null);
   const neighborhoodRef = useRef<TextInput>(null);
   const streetRef = useRef<TextInput>(null);
@@ -98,50 +96,61 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
       </View>
 
       <View style={styles.inputContainer}>
-        <Input
-          formProps={{
-            name: 'addresses.0.location_name',
-            control: control,
-          }}
-          inputProps={{
-            returnKeyType: 'next',
-            placeholder: 'Nome do consultório ou clinica',
-            onSubmitEditing: () => cepRef.current?.focus(),
-          }}
-          error={errors.addresses?.[0]?.location_name?.message}
+        <Controller
+          control={control}
+          name="addresses.0.location_name"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              returnKeyType="next"
+              placeholder="Nome do consultório ou clinica"
+              onSubmitEditing={() => cepRef.current?.focus()}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.addresses?.[0]?.location_name?.message}
+            />
+          )}
         />
-        <Input
-          ref={cepRef}
-          formProps={{
-            name: 'addresses.0.cep',
-            control: control,
-          }}
-          inputProps={{
-            returnKeyType: 'next',
-            placeholder: 'CEP',
-            keyboardType: 'numeric',
-            onSubmitEditing: () => ufRef.current?.focus(),
-          }}
-          error={errors.addresses?.[0]?.cep?.message}
+        <Controller
+          control={control}
+          name="addresses.0.cep"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              ref={cepRef}
+              returnKeyType="next"
+              placeholder="CEP"
+              keyboardType="numeric"
+              onSubmitEditing={() => ufRef.current?.focus()}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.addresses?.[0]?.cep?.message}
+            />
+          )}
         />
         <InputRow>
-          <Select
-            ref={ufRef}
-            formProps={{
-              name: 'addresses.0.uf',
-              control: control,
-            }}
-            selectProps={{
-              placeholder: 'Estado',
-            }}
-            error={errors.addresses?.[0]?.uf?.message}
-            containerStyle={{ flex: 1 }}
-            nextRef={cityRef}
-          >
-            {BRAZILIAN_STATES.map((state) => (
-              <SelectItem key={state.value} label={state.label} value={state.value} />
-            ))}
-          </Select>
+          <Controller
+            control={control}
+            name="addresses.0.uf"
+            render={({ field: { value, onChange, onBlur } }) => (
+              <Select
+                ref={ufRef}
+                value={value}
+                onValueChange={(next) => {
+                  onChange(next);
+                  if (next) cityRef.current?.focus();
+                }}
+                onBlur={onBlur}
+                placeholder="Estado"
+                error={errors.addresses?.[0]?.uf?.message}
+                containerStyle={{ flex: 1 }}
+              >
+                {BRAZILIAN_STATES.map((state) => (
+                  <SelectItem key={state.value} label={state.label} value={state.value} />
+                ))}
+              </Select>
+            )}
+          />
           <SearchableSelect
             ref={cityRef}
             formProps={{
@@ -157,66 +166,78 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
             nextRef={neighborhoodRef}
           />
         </InputRow>
-        <Input
-          ref={neighborhoodRef}
-          formProps={{
-            name: 'addresses.0.neighborhood',
-            control: control,
-          }}
-          inputProps={{
-            returnKeyType: 'next',
-            placeholder: 'Bairro',
-            onSubmitEditing: () => streetRef.current?.focus(),
-          }}
-          error={errors.addresses?.[0]?.neighborhood?.message}
+        <Controller
+          control={control}
+          name="addresses.0.neighborhood"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              ref={neighborhoodRef}
+              returnKeyType="next"
+              placeholder="Bairro"
+              onSubmitEditing={() => streetRef.current?.focus()}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.addresses?.[0]?.neighborhood?.message}
+            />
+          )}
         />
         <InputRow>
-          <Input
-            ref={streetRef}
-            formProps={{
-              name: 'addresses.0.full_address',
-              control: control,
-            }}
-            inputProps={{
-              returnKeyType: 'next',
-              placeholder: 'Rua ou Avenida',
-              onSubmitEditing: () => numberRef.current?.focus(),
-            }}
-            error={errors.addresses?.[0]?.full_address?.message}
-            containerStyle={{ flex: 3 }}
+          <Controller
+            control={control}
+            name="addresses.0.full_address"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                ref={streetRef}
+                returnKeyType="next"
+                placeholder="Rua ou Avenida"
+                onSubmitEditing={() => numberRef.current?.focus()}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.addresses?.[0]?.full_address?.message}
+                containerStyle={{ flex: 3 }}
+              />
+            )}
           />
-          <Input
-            ref={numberRef}
-            formProps={{
-              name: 'addresses.0.number',
-              control: control,
-            }}
-            inputProps={{
-              returnKeyType: 'next',
-              keyboardType: 'numeric',
-              placeholder: 'N°000',
-              onSubmitEditing: () => complementRef.current?.focus(),
-            }}
-            error={errors.addresses?.[0]?.number?.message}
-            containerStyle={{ flex: 1 }}
+          <Controller
+            control={control}
+            name="addresses.0.number"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                ref={numberRef}
+                returnKeyType="next"
+                keyboardType="numeric"
+                placeholder="N°000"
+                onSubmitEditing={() => complementRef.current?.focus()}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.addresses?.[0]?.number?.message}
+                containerStyle={{ flex: 1 }}
+              />
+            )}
           />
         </InputRow>
-        <Input
-          ref={complementRef}
-          formProps={{
-            name: 'addresses.0.complement',
-            control: control,
-          }}
-          inputProps={{
-            returnKeyType: 'done',
-            placeholder: 'Complemento',
-            onSubmitEditing: () => handleSubmit(handleFinishRegistration)(),
-          }}
-          error={errors.addresses?.[0]?.complement?.message}
+        <Controller
+          control={control}
+          name="addresses.0.complement"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              ref={complementRef}
+              returnKeyType="done"
+              placeholder="Complemento"
+              onSubmitEditing={() => handleSubmit(handleFinishRegistration)()}
+              value={value ?? ''}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.addresses?.[0]?.complement?.message}
+            />
+          )}
         />
       </View>
       <View style={styles.buttonContainer}>
-        <PrimaryButton onPress={() => handleSubmit(handleFinishRegistration)()} label="Próximo" />
+        <Button onPress={() => handleSubmit(handleFinishRegistration)()} label="Próximo" />
       </View>
     </>
   );

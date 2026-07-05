@@ -10,12 +10,16 @@ use Override;
 
 class StatusDoughnutChart extends ChartWidget
 {
+    #[Override]
     protected static bool $isDiscovered = false;
 
+    #[Override]
     protected ?string $heading = 'Distribuição por Status';
 
+    #[Override]
     protected ?string $maxHeight = '250px';
 
+    #[Override]
     protected int | string | array $columnSpan = 1;
 
     #[Override]

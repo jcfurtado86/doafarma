@@ -11,12 +11,16 @@ use Override;
 
 class MonthlyBarChart extends ChartWidget
 {
+    #[Override]
     protected static bool $isDiscovered = false;
 
+    #[Override]
     protected ?string $heading = 'Tendência Mensal (6 meses)';
 
+    #[Override]
     protected ?string $maxHeight = '250px';
 
+    #[Override]
     protected int | string | array $columnSpan = 1;
 
     #[Override]

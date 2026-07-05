@@ -17,8 +17,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Override;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @property UserRole $role
@@ -32,6 +32,7 @@ class User extends Authenticatable implements MustVerifyEmail
     use LogsActivity;
     use Notifiable;
 
+    #[Override]
     protected $fillable = [
         'name',
         'email',
@@ -63,6 +64,7 @@ class User extends Authenticatable implements MustVerifyEmail
         });
     }
 
+    #[Override]
     protected $hidden = [
         'password',
         'remember_token',
@@ -73,6 +75,7 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [
@@ -197,7 +200,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return LogOptions::defaults()
             ->logOnly(['name', 'email', 'role', 'status'])
             ->logOnlyDirty()
-            ->dontSubmitEmptyLogs()
+            ->dontLogEmptyChanges()
             ->setDescriptionForEvent(fn (string $eventName): string => match ($eventName) {
                 'created' => "Usuário {$this->name} foi criado",
                 'updated' => "Usuário {$this->name} foi atualizado",

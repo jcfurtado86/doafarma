@@ -14,6 +14,7 @@ class DoctorRating extends Model
     /** @use HasFactory<DoctorRatingFactory> */
     use HasFactory;
 
+    #[\Override]
     protected $fillable = [
         'medication_appointment_id',
         'doctor_id',
@@ -25,6 +26,7 @@ class DoctorRating extends Model
     /**
      * The attributes that should be cast.
      */
+    #[\Override]
     protected function casts(): array
     {
         return [

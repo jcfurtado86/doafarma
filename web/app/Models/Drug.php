@@ -14,6 +14,7 @@ class Drug extends Model
     /** @use HasFactory<DrugFactory> */
     use HasFactory;
 
+    #[\Override]
     protected $fillable = [
         'substance',
         'laboratory',

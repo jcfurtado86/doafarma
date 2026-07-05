@@ -19,6 +19,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @param  array<string>  $abilities
      */
+    #[\Override]
     public function actingAs(Authenticatable $user, mixed $guard = null, array $abilities = []): static
     {
         // Only use Sanctum for explicit 'sanctum' guard

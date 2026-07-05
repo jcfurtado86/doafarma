@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class MedicationAppointmentFactory extends Factory
 {
+    #[\Override]
     protected $model = MedicationAppointment::class;
 
     /**

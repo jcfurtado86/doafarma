@@ -31,7 +31,7 @@ pest()->extend(Tests\TestCase::class)
 expect()->extend('toBeOne', fn () => $this->toBe(1));
 
 // CSV Testing Extensions for Pest 4
-expect()->extend('toBeValidCsv', function () {
+expect()->extend('toBeValidCsv', function (): object {
     PHPUnit\Framework\Assert::assertFileExists($this->value, "CSV file {$this->value} does not exist.");
 
     try {
@@ -48,7 +48,7 @@ expect()->extend('toBeValidCsv', function () {
     }
 });
 
-expect()->extend('toHaveCsvHeader', function (array $expectedHeader) {
+expect()->extend('toHaveCsvHeader', function (array $expectedHeader): object {
     PHPUnit\Framework\Assert::assertFileExists($this->value, "CSV file {$this->value} does not exist.");
 
     try {
@@ -77,7 +77,7 @@ expect()->extend('toHaveCsvHeader', function (array $expectedHeader) {
     }
 });
 
-expect()->extend('toHaveCsvRowCount', function (int $expectedCount) {
+expect()->extend('toHaveCsvRowCount', function (int $expectedCount): object {
     PHPUnit\Framework\Assert::assertFileExists($this->value, "CSV file {$this->value} does not exist.");
 
     try {
@@ -99,7 +99,7 @@ expect()->extend('toHaveCsvRowCount', function (int $expectedCount) {
     }
 });
 
-expect()->extend('toHaveCsvRow', function (array $expectedRow, int | null $index = null) {
+expect()->extend('toHaveCsvRow', function (array $expectedRow, int | null $index = null): object {
     PHPUnit\Framework\Assert::assertFileExists($this->value, "CSV file {$this->value} does not exist.");
 
     try {
@@ -139,7 +139,7 @@ expect()->extend('toHaveCsvRow', function (array $expectedRow, int | null $index
     }
 });
 
-expect()->extend('toHaveCsvHeaderAtOffset', function (array $expectedHeader, int $headerOffset = 0) {
+expect()->extend('toHaveCsvHeaderAtOffset', function (array $expectedHeader, int $headerOffset = 0): object {
     PHPUnit\Framework\Assert::assertFileExists($this->value, "CSV file {$this->value} does not exist.");
 
     try {
@@ -168,7 +168,7 @@ expect()->extend('toHaveCsvHeaderAtOffset', function (array $expectedHeader, int
     }
 });
 
-expect()->extend('toHaveCsvRowCountAtOffset', function (int $expectedCount, int $headerOffset = 0) {
+expect()->extend('toHaveCsvRowCountAtOffset', function (int $expectedCount, int $headerOffset = 0): object {
     PHPUnit\Framework\Assert::assertFileExists($this->value, "CSV file {$this->value} does not exist.");
 
     try {

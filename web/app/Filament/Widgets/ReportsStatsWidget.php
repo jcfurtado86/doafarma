@@ -11,8 +11,10 @@ use Override;
 
 class ReportsStatsWidget extends StatsOverviewWidget
 {
+    #[Override]
     protected static bool $isDiscovered = false;
 
+    #[Override]
     protected ?string $pollingInterval = '30s';
 
     #[Override]

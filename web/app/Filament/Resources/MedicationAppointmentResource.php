@@ -23,16 +23,22 @@ use Override;
 
 class MedicationAppointmentResource extends Resource
 {
+    #[Override]
     protected static ?string $model = MedicationAppointment::class;
 
+    #[Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-calendar';
 
+    #[Override]
     protected static ?string $modelLabel = 'Agendamento';
 
+    #[Override]
     protected static ?string $pluralModelLabel = 'Agendamentos';
 
+    #[Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Doações';
 
+    #[Override]
     protected static ?int $navigationSort = 3;
 
     #[Override]

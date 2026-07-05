@@ -84,42 +84,43 @@ export const cleanNumeric = (value: string): string => {
 // Validation schemas
 export const receptorValidation = {
   name: z
-    .string({ required_error: 'Nome é obrigatório' })
+    .string({ error: 'Nome é obrigatório' })
     .min(3, 'Nome deve ter pelo menos 3 caracteres')
     .max(255, 'Nome não pode ter mais de 255 caracteres'),
 
   email: z
-    .string({ required_error: 'E-mail é obrigatório' })
-    .email('E-mail inválido')
+    .email({
+      error: (issue) => (issue.input === undefined ? 'E-mail é obrigatório' : 'E-mail inválido'),
+    })
     .max(255, 'E-mail não pode ter mais de 255 caracteres'),
 
   cpf: z
-    .string({ required_error: 'CPF é obrigatório' })
+    .string({ error: 'CPF é obrigatório' })
     .refine((val) => cleanNumeric(val).length === 11, {
-      message: 'CPF deve ter 11 dígitos',
+      error: 'CPF deve ter 11 dígitos',
     })
     .refine((val) => validateCPF(val), {
-      message: 'CPF inválido',
+      error: 'CPF inválido',
     }),
 
-  phone: z.string({ required_error: 'Telefone é obrigatório' }).refine(
+  phone: z.string({ error: 'Telefone é obrigatório' }).refine(
     (val) => {
       const clean = cleanNumeric(val);
       return clean.length >= 10 && clean.length <= 11;
     },
     {
-      message: 'Telefone deve ter 10 ou 11 dígitos',
+      error: 'Telefone deve ter 10 ou 11 dígitos',
     }
   ),
 
   password: z
-    .string({ required_error: 'Senha é obrigatória' })
+    .string({ error: 'Senha é obrigatória' })
     .min(8, 'Senha deve ter pelo menos 8 caracteres'),
 
-  passwordConfirmation: z.string({ required_error: 'Confirmação de senha é obrigatória' }),
+  passwordConfirmation: z.string({ error: 'Confirmação de senha é obrigatória' }),
 
   termsAccepted: z.boolean().refine((val) => val === true, {
-    message: 'Você deve aceitar os termos de uso',
+    error: 'Você deve aceitar os termos de uso',
   }),
 };
 
@@ -134,7 +135,7 @@ export const receptorRegistrationSchema = z
     terms_accepted: receptorValidation.termsAccepted,
   })
   .refine((data) => data.password === data.password_confirmation, {
-    message: 'As senhas não conferem',
+    error: 'As senhas não conferem',
     path: ['password_confirmation'],
   });
 

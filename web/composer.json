@@ -10,11 +10,11 @@
         "dedoc/scramble": "^0.13",
         "filament/filament": "^5.0",
         "laravel/breeze": "^2.3",
-        "laravel/framework": "^12.26",
+        "laravel/framework": "^13.0",
         "laravel/sanctum": "^4.2",
-        "laravel/tinker": "^2.11",
+        "laravel/tinker": "^3.0",
         "league/csv": "^9.0",
-        "spatie/laravel-activitylog": "^4.10"
+        "spatie/laravel-activitylog": "^5.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -61,7 +61,7 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185\" \"php artisan serve --host=0.0.0.0\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" --names=server,queue,logs"
         ],
         "analyse": [
             "./vendor/bin/phpstan analyse"

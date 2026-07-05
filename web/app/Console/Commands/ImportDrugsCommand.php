@@ -15,6 +15,7 @@ class ImportDrugsCommand extends Command
      *
      * @var string
      */
+    #[\Override]
     protected $signature = 'drugs:import {filepath}';
 
     /**
@@ -22,6 +23,7 @@ class ImportDrugsCommand extends Command
      *
      * @var string
      */
+    #[\Override]
     protected $description = 'Import drugs from a specified CSV file';
 
     /**

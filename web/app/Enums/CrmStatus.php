@@ -12,17 +12,11 @@ enum CrmStatus: string
     case Suspended = 'suspenso';
     case NotFound  = 'not_found';
 
-    /**
-     * @return bool
-     */
     public function isActive(): bool
     {
         return $this === self::Active;
     }
 
-    /**
-     * @return bool
-     */
     public function isRejectable(): bool
     {
         return in_array($this, [self::Inactive, self::Canceled, self::Suspended], true);

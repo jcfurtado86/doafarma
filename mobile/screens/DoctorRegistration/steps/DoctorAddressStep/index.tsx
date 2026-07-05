@@ -25,25 +25,21 @@ const doctorAddressSchema = z.object({
   addresses: z.array(
     z.object({
       location_name: z
-        .string({ required_error: 'Nome do consultório é obrigatório' })
+        .string({ error: 'Nome do consultório é obrigatório' })
         .max(255, 'Nome do consultório não pode exceder 255 caracteres'),
-      cep: z
-        .string({ required_error: 'CEP é obrigatório' })
-        .length(8, 'CRM deve ter exatamente 8 dígitos'),
-      uf: z
-        .string({ required_error: 'UF é obrigatório' })
-        .max(255, 'UF não pode exceder 255 caracteres'),
+      cep: z.string({ error: 'CEP é obrigatório' }).length(8, 'CRM deve ter exatamente 8 dígitos'),
+      uf: z.string({ error: 'UF é obrigatório' }).max(255, 'UF não pode exceder 255 caracteres'),
       city: z
-        .string({ required_error: 'Cidade é obrigatória' })
+        .string({ error: 'Cidade é obrigatória' })
         .max(255, 'Cidade não pode exceder 255 caracteres'),
       neighborhood: z
-        .string({ required_error: 'Bairro é obrigatório' })
+        .string({ error: 'Bairro é obrigatório' })
         .max(255, 'Bairro não pode exceder 255 caracteres'),
       full_address: z
-        .string({ required_error: 'Rua ou Avenida é obrigatória' })
+        .string({ error: 'Rua ou Avenida é obrigatória' })
         .max(255, 'Rua ou Avenida não pode exceder 255 caracteres'),
       number: z
-        .string({ required_error: 'Número é obrigatório' })
+        .string({ error: 'Número é obrigatório' })
         .max(255, 'Número não pode exceder 255 caracteres'),
       complement: z
         .string()
@@ -158,7 +154,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
           <SearchableSelect
             ref={cityRef}
             formProps={{
-              name: 'addresses[0].city',
+              name: 'addresses.0.city',
               control: control,
             }}
             placeholder="Cidade"

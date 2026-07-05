@@ -10,8 +10,10 @@ use Illuminate\Support\Facades\Http;
 
 class TestPushNotificationCommand extends Command
 {
+    #[\Override]
     protected $signature = 'push:test {email? : Email do usuário para enviar a notificação}';
 
+    #[\Override]
     protected $description = 'Envia uma notificação de teste para um usuário';
 
     public function handle(): int

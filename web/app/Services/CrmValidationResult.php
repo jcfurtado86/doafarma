@@ -17,25 +17,16 @@ final readonly class CrmValidationResult
     ) {
     }
 
-    /**
-     * @return bool
-     */
     public function isApproved(): bool
     {
         return $this->apiAvailable && $this->status->isActive();
     }
 
-    /**
-     * @return bool
-     */
     public function isRejected(): bool
     {
         return $this->apiAvailable && $this->status->isRejectable();
     }
 
-    /**
-     * @return bool
-     */
     public function isPending(): bool
     {
         return ! $this->apiAvailable || $this->status === CrmStatus::NotFound;

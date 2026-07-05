@@ -14,6 +14,7 @@ class Address extends Model
     /** @use HasFactory<AddressFactory> */
     use HasFactory;
 
+    #[\Override]
     protected $fillable = [
         'user_id',
         'location_name',

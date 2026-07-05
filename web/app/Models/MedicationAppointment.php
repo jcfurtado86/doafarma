@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @property Carbon $scheduled_date
@@ -58,8 +58,10 @@ class MedicationAppointment extends Model
         'address',
     ];
 
+    #[\Override]
     protected $table = 'medication_appointments';
 
+    #[\Override]
     protected $fillable = [
         'medication_request_id',
         'address_id',
@@ -74,6 +76,7 @@ class MedicationAppointment extends Model
     /**
      * The attributes that should be cast.
      */
+    #[\Override]
     protected function casts(): array
     {
         return [
@@ -190,7 +193,7 @@ class MedicationAppointment extends Model
         return LogOptions::defaults()
             ->logOnly(['medication_request_id', 'address_id', 'scheduled_date', 'scheduled_time', 'status', 'receptor_confirmed', 'doctor_confirmed'])
             ->logOnlyDirty()
-            ->dontSubmitEmptyLogs()
+            ->dontLogEmptyChanges()
             ->setDescriptionForEvent(fn (string $eventName): string => match ($eventName) {
                 'created' => "Agendamento #{$this->id} criado",
                 'updated' => "Agendamento #{$this->id} atualizado",

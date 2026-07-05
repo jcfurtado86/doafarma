@@ -111,7 +111,7 @@ it('should return pending when CRM is not found in API', function (): void {
 
 it('should return pending when API times out', function (): void {
     Http::fake([
-        '*' => function () {
+        '*' => function (): void {
             throw new Illuminate\Http\Client\ConnectionException('Connection timed out');
         },
     ]);

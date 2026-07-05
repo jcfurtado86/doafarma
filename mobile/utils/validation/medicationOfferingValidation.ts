@@ -35,29 +35,27 @@ const validateDateString = (dateString: string): boolean => {
 };
 
 export const medicationOfferingValidation = {
-  drugId: z
-    .string({ required_error: 'Medicamento é obrigatório' })
-    .min(1, 'Selecione um medicamento'),
+  drugId: z.string({ error: 'Medicamento é obrigatório' }).min(1, 'Selecione um medicamento'),
 
   lotNumber: z
-    .string({ required_error: 'Número do lote é obrigatório' })
+    .string({ error: 'Número do lote é obrigatório' })
     .max(255, 'Número do lote não pode ter mais de 255 caracteres')
     .regex(LOT_NUMBER_REGEX, 'Número do lote deve conter apenas letras, números e hífens'),
 
   expiresAt: z
-    .string({ required_error: 'Data de vencimento é obrigatória' })
+    .string({ error: 'Data de vencimento é obrigatória' })
     .length(10, 'Data deve estar no formato DD/MM/AAAA')
     .refine(validateDateString, {
-      message: 'Data inválida. Deve ser futura e no máximo 10 anos à frente',
+      error: 'Data inválida. Deve ser futura e no máximo 10 anos à frente',
     }),
 
-  quantity: z.string({ required_error: 'Quantidade é obrigatória' }).refine(
+  quantity: z.string({ error: 'Quantidade é obrigatória' }).refine(
     (val) => {
       const num = parseInt(val, 10);
       return !isNaN(num) && num >= MIN_QUANTITY && num <= MAX_QUANTITY;
     },
     {
-      message: `Quantidade deve ser entre ${MIN_QUANTITY} e ${MAX_QUANTITY.toLocaleString('pt-BR')}`,
+      error: `Quantidade deve ser entre ${MIN_QUANTITY} e ${MAX_QUANTITY.toLocaleString('pt-BR')}`,
     }
   ),
 };

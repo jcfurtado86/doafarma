@@ -11,6 +11,7 @@ use Spatie\Activitylog\Models\Activity;
 
 class ActivityStatsWidget extends BaseWidget
 {
+    #[Override]
     protected static ?int $sort = 3;
 
     #[Override]

@@ -49,11 +49,6 @@ export const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
     marginLeft: spacing.sm,
   },
-  closeButtonText: {
-    fontSize: 22,
-    lineHeight: 22,
-    color: colors.textSecondary,
-  },
   body: {
     flexShrink: 1,
   },

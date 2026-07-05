@@ -1,6 +1,9 @@
 import { ReactNode } from 'react';
 import { Modal as RNModal, Pressable, ScrollView, Text, View } from 'react-native';
 
+import { Ionicons } from '@expo/vector-icons';
+
+import { colors, spacing, typography } from '@/theme/tokens';
 import { a11y } from '@/utils/accessibility';
 
 import { styles, type ModalAnimation } from './styles';
@@ -67,9 +70,14 @@ export function Modal({
               {...a11y.closeButton()}
               onPress={onClose}
               style={styles.closeButton}
+              hitSlop={{ top: spacing.sm, bottom: spacing.sm, left: spacing.xs, right: spacing.xs }}
               testID={testID ? `${testID}-close` : undefined}
             >
-              <Text style={styles.closeButtonText}>✕</Text>
+              <Ionicons
+                name="close"
+                size={typography.heading4.fontSize}
+                color={colors.textSecondary}
+              />
             </Pressable>
           </View>
           <ScrollView

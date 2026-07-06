@@ -66,7 +66,7 @@ export function DoctorRegistrationFlow({ currentStep }: DoctorRegistrationFlowPr
       if (user && isUserBlocked(user.status)) {
         router.replace('/(auth)/pending-approval' as Href);
       } else {
-        router.replace('/(auth)/dashboard' as Href);
+        router.replace('/(auth)/doctor/(tabs)/offerings');
       }
     }
   };

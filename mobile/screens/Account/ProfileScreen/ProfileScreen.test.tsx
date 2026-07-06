@@ -1,6 +1,5 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react-native';
-import { type Href } from 'expo-router';
 
 import { ProfileScreen, type ProfileMenuItem } from '.';
 import { useAuthStore, type User } from '@/stores/authStore';
@@ -23,15 +22,13 @@ const items: ProfileMenuItem[] = [
   {
     label: 'Minhas Avaliações',
     icon: 'star-outline',
-    // rota criada na Task 4; cast temporário até lá
-    href: '/(auth)/doctor/ratings' as Href,
+    href: '/(auth)/doctor/ratings',
     testID: 'profile-ratings',
   },
   {
     label: 'Configurações',
     icon: 'settings-outline',
-    // rota criada na Task 4; cast temporário até lá
-    href: '/(auth)/doctor/settings' as Href,
+    href: '/(auth)/doctor/settings',
     testID: 'profile-settings',
   },
 ];

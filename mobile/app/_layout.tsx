@@ -82,7 +82,7 @@ export default function RootLayout() {
       if (data?.type === 'appointment_reminder') {
         const user = useAuthStore.getState().user;
         if (user?.role === 'doctor') {
-          router.push('/(auth)/medication-appointments' as Href);
+          router.push('/(auth)/doctor/(tabs)/appointments');
         } else {
           router.push('/(auth)/receptor/(tabs)/appointments' as Href);
         }

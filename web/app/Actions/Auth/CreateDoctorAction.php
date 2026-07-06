@@ -6,8 +6,8 @@ namespace App\Actions\Auth;
 
 use App\Enums\UserStatus;
 use App\Models\User;
-use App\Services\CrmValidationResult;
 use App\Services\CrmValidationService;
+use App\Values\CrmValidationResult;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;

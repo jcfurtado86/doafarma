@@ -11,7 +11,7 @@ import {
   Platform,
   Keyboard,
 } from 'react-native';
-import { router, Href } from 'expo-router';
+import { router } from 'expo-router';
 import { colors } from '@/theme/tokens';
 import { Pagination } from '@/constants/Pagination';
 import { SearchResultCard } from '@/components/SearchResultCard';
@@ -65,12 +65,12 @@ export default function SearchScreen() {
 
   const handleCardPress = useCallback((offering: MedicationOfferingSearchResult) => {
     router.push({
-      pathname: '/(auth)/receptor/offering/[id]' as Href,
+      pathname: '/(auth)/receptor/offering/[id]',
       params: {
         id: offering.id.toString(),
         offering: JSON.stringify(offering),
       },
-    } as any);
+    });
   }, []);
 
   const handleRetry = useCallback(() => {

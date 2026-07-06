@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# Em worktrees o git exporta GIT_DIR para os hooks; com GIT_DIR setado e cwd
+# alterado (cd web), o git trata o cwd como raiz e o "git add" pós-Pint grava
+# paths errados (app/... na raiz em vez de web/app/...). Sem GIT_DIR o git
+# redescobre o repositório a partir do cwd e resolve os paths corretamente.
+unset GIT_DIR
+
 # Cores
 NC='\033[0m' # No Color
 Blue='\033[1;34m'

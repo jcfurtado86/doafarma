@@ -6,6 +6,7 @@ namespace App\Actions\Auth;
 
 use App\Enums\TokenAbility;
 use App\Models\User;
+use App\Values\TokenName;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterval;
 
@@ -23,13 +24,13 @@ class CreateTokenPairAction
         $refreshExpirationDays = config('sanctum.refresh_token_expiration_days');
 
         $accessToken = $user->createToken(
-            name: "{$deviceName}:" . TokenAbility::Access->value,
+            name: TokenName::forNewToken($deviceName, TokenAbility::Access)->toString(),
             abilities: [TokenAbility::Access->value],
             expiresAt: $now->addHours($accessExpirationHours)
         );
 
         $refreshToken = $user->createToken(
-            name: "{$deviceName}:" . TokenAbility::Refresh->value,
+            name: TokenName::forNewToken($deviceName, TokenAbility::Refresh)->toString(),
             abilities: [TokenAbility::Refresh->value],
             expiresAt: $now->addDays($refreshExpirationDays)
         );

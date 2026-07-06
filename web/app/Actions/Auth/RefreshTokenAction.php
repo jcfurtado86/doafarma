@@ -7,6 +7,7 @@ namespace App\Actions\Auth;
 use App\Enums\TokenAbility;
 use App\Enums\UserStatus;
 use App\Models\User;
+use App\Values\TokenName;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterval;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -29,11 +30,11 @@ class RefreshTokenAction
         }
 
         $currentToken          = $user->currentAccessToken();
-        $deviceName            = str_replace(':' . TokenAbility::Refresh->value, '', $currentToken->name);
+        $deviceName            = TokenName::fromStoredName($currentToken->name)->device;
         $accessExpirationHours = config('sanctum.access_token_expiration_hours');
 
         $accessToken = $user->createToken(
-            name: "{$deviceName}:" . TokenAbility::Access->value,
+            name: TokenName::forNewToken($deviceName, TokenAbility::Access)->toString(),
             abilities: [TokenAbility::Access->value],
             expiresAt: CarbonImmutable::now()->addHours($accessExpirationHours)
         );

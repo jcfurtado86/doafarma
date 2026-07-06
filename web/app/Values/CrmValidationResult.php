@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace App\Services;
+namespace App\Values;
 
 use App\Enums\CrmStatus;
 
@@ -19,16 +19,16 @@ final readonly class CrmValidationResult
 
     public function isApproved(): bool
     {
-        return $this->apiAvailable && $this->status->isActive();
+        return $this->status->isActive();
     }
 
     public function isRejected(): bool
     {
-        return $this->apiAvailable && $this->status->isRejectable();
+        return $this->status->isRejectable();
     }
 
     public function isPending(): bool
     {
-        return ! $this->apiAvailable || $this->status === CrmStatus::NotFound;
+        return $this->status->isPending();
     }
 }

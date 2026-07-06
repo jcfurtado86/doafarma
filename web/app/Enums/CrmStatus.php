@@ -11,6 +11,7 @@ enum CrmStatus: string
     case Canceled  = 'cancelado';
     case Suspended = 'suspenso';
     case NotFound  = 'not_found';
+    case Unknown   = 'unknown';
 
     public function isActive(): bool
     {
@@ -20,5 +21,10 @@ enum CrmStatus: string
     public function isRejectable(): bool
     {
         return in_array($this, [self::Inactive, self::Canceled, self::Suspended], true);
+    }
+
+    public function isPending(): bool
+    {
+        return in_array($this, [self::NotFound, self::Unknown], true);
     }
 }

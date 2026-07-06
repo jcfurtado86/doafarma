@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Enums\CrmStatus;
 use App\Models\CrmRecord;
+use App\Values\CrmValidationResult;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -172,7 +173,7 @@ class CrmValidationService
     private function unavailableResult(): CrmValidationResult
     {
         return new CrmValidationResult(
-            status: CrmStatus::NotFound,
+            status: CrmStatus::Unknown,
             doctorName: null,
             specialty: null,
             source: 'unavailable',

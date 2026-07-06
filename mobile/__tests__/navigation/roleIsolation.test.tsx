@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text } from 'react-native';
 import { Stack } from 'expo-router';
-import { renderRouter, screen } from 'expo-router/testing-library';
+import { renderRouter, screen, waitFor } from 'expo-router/testing-library';
 import AuthLayout from '@/app/(auth)/_layout';
 import LegacyDashboardRedirect from '@/app/(auth)/dashboard';
 import { useAuthStore, type User } from '@/stores/authStore';
@@ -24,6 +24,8 @@ const routes = {
   index: () => <Text testID="screen-login">login</Text>,
   '(auth)/_layout': AuthLayout,
   '(auth)/dashboard': LegacyDashboardRedirect,
+  '(auth)/pending-approval': () => <Text testID="screen-pending">pending</Text>,
+  '(auth)/medication-appointments/index': () => <Text testID="screen-appts">appts</Text>,
   '(auth)/doctor/_layout': () => <Stack screenOptions={{ headerShown: false }} />,
   '(auth)/doctor/(tabs)/offerings': () => <Text testID="screen-doctor-offerings">ofertas</Text>,
   '(auth)/receptor/_layout': () => <Stack screenOptions={{ headerShown: false }} />,
@@ -72,7 +74,6 @@ describe('role isolation', () => {
       logout: logoutMock,
     });
     renderRouter(routes, { initialUrl: '/(auth)/dashboard' });
-    await screen.findByTestId('screen-login').catch(() => undefined);
-    expect(logoutMock).toHaveBeenCalled();
+    await waitFor(() => expect(logoutMock).toHaveBeenCalled());
   });
 });

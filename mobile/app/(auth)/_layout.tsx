@@ -4,7 +4,7 @@ import { Redirect, Stack } from 'expo-router';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 export default function AuthLayout() {
-  const { isAuthenticated, isLoading } = useAuthStore();
+  const { isAuthenticated, isLoading, user } = useAuthStore();
 
   if (isLoading) {
     return (
@@ -19,7 +19,19 @@ export default function AuthLayout() {
     return <Redirect href="/" />;
   }
 
-  return <Stack />;
+  return (
+    <Stack>
+      <Stack.Protected guard={user?.role === 'doctor'}>
+        <Stack.Screen name="doctor" options={{ headerShown: false }} />
+      </Stack.Protected>
+      <Stack.Protected guard={user?.role === 'receptor'}>
+        <Stack.Screen name="receptor" options={{ headerShown: false }} />
+      </Stack.Protected>
+      <Stack.Screen name="pending-approval" />
+      <Stack.Screen name="dashboard" options={{ headerShown: false }} />
+      <Stack.Screen name="medication-appointments/index" options={{ headerShown: false }} />
+    </Stack>
+  );
 }
 
 const styles = StyleSheet.create({

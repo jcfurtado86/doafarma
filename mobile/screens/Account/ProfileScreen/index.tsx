@@ -7,6 +7,7 @@ import { useRouter, type Href } from 'expo-router';
 import { Badge } from '@/components/ui';
 import { useAuthStore, type User } from '@/stores/authStore';
 import { colors } from '@/theme/tokens';
+import { a11y } from '@/utils/accessibility';
 
 import { styles } from './styles';
 
@@ -51,10 +52,9 @@ export function ProfileScreen({ items }: ProfileScreenProps) {
       <View style={styles.menu}>
         {items.map((item) => (
           <Pressable
-            key={item.testID}
+            key={String(item.href)}
             testID={item.testID}
-            accessibilityRole="button"
-            accessibilityLabel={item.label}
+            {...a11y.button(item.label)}
             style={styles.menuItem}
             onPress={() => router.push(item.href)}
           >

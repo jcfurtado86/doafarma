@@ -47,6 +47,13 @@ describe('ProfileScreen', () => {
     expect(getByText('Ana Souza')).toBeTruthy();
     expect(getByText('ana@doafarma.com')).toBeTruthy();
     expect(getByText('Médico')).toBeTruthy();
+    expect(getByText('AS')).toBeTruthy();
+  });
+
+  it('shows a single-letter avatar for single-word names', () => {
+    useAuthStore.setState({ user: { ...doctor, name: 'Ana' } });
+    const { getByText } = render(<ProfileScreen items={[]} />);
+    expect(getByText('A')).toBeTruthy();
   });
 
   it('shows the receptor role label for receptors', () => {

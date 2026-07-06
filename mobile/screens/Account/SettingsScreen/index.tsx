@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { useAuthStore } from '@/stores/authStore';
 import { colors } from '@/theme/tokens';
+import { a11y } from '@/utils/accessibility';
 
 import { styles } from './styles';
 
@@ -24,8 +25,7 @@ export function SettingsScreen() {
         <Text style={styles.sectionTitle}>Sessão</Text>
         <Pressable
           testID="settings-logout"
-          accessibilityRole="button"
-          accessibilityLabel="Sair da conta"
+          {...a11y.button('Sair da conta')}
           style={styles.logoutButton}
           onPress={handleLogoutPress}
         >

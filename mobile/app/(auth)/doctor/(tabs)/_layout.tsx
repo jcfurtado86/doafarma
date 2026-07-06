@@ -2,7 +2,7 @@ import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '@/theme/tokens';
 
-export default function ReceptorTabsLayout() {
+export default function DoctorTabsLayout() {
   return (
     <Tabs
       screenOptions={{
@@ -29,13 +29,13 @@ export default function ReceptorTabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="search"
+        name="offerings"
         options={{
-          title: 'Buscar',
+          title: 'Ofertas',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="search-outline" size={size} color={color} />
+            <Ionicons name="medkit-outline" size={size} color={color} />
           ),
-          headerTitle: 'Buscar Medicamentos',
+          headerTitle: 'Minhas Ofertas',
         }}
       />
       <Tabs.Screen
@@ -45,7 +45,7 @@ export default function ReceptorTabsLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="document-text-outline" size={size} color={color} />
           ),
-          headerTitle: 'Minhas Solicitações',
+          headerTitle: 'Solicitações Recebidas',
         }}
       />
       <Tabs.Screen
@@ -65,7 +65,7 @@ export default function ReceptorTabsLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="time-outline" size={size} color={color} />
           ),
-          headerTitle: 'Histórico de Medicamentos',
+          headerTitle: 'Histórico de Doações',
         }}
       />
       <Tabs.Screen

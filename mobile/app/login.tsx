@@ -101,10 +101,10 @@ export default function LoginScreen() {
 
       // Navigate based on user role
       const routeByRole: Record<UserRole, Href> = {
-        [UserRole.Doctor]: '/(auth)/dashboard' as Href,
-        [UserRole.Receptor]: '/(auth)/receptor' as Href,
+        [UserRole.Doctor]: '/(auth)/doctor/(tabs)/offerings',
+        [UserRole.Receptor]: '/(auth)/receptor/(tabs)/search',
       };
-      router.replace(routeByRole[user.role] || ('/(auth)/dashboard' as Href));
+      router.replace(routeByRole[user.role] ?? '/(auth)/dashboard');
     } catch (err) {
       logger.error('[LoginScreen] handleLogin() error caught:', err);
       if (err instanceof AuthServiceError) {

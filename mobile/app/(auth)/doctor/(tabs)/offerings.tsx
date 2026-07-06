@@ -53,7 +53,7 @@ export default function MedicationOfferingsScreen() {
 
   const handleEdit = useCallback(
     (offering: MedicationOffering) => {
-      router.push(`/(auth)/medication-offerings/edit/${offering.id}`);
+      router.push(`/(auth)/doctor/offering/edit/${offering.id}`);
     },
     [router]
   );
@@ -97,10 +97,7 @@ export default function MedicationOfferingsScreen() {
       </View>
 
       <View style={styles.footer}>
-        <Button
-          label="Nova Oferta"
-          onPress={() => router.push('/(auth)/medication-offerings/create')}
-        />
+        <Button label="Nova Oferta" onPress={() => router.push('/(auth)/doctor/offering/create')} />
       </View>
     </View>
   );

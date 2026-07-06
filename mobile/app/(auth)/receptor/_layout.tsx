@@ -18,6 +18,13 @@ export default function ReceptorLayout() {
           headerShown: true,
         }}
       />
+      <Stack.Screen
+        name="settings"
+        options={{
+          title: 'Configurações',
+          headerShown: true,
+        }}
+      />
     </Stack>
   );
 }

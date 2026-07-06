@@ -1,4 +1,4 @@
-import { Stack, router, Href } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useRef } from 'react';
 import 'react-native-reanimated';
@@ -84,7 +84,7 @@ export default function RootLayout() {
         if (user?.role === 'doctor') {
           router.push('/(auth)/doctor/(tabs)/appointments');
         } else {
-          router.push('/(auth)/receptor/(tabs)/appointments' as Href);
+          router.push('/(auth)/receptor/(tabs)/appointments');
         }
       }
     });

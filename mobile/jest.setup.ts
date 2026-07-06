@@ -17,8 +17,9 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
   removeItem: jest.fn(),
 }));
 
-// Mock expo-router
+// Mock expo-router (preserve the real module so Stack, Redirect, Tabs, hooks etc. keep working)
 jest.mock('expo-router', () => ({
+  ...jest.requireActual('expo-router'),
   router: {
     replace: jest.fn(),
     push: jest.fn(),

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text } from 'react-native';
+import { Redirect, Stack, type Href } from 'expo-router';
 import { renderRouter, screen } from 'expo-router/testing-library';
 
 describe('renderRouter smoke', () => {
@@ -14,5 +15,19 @@ describe('renderRouter smoke', () => {
 
     expect(await screen.findByTestId('screen-about')).toBeTruthy();
     expect(screen.queryByTestId('screen-home')).toBeNull();
+  });
+
+  it('supports real expo-router components (Stack layout and Redirect)', async () => {
+    renderRouter(
+      {
+        _layout: () => <Stack />,
+        // Cast needed: typedRoutes only knows the app's real routes, not this mocked tree
+        index: () => <Redirect href={'/about' as Href} />,
+        about: () => <Text testID="screen-about">about</Text>,
+      },
+      { initialUrl: '/' }
+    );
+
+    expect(await screen.findByTestId('screen-about')).toBeTruthy();
   });
 });

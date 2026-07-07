@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
 import { useDoctorRatingStore } from '@/stores/doctorRatingStore';
+import { EmptyState } from '@/components/ui';
 import { colors } from '@/theme/tokens';
 import { formatLongDate } from '@/utils/dateFormatters';
 import { DoctorRating, RATING_LABELS } from '@/types/doctorRating';
@@ -88,16 +89,11 @@ export default function DoctorRatingsScreen() {
   const renderEmpty = () => {
     if (isLoading) return null;
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyIcon}>⭐</Text>
-        <Text style={styles.emptyTitle}>Nenhuma avaliacao ainda</Text>
-        <Text style={styles.emptyText}>
-          Quando receptores avaliarem suas doacoes, as avaliacoes aparecerao aqui.
-        </Text>
-        <Text style={styles.emptyHint}>
-          Continue doando medicamentos para receber feedback dos beneficiarios.
-        </Text>
-      </View>
+      <EmptyState
+        icon="star-outline"
+        title="Nenhuma avaliação ainda"
+        description="Quando receptores avaliarem suas doações, as avaliações aparecerão aqui. Continue doando medicamentos para receber feedback dos beneficiários."
+      />
     );
   };
 
@@ -280,34 +276,6 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 14,
     color: colors.textSecondary,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 32,
-    paddingTop: 64,
-  },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: 16,
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: colors.textPrimary,
-    marginBottom: 8,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  emptyHint: {
-    fontSize: 14,
-    color: colors.textMuted,
-    textAlign: 'center',
   },
   errorContainer: {
     flex: 1,

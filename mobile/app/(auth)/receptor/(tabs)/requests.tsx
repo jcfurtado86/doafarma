@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { useMedicationRequestStore } from '@/stores/medicationRequestStore';
 import { useMedicationAppointmentStore } from '@/stores/medicationAppointmentStore';
 import { MedicationRequestCard } from '@/components/MedicationRequestCard';
+import { EmptyState } from '@/components/ui';
 import { colors } from '@/theme/tokens';
 import { MedicationRequest } from '@/types/medicationRequest';
 
@@ -44,14 +45,11 @@ export default function ReceptorRequestsScreen() {
   const renderEmpty = () => {
     if (isLoading) return null;
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyIcon}>📋</Text>
-        <Text style={styles.emptyTitle}>Nenhuma solicitação</Text>
-        <Text style={styles.emptyText}>Você ainda não fez nenhuma solicitação de medicamento.</Text>
-        <Text style={styles.emptyHint}>
-          Busque medicamentos disponíveis e solicite os que você precisa!
-        </Text>
-      </View>
+      <EmptyState
+        icon="file-tray-outline"
+        title="Nenhuma solicitação feita"
+        description="Você ainda não fez nenhuma solicitação. Busque medicamentos disponíveis e solicite os que você precisa."
+      />
     );
   };
 
@@ -120,33 +118,6 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 14,
     color: colors.textSecondary,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 32,
-  },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: 16,
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: colors.textPrimary,
-    marginBottom: 8,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  emptyHint: {
-    fontSize: 14,
-    color: colors.textMuted,
-    textAlign: 'center',
   },
   errorContainer: {
     flex: 1,

@@ -5,6 +5,7 @@ import { Pagination } from '@/constants/Pagination';
 import { formatLongDate } from '@/utils/dateFormatters';
 import { MedicationAppointment } from '@/types/medicationAppointment';
 import { ListFooterLoader } from '@/components/ListFooterLoader';
+import { EmptyState } from '@/components/ui';
 import { usePagination } from '@/hooks/usePagination';
 import { medicationAppointmentService } from '@/services/medicationAppointmentService';
 
@@ -92,16 +93,11 @@ export default function DoctorHistoryScreen() {
   const renderEmpty = () => {
     if (isLoading) return null;
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyIcon}>🎁</Text>
-        <Text style={styles.emptyTitle}>Nenhuma doação realizada</Text>
-        <Text style={styles.emptyText}>
-          Quando você concluir doações de medicamentos, elas aparecerão aqui.
-        </Text>
-        <Text style={styles.emptyHint}>
-          Cadastre ofertas de medicamentos para começar a ajudar quem precisa.
-        </Text>
-      </View>
+      <EmptyState
+        icon="gift-outline"
+        title="Nenhuma doação realizada ainda"
+        description="Quando você concluir doações de medicamentos, elas aparecerão aqui. Cadastre ofertas para começar a ajudar quem precisa."
+      />
     );
   };
 
@@ -263,33 +259,6 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 14,
     color: colors.textSecondary,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 32,
-  },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: 16,
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: colors.textPrimary,
-    marginBottom: 8,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  emptyHint: {
-    fontSize: 14,
-    color: colors.textMuted,
-    textAlign: 'center',
   },
   errorContainer: {
     flex: 1,

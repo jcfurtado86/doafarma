@@ -5,6 +5,7 @@ export const iconSize = spacing['2xl'];
 
 export const styles = StyleSheet.create({
   container: {
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing.xl,

@@ -7,7 +7,7 @@ import { useRouter } from 'expo-router';
 import { useMedicationOfferingStore } from '@/stores/medicationOfferingStore';
 import { Title } from '@/components/Title';
 import { Caption } from '@/components/Caption';
-import { Button } from '@/components/ui';
+import { Button, EmptyState } from '@/components/ui';
 import { MedicationOfferingCard } from '@/components/MedicationOfferingCard';
 import type { MedicationOffering } from '@/types/medicationOffering';
 
@@ -87,10 +87,13 @@ export default function MedicationOfferingsScreen() {
           onRefresh={fetchOfferingsCallback}
           ListEmptyComponent={
             !isLoading ? (
-              <View style={styles.emptyContainer}>
-                <Caption>Nenhuma oferta encontrada</Caption>
-                <Caption>Toque no botão abaixo para criar sua primeira oferta</Caption>
-              </View>
+              <EmptyState
+                icon="medkit-outline"
+                title="Nenhuma oferta cadastrada"
+                description="Cadastre medicamentos disponíveis para doação e ajude quem precisa."
+                actionLabel="Cadastrar medicamento"
+                onAction={() => router.push('/(auth)/doctor/offering/create')}
+              />
             ) : null
           }
         />
@@ -118,12 +121,7 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingBottom: 20,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 40,
+    flexGrow: 1,
   },
   footer: {
     marginBottom: 20,

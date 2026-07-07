@@ -13,6 +13,7 @@ import { toast } from '@/utils/toast';
 import { useMedicationRequestStore } from '@/stores/medicationRequestStore';
 import { MedicationRequestCard } from '@/components/MedicationRequestCard';
 import { FilterButton } from '@/components/FilterButton';
+import { EmptyState } from '@/components/ui';
 import { colors } from '@/theme/tokens';
 import { MedicationRequest, MedicationRequestStatus } from '@/types/medicationRequest';
 
@@ -110,19 +111,19 @@ export default function DoctorReceivedRequestsScreen() {
   const renderEmpty = () => {
     if (isLoading) return null;
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyIcon}>📋</Text>
-        <Text style={styles.emptyTitle}>Nenhuma solicitação</Text>
-        <Text style={styles.emptyText}>
-          {filter === 'pending'
+      <EmptyState
+        icon="file-tray-outline"
+        title="Nenhuma solicitação recebida"
+        description={
+          filter === 'pending'
             ? 'Não há solicitações pendentes no momento.'
             : filter === 'confirmed'
               ? 'Não há solicitações confirmadas.'
               : filter === 'rejected'
                 ? 'Não há solicitações recusadas.'
-                : 'Você não recebeu nenhuma solicitação ainda.'}
-        </Text>
-      </View>
+                : 'Você não recebeu nenhuma solicitação ainda.'
+        }
+      />
     );
   };
 
@@ -221,27 +222,6 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 14,
     color: colors.textSecondary,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 32,
-  },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: 16,
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: colors.textPrimary,
-    marginBottom: 8,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    textAlign: 'center',
   },
   errorContainer: {
     flex: 1,

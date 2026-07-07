@@ -16,6 +16,7 @@ import { colors } from '@/theme/tokens';
 import { Pagination } from '@/constants/Pagination';
 import { SearchResultCard } from '@/components/SearchResultCard';
 import { ListFooterLoader } from '@/components/ListFooterLoader';
+import { EmptyState } from '@/components/ui';
 import { medicationOfferingService } from '@/services/medicationOfferingService';
 import { MedicationOfferingSearchResult } from '@/types/medicationOffering';
 import { usePagination } from '@/hooks/usePagination';
@@ -88,19 +89,17 @@ export default function SearchScreen() {
         );
       case 'empty':
         return (
-          <View style={styles.stateContainer}>
-            <Text style={styles.stateIcon}>🔍</Text>
-            <Text style={styles.stateTitle}>
-              {searchQuery.trim()
-                ? 'Nenhum medicamento encontrado'
-                : 'Nenhum medicamento disponível'}
-            </Text>
-            <Text style={styles.stateSubtitle}>
-              {searchQuery.trim()
-                ? 'Tente buscar por outro nome ou princípio ativo'
-                : 'Não há medicamentos disponíveis para doação no momento'}
-            </Text>
-          </View>
+          <EmptyState
+            icon="search-outline"
+            title={
+              searchQuery.trim() ? 'Nenhum medicamento encontrado' : 'Nenhum medicamento disponível'
+            }
+            description={
+              searchQuery.trim()
+                ? 'Tente buscar por outro nome ou princípio ativo, ou amplie os termos da busca.'
+                : 'Não há medicamentos disponíveis para doação no momento.'
+            }
+          />
         );
       case 'error':
         return (

@@ -13,6 +13,7 @@ import { getErrorMessage } from '@/types/errors';
 import { useMedicationAppointmentStore } from '@/stores/medicationAppointmentStore';
 import { MedicationAppointmentCard } from '@/components/MedicationAppointmentCard';
 import { FilterButton } from '@/components/FilterButton';
+import { EmptyState } from '@/components/ui';
 import { colors } from '@/theme/tokens';
 import { MedicationAppointment, MedicationAppointmentStatus } from '@/types/medicationAppointment';
 
@@ -126,22 +127,19 @@ export default function ReceptorAppointmentsScreen() {
   const renderEmpty = () => {
     if (isLoading) return null;
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyIcon}>📅</Text>
-        <Text style={styles.emptyTitle}>Nenhum agendamento</Text>
-        <Text style={styles.emptyText}>
-          {filter === 'proposed'
+      <EmptyState
+        icon="calendar-outline"
+        title="Nenhum agendamento"
+        description={
+          filter === 'proposed'
             ? 'Não há propostas de agendamento no momento.'
             : filter === 'confirmed'
               ? 'Não há agendamentos confirmados.'
               : filter === 'completed'
                 ? 'Não há agendamentos concluídos.'
-                : 'Você não possui nenhum agendamento ainda.'}
-        </Text>
-        <Text style={styles.emptyHint}>
-          Após uma solicitação ser confirmada pelo médico, você poderá agendar a retirada.
-        </Text>
-      </View>
+                : 'Após uma solicitação ser confirmada pelo médico, você poderá agendar a retirada.'
+        }
+      />
     );
   };
 
@@ -240,33 +238,6 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 14,
     color: colors.textSecondary,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 32,
-  },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: 16,
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: colors.textPrimary,
-    marginBottom: 8,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  emptyHint: {
-    fontSize: 14,
-    color: colors.textMuted,
-    textAlign: 'center',
   },
   errorContainer: {
     flex: 1,

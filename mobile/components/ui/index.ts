@@ -3,6 +3,8 @@ export { Button } from './Button';
 export type { ButtonProps, ButtonSize, ButtonVariant } from './Button';
 export { Card } from './Card';
 export type { CardAccent, CardProps, CardVariant } from './Card';
+export { EmptyState } from './EmptyState';
+export type { EmptyStateIcon, EmptyStateProps } from './EmptyState';
 export { Input } from './Input';
 export type { InputProps, InputSize } from './Input';
 export { Modal } from './Modal';

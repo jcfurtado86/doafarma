@@ -38,10 +38,14 @@ class DoctorRegistrationRequest extends FormRequest
             'password'                  => ['required', 'confirmed', Password::defaults()],
             'device_name'               => ['required', 'string', 'max:255'],
             'addresses'                 => ['array', 'min:1'],
-            'addresses.*.location_name' => ['required', 'string', 'max:255'],
-            'addresses.*.full_address'  => ['required', 'string', 'max:255'],
-            'addresses.*.complement'    => ['nullable', 'string', 'max:255'],
+            'addresses.*.label'         => ['required', 'string', 'max:255'],
             'addresses.*.cep'           => ['required', 'string', 'size:8'],
+            'addresses.*.uf'            => ['required', 'string', 'size:2', new ValidUF()],
+            'addresses.*.city'          => ['required', 'string', 'max:255'],
+            'addresses.*.neighborhood'  => ['required', 'string', 'max:255'],
+            'addresses.*.street'        => ['required', 'string', 'max:255'],
+            'addresses.*.number'        => ['required', 'string', 'max:20'],
+            'addresses.*.complement'    => ['nullable', 'string', 'max:255'],
             'terms_accepted'            => ['required', 'accepted'],
         ];
     }

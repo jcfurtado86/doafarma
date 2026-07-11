@@ -74,7 +74,9 @@ class CreateDoctorAction
                 'specialty'       => $crmResult->specialty,
             ]);
 
-            $user->addresses()->createMany($data['addresses']);
+            $addresses = $user->addresses()->createMany($data['addresses']);
+
+            $user->update(['default_address_id' => $addresses->first()->id]);
 
             return $user;
         });

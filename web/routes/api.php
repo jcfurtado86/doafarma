@@ -152,6 +152,8 @@ Route::prefix('v1')->group(function (): void {
                 ->name('api.v1.addresses.store');
             Route::put('/{address}', Address\UpdateController::class)
                 ->name('api.v1.addresses.update');
+            Route::delete('/{address}', Address\DeleteController::class)
+                ->name('api.v1.addresses.delete');
         });
     });
 });

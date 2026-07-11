@@ -54,7 +54,7 @@ it('returns 403 when setting another user\'s address as default', function (): v
 
     patchJson(route('api.v1.addresses.set-default', $otherAddress))->assertForbidden();
 
-    expect($otherUser->fresh()->default_address_id)->not->toBe($otherAddress->id);
+    expect($user->fresh()->default_address_id)->not->toBe($otherAddress->id);
 });
 
 it('should return 401 Unauthorized for unauthenticated users', function (): void {

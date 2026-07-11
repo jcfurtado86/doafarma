@@ -26,7 +26,7 @@ const AddressItem = memo(function AddressItem({ address, isSelected, onSelect }:
       </View>
       <View style={styles.addressInfo}>
         <Text style={styles.addressName}>{address.label}</Text>
-        <Text style={styles.addressText}>{address.street}</Text>
+        <Text style={styles.addressText}>{address.formatted_address}</Text>
       </View>
     </Pressable>
   );

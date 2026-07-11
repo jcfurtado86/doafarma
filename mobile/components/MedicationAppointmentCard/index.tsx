@@ -77,7 +77,7 @@ export const MedicationAppointmentCard = memo(function MedicationAppointmentCard
             <View style={styles.addressContainer}>
               <Text style={styles.addressTitle}>Local de retirada:</Text>
               <Text style={styles.addressName}>{appointment.address.label}</Text>
-              <Text style={styles.addressText}>{appointment.address.street}</Text>
+              <Text style={styles.addressText}>{appointment.address.formatted_address}</Text>
               {appointment.address.complement && (
                 <Text style={styles.addressText}>{appointment.address.complement}</Text>
               )}

@@ -8,6 +8,7 @@ export interface Address {
   id: number;
   label: string;
   street: string;
+  formatted_address: string;
   complement?: string;
   cep: string;
 }

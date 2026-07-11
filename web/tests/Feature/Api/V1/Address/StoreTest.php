@@ -42,13 +42,14 @@ it('creates the address for the authenticated user and returns 201', function ()
     $response->assertCreated();
     $response->assertJson([
         'data' => [
-            'label'        => 'Consultório Centro',
-            'uf'           => 'SP',
-            'city'         => 'São Paulo',
-            'neighborhood' => 'Centro',
-            'street'       => 'Rua A',
-            'number'       => '123',
-            'complement'   => 'Sala 1',
+            'label'             => 'Consultório Centro',
+            'uf'                => 'SP',
+            'city'              => 'São Paulo',
+            'neighborhood'      => 'Centro',
+            'street'            => 'Rua A',
+            'number'            => '123',
+            'complement'        => 'Sala 1',
+            'formatted_address' => 'Rua A, 123 - Centro, São Paulo - SP',
         ],
     ]);
 

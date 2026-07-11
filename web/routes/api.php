@@ -148,6 +148,8 @@ Route::prefix('v1')->group(function (): void {
         Route::prefix('addresses')->group(function (): void {
             Route::get('/', Address\ListController::class)
                 ->name('api.v1.addresses.list');
+            Route::post('/', Address\StoreController::class)
+                ->name('api.v1.addresses.store');
         });
     });
 });

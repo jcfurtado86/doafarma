@@ -23,19 +23,27 @@ class DoctorUserSeeder extends Seeder
         ]);
 
         Address::create([
-            'user_id'       => $doctor->id,
-            'location_name' => 'Consultório',
-            'full_address'  => 'Av. Paulista, 1000 - Bela Vista, São Paulo - SP',
-            'complement'    => 'Sala 1501',
-            'cep'           => '01310100',
+            'user_id'      => $doctor->id,
+            'label'        => 'Consultório',
+            'street'       => 'Av. Paulista',
+            'number'       => '1000',
+            'neighborhood' => 'Bela Vista',
+            'city'         => 'São Paulo',
+            'uf'           => 'SP',
+            'complement'   => 'Sala 1501',
+            'cep'          => '01310100',
         ]);
 
         Address::create([
-            'user_id'       => $doctor->id,
-            'location_name' => 'Clínica',
-            'full_address'  => 'Rua Augusta, 500 - Consolação, São Paulo - SP',
-            'complement'    => null,
-            'cep'           => '01304000',
+            'user_id'      => $doctor->id,
+            'label'        => 'Clínica',
+            'street'       => 'Rua Augusta',
+            'number'       => '500',
+            'neighborhood' => 'Consolação',
+            'city'         => 'São Paulo',
+            'uf'           => 'SP',
+            'complement'   => null,
+            'cep'          => '01304000',
         ]);
     }
 }

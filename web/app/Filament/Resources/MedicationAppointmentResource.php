@@ -183,9 +183,9 @@ class MedicationAppointmentResource extends Resource
                     ->columns(2),
                 \Filament\Schemas\Components\Section::make('Local')
                     ->schema([
-                        TextEntry::make('address.location_name')
+                        TextEntry::make('address.label')
                             ->label('Nome do Local'),
-                        TextEntry::make('address.full_address')
+                        TextEntry::make('address.street')
                             ->label('Endereço'),
                         TextEntry::make('address.complement')
                             ->label('Complemento'),

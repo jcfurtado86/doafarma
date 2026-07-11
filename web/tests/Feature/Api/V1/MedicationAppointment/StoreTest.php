@@ -83,8 +83,8 @@ it('should return 201 with appointment data including request and address', func
                 ],
                 'address' => [
                     'id',
-                    'location_name',
-                    'full_address',
+                    'label',
+                    'street',
                 ],
             ],
         ])

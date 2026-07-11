@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Http\Requests\Api\V1\Address;
 
+use App\Http\Requests\Api\V1\Address\Concerns\CleansNumericInput;
 use App\Models\Address;
 use App\Rules\ValidUF;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -11,6 +12,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreAddressRequest extends FormRequest
 {
+    use CleansNumericInput;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -47,17 +50,5 @@ class StoreAddressRequest extends FormRequest
         $this->merge([
             'cep' => $this->cleanNumeric($this->input('cep')),
         ]);
-    }
-
-    /**
-     * Clean numeric values.
-     */
-    private function cleanNumeric(mixed $value): string
-    {
-        if (! is_string($value)) {
-            return '';
-        }
-
-        return preg_replace('/\D/', '', $value) ?? '';
     }
 }

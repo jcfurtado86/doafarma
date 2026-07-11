@@ -3,11 +3,25 @@
 declare(strict_types = 1);
 
 use App\Models\Address;
+use App\Models\MedicationAppointment;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Laravel\deleteJson;
+
+it('returns 422 and keeps the address when it is referenced by a medication appointment', function (): void {
+    $user    = User::factory()->create();
+    $address = Address::factory()->create(['user_id' => $user->id]);
+    MedicationAppointment::factory()->create(['address_id' => $address->id]);
+
+    actingAs($user, 'sanctum');
+
+    deleteJson(route('api.v1.addresses.delete', $address))->assertUnprocessable();
+
+    assertDatabaseHas('addresses', ['id' => $address->id]);
+});
 
 it('should be accessible via DELETE /api/v1/addresses/{address}', function (): void {
     $user    = User::factory()->create();

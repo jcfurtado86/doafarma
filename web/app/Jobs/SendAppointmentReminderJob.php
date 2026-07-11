@@ -76,7 +76,7 @@ class SendAppointmentReminderJob implements ShouldQueue
         $drugName   = $appointment->medicationRequest->medicationOffering->drug->product_name;
         $appointment->scheduled_date->format('d/m/Y');
         $scheduledTime = $appointment->scheduled_time;
-        $address       = $appointment->address->full_address;
+        $address       = $appointment->address->street;
 
         $title = $this->reminderType === '24h'
             ? 'Lembrete: Retirada de medicamento amanhã'
@@ -117,7 +117,7 @@ class SendAppointmentReminderJob implements ShouldQueue
         $drugName     = $appointment->medicationRequest->medicationOffering->drug->product_name;
         $appointment->scheduled_date->format('d/m/Y');
         $scheduledTime = $appointment->scheduled_time;
-        $address       = $appointment->address->full_address;
+        $address       = $appointment->address->street;
 
         $title = $this->reminderType === '24h'
             ? 'Lembrete: Entrega de medicamento amanhã'

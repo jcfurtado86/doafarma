@@ -58,6 +58,18 @@ it('returns 403 when updating another user\'s address', function (): void {
     assertDatabaseHas('addresses', ['id' => $otherAddress->id, 'label' => $otherAddress->label]);
 });
 
+it('cleans the cep field when provided', function (): void {
+    $user    = User::factory()->create();
+    $address = Address::factory()->create(['user_id' => $user->id]);
+
+    actingAs($user, 'sanctum');
+
+    putJson(route('api.v1.addresses.update', $address), ['cep' => '98765-432'])
+        ->assertOk();
+
+    assertDatabaseHas('addresses', ['id' => $address->id, 'cep' => '98765432']);
+});
+
 it('returns a validation error for an invalid uf', function (): void {
     $user    = User::factory()->create();
     $address = Address::factory()->create(['user_id' => $user->id]);

@@ -19,12 +19,12 @@ export interface DoctorRegistrationFormData {
 
   // final step
   addresses?: {
-    location_name?: string;
+    label?: string;
     cep?: string;
     uf?: string;
     city?: string;
     neighborhood?: string;
-    full_address?: string;
+    street?: string;
     number?: string;
     complement?: string;
   }[];
@@ -89,21 +89,6 @@ export const useDoctorRegistrationFormStore = create<DoctorRegistrationFormStore
       if (formData.ddd && formData.phone_number) {
         formData.phone_number = `${formData.ddd}${formData.phone_number}`;
         delete formData.ddd;
-      }
-
-      if (
-        formData.addresses &&
-        formData.addresses[0].full_address &&
-        formData.addresses[0].number &&
-        formData.addresses[0].neighborhood &&
-        formData.addresses[0].city &&
-        formData.addresses[0].uf
-      ) {
-        formData.addresses[0].full_address = `${formData.addresses[0].full_address}, ${formData.addresses[0].number} - ${formData.addresses[0].neighborhood}, ${formData.addresses[0].city} - ${formData.addresses[0].uf}`;
-        delete formData.addresses[0].number;
-        delete formData.addresses[0].neighborhood;
-        delete formData.addresses[0].city;
-        delete formData.addresses[0].uf;
       }
 
       formData.device_name = await getDeviceName();

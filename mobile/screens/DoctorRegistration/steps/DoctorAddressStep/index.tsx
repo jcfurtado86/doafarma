@@ -24,7 +24,7 @@ interface DoctorAddressStepProps {
 const doctorAddressSchema = z.object({
   addresses: z.array(
     z.object({
-      location_name: z
+      label: z
         .string({ error: 'Nome do consultório é obrigatório' })
         .max(255, 'Nome do consultório não pode exceder 255 caracteres'),
       cep: z.string({ error: 'CEP é obrigatório' }).length(8, 'CRM deve ter exatamente 8 dígitos'),
@@ -35,7 +35,7 @@ const doctorAddressSchema = z.object({
       neighborhood: z
         .string({ error: 'Bairro é obrigatório' })
         .max(255, 'Bairro não pode exceder 255 caracteres'),
-      full_address: z
+      street: z
         .string({ error: 'Rua ou Avenida é obrigatória' })
         .max(255, 'Rua ou Avenida não pode exceder 255 caracteres'),
       number: z
@@ -98,7 +98,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
       <View style={styles.inputContainer}>
         <Controller
           control={control}
-          name="addresses.0.location_name"
+          name="addresses.0.label"
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
               returnKeyType="next"
@@ -107,7 +107,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
-              error={errors.addresses?.[0]?.location_name?.message}
+              error={errors.addresses?.[0]?.label?.message}
             />
           )}
         />
@@ -185,7 +185,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
         <InputRow>
           <Controller
             control={control}
-            name="addresses.0.full_address"
+            name="addresses.0.street"
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
                 ref={streetRef}
@@ -195,7 +195,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
-                error={errors.addresses?.[0]?.full_address?.message}
+                error={errors.addresses?.[0]?.street?.message}
                 containerStyle={{ flex: 3 }}
               />
             )}

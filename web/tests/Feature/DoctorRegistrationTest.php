@@ -245,6 +245,8 @@ it('should be able to register without a complement and with multiple addresses'
         ->and($user->addresses[0]->complement)->toBeNull()
         ->and($user->addresses[1]->complement)->toBe('Sala 2');
 
+    expect($user->default_address_id)->toBe($user->addresses[0]->id);
+
     assertDatabaseCount('users', 1);
     assertDatabaseCount('addresses', 2);
 });

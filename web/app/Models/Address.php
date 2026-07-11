@@ -17,10 +17,14 @@ class Address extends Model
     #[\Override]
     protected $fillable = [
         'user_id',
-        'location_name',
-        'full_address',
-        'complement',
+        'label',
         'cep',
+        'uf',
+        'city',
+        'neighborhood',
+        'street',
+        'number',
+        'complement',
     ];
 
     /**

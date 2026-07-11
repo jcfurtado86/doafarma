@@ -16,10 +16,14 @@ return new class () extends Migration
         Schema::create('addresses', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('location_name');
-            $table->string('full_address');
-            $table->string('complement')->nullable();
+            $table->string('label');
             $table->char('cep', 8);
+            $table->char('uf', 2);
+            $table->string('city');
+            $table->string('neighborhood');
+            $table->string('street');
+            $table->string('number');
+            $table->string('complement')->nullable();
             $table->timestamps();
         });
     }

@@ -6,6 +6,7 @@ namespace App\Actions\Address;
 
 use App\Models\Address;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class StoreAddressAction
 {
@@ -16,12 +17,14 @@ class StoreAddressAction
      */
     public function execute(User $user, array $data): Address
     {
-        $address = $user->addresses()->create($data);
+        return DB::transaction(function () use ($user, $data): Address {
+            $address = $user->addresses()->create($data);
 
-        if ($user->default_address_id === null) {
-            $user->update(['default_address_id' => $address->id]);
-        }
+            if ($user->default_address_id === null) {
+                $user->update(['default_address_id' => $address->id]);
+            }
 
-        return $address->fresh();
+            return $address->fresh();
+        });
     }
 }

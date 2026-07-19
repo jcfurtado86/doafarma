@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Http\Requests\Api\V1\Address;
 
-use App\Http\Requests\Api\V1\Address\Concerns\CleansNumericInput;
+use App\Http\Requests\Concerns\CleansNumericInput;
 use App\Models\Address;
 use App\Rules\ValidUF;
 use Illuminate\Contracts\Validation\ValidationRule;

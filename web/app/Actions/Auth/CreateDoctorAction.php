@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Actions\Auth;
 
+use App\Actions\Address\StoreAddressAction;
 use App\Enums\UserStatus;
 use App\Models\User;
 use App\Services\CrmValidationService;
@@ -22,7 +23,8 @@ use Illuminate\Validation\ValidationException;
 class CreateDoctorAction
 {
     public function __construct(
-        private readonly CrmValidationService $crmValidationService
+        private readonly CrmValidationService $crmValidationService,
+        private readonly StoreAddressAction $storeAddressAction
     ) {
     }
 
@@ -74,9 +76,9 @@ class CreateDoctorAction
                 'specialty'       => $crmResult->specialty,
             ]);
 
-            $addresses = $user->addresses()->createMany($data['addresses']);
-
-            $user->update(['default_address_id' => $addresses->first()->id]);
+            foreach ($data['addresses'] as $addressData) {
+                $this->storeAddressAction->execute($user, $addressData);
+            }
 
             return $user;
         });

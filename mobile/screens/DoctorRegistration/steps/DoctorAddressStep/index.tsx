@@ -11,6 +11,7 @@ import { SearchableSelect, SearchableSelectRef } from '@/components/SearchableSe
 import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
 import { BRAZILIAN_STATES } from '@/constants/BrazilianStates';
 import { z } from 'zod';
+import { addressFormSchema } from '@/utils/validation/addressValidation';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
 import { useCitiesByState } from '@/hooks/useCitiesByState';
 
@@ -22,32 +23,7 @@ interface DoctorAddressStepProps {
 }
 
 const doctorAddressSchema = z.object({
-  addresses: z.array(
-    z.object({
-      label: z
-        .string({ error: 'Nome do consultório é obrigatório' })
-        .max(255, 'Nome do consultório não pode exceder 255 caracteres'),
-      cep: z.string({ error: 'CEP é obrigatório' }).length(8, 'CRM deve ter exatamente 8 dígitos'),
-      uf: z.string({ error: 'UF é obrigatório' }).max(255, 'UF não pode exceder 255 caracteres'),
-      city: z
-        .string({ error: 'Cidade é obrigatória' })
-        .max(255, 'Cidade não pode exceder 255 caracteres'),
-      neighborhood: z
-        .string({ error: 'Bairro é obrigatório' })
-        .max(255, 'Bairro não pode exceder 255 caracteres'),
-      street: z
-        .string({ error: 'Rua ou Avenida é obrigatória' })
-        .max(255, 'Rua ou Avenida não pode exceder 255 caracteres'),
-      number: z
-        .string({ error: 'Número é obrigatório' })
-        .max(255, 'Número não pode exceder 255 caracteres'),
-      complement: z
-        .string()
-        .optional()
-        .transform((val) => (val === '' ? undefined : val))
-        .pipe(z.string().max(255, 'Complemento não pode exceder 255 caracteres').optional()),
-    })
-  ),
+  addresses: z.array(addressFormSchema),
 });
 
 type DoctorAddressFormData = z.infer<typeof doctorAddressSchema>;

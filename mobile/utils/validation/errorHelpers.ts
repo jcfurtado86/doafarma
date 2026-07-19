@@ -41,6 +41,15 @@ const formatFieldName = (field: string): string => {
     lot_number: 'Número do lote',
     expires_at: 'Data de vencimento',
     quantity: 'Quantidade',
+    label: 'Nome',
+    cep: 'CEP',
+    uf: 'Estado',
+    city: 'Cidade',
+    neighborhood: 'Bairro',
+    street: 'Rua',
+    number: 'Número',
+    complement: 'Complemento',
+    address: 'Endereço',
   };
 
   return fieldNames[field] || field;

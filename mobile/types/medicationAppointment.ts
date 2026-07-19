@@ -1,17 +1,11 @@
 import { colors } from '@/theme/tokens';
+import { Address } from './address';
 import { MedicationRequest } from './medicationRequest';
 
 export type MedicationAppointmentStatus = 'proposed' | 'confirmed' | 'completed';
 export type ProposedBy = 'receptor' | 'doctor';
 
-export interface Address {
-  id: number;
-  label: string;
-  street: string;
-  formatted_address: string;
-  complement?: string;
-  cep: string;
-}
+export type { Address };
 
 export interface MedicationAppointment {
   id: number;

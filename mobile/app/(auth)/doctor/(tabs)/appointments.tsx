@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { toast } from '@/utils/toast';
 import { getErrorMessage } from '@/types/errors';
+import { useAddressStore } from '@/stores/addressStore';
 import { useMedicationAppointmentStore } from '@/stores/medicationAppointmentStore';
 import { MedicationAppointmentCard } from '@/components/MedicationAppointmentCard';
 import { FilterButton } from '@/components/FilterButton';
@@ -33,6 +34,8 @@ export default function DoctorReceivedAppointmentsScreen() {
 
   const [filter, setFilter] = useState<FilterOption>('proposed');
 
+  const { addresses, ensureAddressesLoaded } = useAddressStore();
+
   const loadAppointments = useCallback(() => {
     const status = filter === 'all' ? undefined : filter;
     fetchReceivedAppointments(status);
@@ -41,6 +44,12 @@ export default function DoctorReceivedAppointmentsScreen() {
   useEffect(() => {
     loadAppointments();
   }, [loadAppointments]);
+
+  useEffect(() => {
+    ensureAddressesLoaded().catch(() => {
+      // sem endereços a contraproposta segue possível mantendo o endereço atual
+    });
+  }, [ensureAddressesLoaded]);
 
   const handleAccept = useCallback(
     (appointment: MedicationAppointment) => {
@@ -116,10 +125,10 @@ export default function DoctorReceivedAppointmentsScreen() {
         onConfirmDelivery={() => handleConfirmDelivery(item)}
         onAccept={() => handleAccept(item)}
         onCounterPropose={(data) => handleCounterPropose(item.id, data)}
-        doctorAddresses={[]} // TODO: Pass doctor's addresses from user store
+        doctorAddresses={addresses}
       />
     ),
-    [handleConfirmDelivery, handleAccept, handleCounterPropose]
+    [handleConfirmDelivery, handleAccept, handleCounterPropose, addresses]
   );
 
   const renderEmpty = () => {

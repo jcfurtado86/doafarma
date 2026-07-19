@@ -26,4 +26,5 @@ coverage/
 # Claude
 .claude/
 docs/specs/
+docs/plans/
 .worktrees/

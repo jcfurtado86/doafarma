@@ -13,7 +13,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class ListController extends Controller
 {
     /**
-     * Handle the incoming request.
+     * List the authenticated user's addresses.
      */
     public function __invoke(ListAddressRequest $request, ListAddressAction $action): AnonymousResourceCollection
     {

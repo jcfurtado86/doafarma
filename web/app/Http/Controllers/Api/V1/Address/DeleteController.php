@@ -13,7 +13,9 @@ use Illuminate\Http\Response;
 class DeleteController extends Controller
 {
     /**
-     * Handle the incoming request.
+     * Delete one of the authenticated user's addresses.
+     *
+     * Fails with 422 when the address is linked to a medication appointment.
      */
     public function __invoke(DeleteAddressRequest $request, Address $address, DeleteAddressAction $action): Response
     {

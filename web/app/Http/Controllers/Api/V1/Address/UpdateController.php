@@ -13,7 +13,7 @@ use App\Models\Address;
 class UpdateController extends Controller
 {
     /**
-     * Handle the incoming request.
+     * Update one of the authenticated user's addresses.
      */
     public function __invoke(
         UpdateAddressRequest $request,

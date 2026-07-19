@@ -13,7 +13,7 @@ use App\Models\Address;
 class SetDefaultController extends Controller
 {
     /**
-     * Handle the incoming request.
+     * Set the address as the authenticated user's default.
      */
     public function __invoke(SetDefaultAddressRequest $request, Address $address, SetDefaultAddressAction $action): AddressResource
     {

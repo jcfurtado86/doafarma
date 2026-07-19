@@ -13,7 +13,9 @@ use Illuminate\Http\JsonResponse;
 class StoreController extends Controller
 {
     /**
-     * Handle the incoming request.
+     * Create an address for the authenticated user.
+     *
+     * The first address a user creates automatically becomes their default address.
      */
     public function __invoke(StoreAddressRequest $request, StoreAddressAction $action): AddressResource | JsonResponse
     {

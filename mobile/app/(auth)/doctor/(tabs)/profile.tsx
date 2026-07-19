@@ -9,6 +9,12 @@ const DOCTOR_MENU: ProfileMenuItem[] = [
     testID: 'profile-ratings',
   },
   {
+    label: 'Meus Endereços',
+    icon: 'location-outline',
+    href: '/(auth)/doctor/addresses',
+    testID: 'profile-addresses',
+  },
+  {
     label: 'Configurações',
     icon: 'settings-outline',
     href: '/(auth)/doctor/settings',

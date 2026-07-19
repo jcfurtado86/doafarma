@@ -15,6 +15,9 @@ export default function DoctorLayout() {
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="offering/create" options={{ title: 'Nova Oferta' }} />
       <Stack.Screen name="offering/edit/[id]" options={{ title: 'Editar Oferta' }} />
+      <Stack.Screen name="addresses/index" options={{ title: 'Meus Endereços' }} />
+      <Stack.Screen name="addresses/create" options={{ title: 'Novo Endereço' }} />
+      <Stack.Screen name="addresses/edit/[id]" options={{ title: 'Editar Endereço' }} />
       <Stack.Screen name="ratings" options={{ title: 'Minhas Avaliações' }} />
       <Stack.Screen name="settings" options={{ title: 'Configurações' }} />
     </Stack>

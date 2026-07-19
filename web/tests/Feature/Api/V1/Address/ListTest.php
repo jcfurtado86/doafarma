@@ -63,24 +63,22 @@ it('marks the address matching default_address_id as is_default', function (): v
     ]);
 });
 
-it('does not mark another user\'s address as default even if the ids coincidentally match the viewer\'s default_address_id', function (): void {
+it('does not mark an address as default when default_address_id points to another user\'s address', function (): void {
     $viewer       = User::factory()->create();
     $otherUser    = User::factory()->create();
-    $ownAddress   = Address::factory()->create(['user_id' => $viewer->id]);
     $otherAddress = Address::factory()->create(['user_id' => $otherUser->id]);
-    $viewer->update(['default_address_id' => $ownAddress->id]);
 
-    actingAs($viewer, 'sanctum');
+    // Bypasses the normal SetDefaultAddressAction/policy flow on purpose: simulates an
+    // inconsistent data state (e.g. a future code path, a manual data fix) where
+    // default_address_id points to an address that isn't the viewer's own. AddressResource
+    // must not blindly trust default_address_id without also confirming the address being
+    // rendered belongs to the person looking at it.
+    $viewer->update(['default_address_id' => $otherAddress->id]);
 
-    // Simulate viewing an address that isn't the viewer's own, via a direct resource call,
-    // since the List endpoint only ever returns the viewer's own addresses (this test exists
-    // to guard AddressResource's is_default logic itself, for when it's reused inside
-    // MedicationAppointmentResource to render another user's address).
     $payload = (new App\Http\Resources\Api\V1\AddressResource($otherAddress))
-        ->response(request())
-        ->getData(true);
+        ->toArray(Illuminate\Http\Request::create('/', 'GET')->setUserResolver(fn () => $viewer));
 
-    expect($payload['data']['is_default'] ?? $payload['is_default'])->toBeFalse();
+    expect($payload['is_default'])->toBeFalse();
 });
 
 it('should return 401 Unauthorized for unauthenticated users', function (): void {

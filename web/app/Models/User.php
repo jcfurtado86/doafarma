@@ -42,6 +42,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'status',
         'status_changed_at',
         'status_changed_by',
+        'default_address_id',
         'password',
         'phone_number',
         'terms_accepted',
@@ -137,6 +138,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function addresses(): HasMany
     {
         return $this->hasMany(Address::class);
+    }
+
+    /**
+     * Get the user's default address.
+     *
+     * @return BelongsTo<Address, $this>
+     */
+    public function defaultAddress(): BelongsTo
+    {
+        return $this->belongsTo(Address::class, 'default_address_id');
     }
 
     /**

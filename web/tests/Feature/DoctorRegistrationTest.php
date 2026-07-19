@@ -52,10 +52,14 @@ function validDoctorData(array $overrides = []): array
         'device_name'           => 'Test Device',
         'addresses'             => [
             [
-                'location_name' => 'Clínica X',
-                'full_address'  => 'Rua A, 123, Bairro B, Cidade C, Estado D',
-                'complement'    => 'Sala 1',
-                'cep'           => '12345-678',
+                'label'        => 'Clínica X',
+                'cep'          => '12345-678',
+                'uf'           => 'SP',
+                'city'         => 'São Paulo',
+                'neighborhood' => 'Centro',
+                'street'       => 'Rua A',
+                'number'       => '123',
+                'complement'   => 'Sala 1',
             ],
         ],
         'terms_accepted' => true,
@@ -96,10 +100,14 @@ it('should be able to register a doctor with active CRM', function (): void {
     ]);
 
     assertDatabaseHas('addresses', [
-        'location_name' => 'Clínica X',
-        'full_address'  => 'Rua A, 123, Bairro B, Cidade C, Estado D',
-        'complement'    => 'Sala 1',
-        'cep'           => '12345678',
+        'label'        => 'Clínica X',
+        'cep'          => '12345678',
+        'uf'           => 'SP',
+        'city'         => 'São Paulo',
+        'neighborhood' => 'Centro',
+        'street'       => 'Rua A',
+        'number'       => '123',
+        'complement'   => 'Sala 1',
     ]);
 
     assertDatabaseCount('users', 1);
@@ -172,7 +180,35 @@ it('should ensure that there is a relationship between the user and their addres
     expect($address)
         ->not->toBeNull()
         ->and($address->user_id)->toBe($user->id)
-        ->and($address->location_name)->toBe('Clínica X');
+        ->and($address->label)->toBe('Clínica X')
+        ->and($address->uf)->toBe('SP')
+        ->and($address->city)->toBe('São Paulo')
+        ->and($address->neighborhood)->toBe('Centro')
+        ->and($address->number)->toBe('123');
+});
+
+it('persists uf, city, neighborhood and number instead of discarding them', function (): void {
+    fakeCrmApi();
+
+    postJson(route('doctor.register'), validDoctorData())->assertCreated();
+
+    assertDatabaseHas('addresses', [
+        'uf'           => 'SP',
+        'city'         => 'São Paulo',
+        'neighborhood' => 'Centro',
+        'number'       => '123',
+    ]);
+});
+
+it('sets the first registered address as the user default_address_id', function (): void {
+    fakeCrmApi();
+
+    postJson(route('doctor.register'), validDoctorData())->assertCreated();
+
+    $user    = User::whereEmail('test@example.com')->first();
+    $address = $user->addresses()->first();
+
+    expect($user->default_address_id)->toBe($address->id);
 });
 
 it('should be able to register without a complement and with multiple addresses', function (): void {
@@ -181,15 +217,23 @@ it('should be able to register without a complement and with multiple addresses'
     postJson(route('doctor.register'), validDoctorData([
         'addresses' => [
             [
-                'location_name' => 'Clínica X',
-                'full_address'  => 'Rua A, 123, Bairro B, Cidade C, Estado D',
-                'cep'           => '12345-678',
+                'label'        => 'Clínica X',
+                'cep'          => '12345-678',
+                'uf'           => 'SP',
+                'city'         => 'São Paulo',
+                'neighborhood' => 'Centro',
+                'street'       => 'Rua A',
+                'number'       => '123',
             ],
             [
-                'location_name' => 'Clínica Y',
-                'full_address'  => 'Rua B, 456, Bairro C, Cidade D, Estado E',
-                'complement'    => 'Sala 2',
-                'cep'           => '98765-432',
+                'label'        => 'Clínica Y',
+                'cep'          => '98765-432',
+                'uf'           => 'RJ',
+                'city'         => 'Rio de Janeiro',
+                'neighborhood' => 'Copacabana',
+                'street'       => 'Rua B',
+                'number'       => '456',
+                'complement'   => 'Sala 2',
             ],
         ],
     ]))->assertCreated();
@@ -200,6 +244,8 @@ it('should be able to register without a complement and with multiple addresses'
         ->toHaveCount(2)
         ->and($user->addresses[0]->complement)->toBeNull()
         ->and($user->addresses[1]->complement)->toBe('Sala 2');
+
+    expect($user->default_address_id)->toBe($user->addresses[0]->id);
 
     assertDatabaseCount('users', 1);
     assertDatabaseCount('addresses', 2);
@@ -361,9 +407,13 @@ it('should validate required fields', function (): void {
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors([
-            'addresses.0.location_name',
-            'addresses.0.full_address',
+            'addresses.0.label',
             'addresses.0.cep',
+            'addresses.0.uf',
+            'addresses.0.city',
+            'addresses.0.neighborhood',
+            'addresses.0.street',
+            'addresses.0.number',
         ]);
 
     assertDatabaseCount('users', 0);
@@ -431,9 +481,13 @@ it('should validate required address fields', function (): void {
     postJson(route('doctor.register'), validDoctorData(['addresses' => [[]]]))
         ->assertUnprocessable()
         ->assertJsonValidationErrors([
-            'addresses.0.location_name',
-            'addresses.0.full_address',
+            'addresses.0.label',
             'addresses.0.cep',
+            'addresses.0.uf',
+            'addresses.0.city',
+            'addresses.0.neighborhood',
+            'addresses.0.street',
+            'addresses.0.number',
         ]);
 
     assertDatabaseCount('users', 0);
@@ -444,10 +498,14 @@ it('should validate CEP format', function (): void {
 
     postJson(route('doctor.register'), validDoctorData([
         'addresses' => [[
-            'location_name' => 'Clínica X',
-            'full_address'  => 'Rua A, 123',
-            'complement'    => 'Sala 1',
-            'cep'           => 'invalid-cep',
+            'label'        => 'Clínica X',
+            'cep'          => 'invalid-cep',
+            'uf'           => 'SP',
+            'city'         => 'São Paulo',
+            'neighborhood' => 'Centro',
+            'street'       => 'Rua A',
+            'number'       => '123',
+            'complement'   => 'Sala 1',
         ]],
     ]))
         ->assertUnprocessable()
@@ -490,36 +548,44 @@ it('should validate terms_accepted is true', function (): void {
     assertDatabaseCount('users', 0);
 });
 
-it('should validate address has valid location name length', function (): void {
+it('should validate address has valid label length', function (): void {
     fakeCrmApi();
 
     postJson(route('doctor.register'), validDoctorData([
         'addresses' => [[
-            'location_name' => str_repeat('a', 256),
-            'full_address'  => 'Rua A, 123',
-            'complement'    => 'Sala 1',
-            'cep'           => '12345-678',
+            'label'        => str_repeat('a', 256),
+            'cep'          => '12345-678',
+            'uf'           => 'SP',
+            'city'         => 'São Paulo',
+            'neighborhood' => 'Centro',
+            'street'       => 'Rua A',
+            'number'       => '123',
+            'complement'   => 'Sala 1',
         ]],
     ]))
         ->assertUnprocessable()
-        ->assertJsonValidationErrors(['addresses.0.location_name']);
+        ->assertJsonValidationErrors(['addresses.0.label']);
 
     assertDatabaseCount('users', 0);
 });
 
-it('should validate full_address is not empty', function (): void {
+it('should validate street is not empty', function (): void {
     fakeCrmApi();
 
     postJson(route('doctor.register'), validDoctorData([
         'addresses' => [[
-            'location_name' => 'Clínica X',
-            'full_address'  => '',
-            'complement'    => 'Sala 1',
-            'cep'           => '12345-678',
+            'label'        => 'Clínica X',
+            'cep'          => '12345-678',
+            'uf'           => 'SP',
+            'city'         => 'São Paulo',
+            'neighborhood' => 'Centro',
+            'street'       => '',
+            'number'       => '123',
+            'complement'   => 'Sala 1',
         ]],
     ]))
         ->assertUnprocessable()
-        ->assertJsonValidationErrors(['addresses.0.full_address']);
+        ->assertJsonValidationErrors(['addresses.0.street']);
 
     assertDatabaseCount('users', 0);
 });

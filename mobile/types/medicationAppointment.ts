@@ -6,8 +6,9 @@ export type ProposedBy = 'receptor' | 'doctor';
 
 export interface Address {
   id: number;
-  location_name: string;
-  full_address: string;
+  label: string;
+  street: string;
+  formatted_address: string;
   complement?: string;
   cep: string;
 }

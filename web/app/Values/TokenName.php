@@ -16,7 +16,7 @@ use App\Enums\TokenAbility;
  */
 final readonly class TokenName
 {
-    private const SEPARATOR = ':';
+    private const string SEPARATOR = ':';
 
     public function __construct(
         public string $device,

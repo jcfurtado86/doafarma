@@ -23,11 +23,15 @@ class ReceptorUserSeeder extends Seeder
         ]);
 
         Address::create([
-            'user_id'       => $receptor->id,
-            'location_name' => 'Casa',
-            'full_address'  => 'Rua das Flores, 123 - Centro, São Paulo - SP',
-            'complement'    => 'Apartamento 45',
-            'cep'           => '01310100',
+            'user_id'      => $receptor->id,
+            'label'        => 'Casa',
+            'street'       => 'Rua das Flores',
+            'number'       => '123',
+            'neighborhood' => 'Centro',
+            'city'         => 'São Paulo',
+            'uf'           => 'SP',
+            'complement'   => 'Apartamento 45',
+            'cep'          => '01310100',
         ]);
     }
 }

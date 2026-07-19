@@ -159,7 +159,7 @@ export const CounterProposeModal = memo(function CounterProposeModal({
             Como paciente, você não pode alterar o local de retirada. Apenas o médico pode escolher
             o endereço.
           </Text>
-          <Text style={styles.infoText}>Local atual: {currentAddress.location_name}</Text>
+          <Text style={styles.infoText}>Local atual: {currentAddress.label}</Text>
         </View>
       )}
     </Modal>

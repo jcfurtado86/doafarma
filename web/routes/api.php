@@ -2,6 +2,7 @@
 
 declare(strict_types = 1);
 
+use App\Http\Controllers\Api\V1\Address;
 use App\Http\Controllers\Api\V1\Auth;
 use App\Http\Controllers\Api\V1\DoctorRating;
 use App\Http\Controllers\Api\V1\Drug;
@@ -142,6 +143,19 @@ Route::prefix('v1')->group(function (): void {
                 ->name('api.v1.doctor-ratings.update');
             Route::get('/doctor/{doctor}', DoctorRating\ListController::class)
                 ->name('api.v1.doctor-ratings.list');
+        });
+
+        Route::prefix('addresses')->group(function (): void {
+            Route::get('/', Address\ListController::class)
+                ->name('api.v1.addresses.list');
+            Route::post('/', Address\StoreController::class)
+                ->name('api.v1.addresses.store');
+            Route::put('/{address}', Address\UpdateController::class)
+                ->name('api.v1.addresses.update');
+            Route::delete('/{address}', Address\DeleteController::class)
+                ->name('api.v1.addresses.delete');
+            Route::patch('/{address}/default', Address\SetDefaultController::class)
+                ->name('api.v1.addresses.set-default');
         });
     });
 });

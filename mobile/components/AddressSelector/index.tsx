@@ -19,14 +19,14 @@ const AddressItem = memo(function AddressItem({ address, isSelected, onSelect }:
     <Pressable
       style={[styles.option, isSelected && styles.optionSelected]}
       onPress={handlePress}
-      {...a11y.radioButton(address.location_name, isSelected)}
+      {...a11y.radioButton(address.label, isSelected)}
     >
       <View style={[styles.radioButton, isSelected && styles.radioButtonSelected]}>
         {isSelected && <View style={styles.radioButtonInner} />}
       </View>
       <View style={styles.addressInfo}>
-        <Text style={styles.addressName}>{address.location_name}</Text>
-        <Text style={styles.addressText}>{address.full_address}</Text>
+        <Text style={styles.addressName}>{address.label}</Text>
+        <Text style={styles.addressText}>{address.formatted_address}</Text>
       </View>
     </Pressable>
   );

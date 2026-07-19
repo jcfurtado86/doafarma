@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,10 +20,15 @@ class AddressFactory extends Factory
     public function definition(): array
     {
         return [
-            'location_name' => fake()->company(),
-            'full_address'  => fake()->address(),
-            'complement'    => fake()->optional()->secondaryAddress(),
-            'cep'           => fake()->numerify('########'),
+            'user_id'      => User::factory(),
+            'label'        => fake()->company(),
+            'cep'          => fake()->numerify('########'),
+            'uf'           => fake()->randomElement(['SP', 'RJ', 'MG', 'RS', 'PR']),
+            'city'         => fake()->city(),
+            'neighborhood' => fake()->word(),
+            'street'       => fake()->streetName(),
+            'number'       => (string) fake()->buildingNumber(),
+            'complement'   => fake()->optional()->secondaryAddress(),
         ];
     }
 }

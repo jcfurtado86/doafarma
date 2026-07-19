@@ -33,9 +33,7 @@ class AddressResource extends JsonResource
             'number'            => $this->number,
             'complement'        => $this->complement,
             'formatted_address' => $this->formatted_address,
-            'is_default'        => $request->user() !== null
-                && $this->user_id === $request->user()->id
-                && $this->id === $request->user()->default_address_id,
+            'is_default'        => $this->isDefaultFor($request->user()),
         ];
     }
 }

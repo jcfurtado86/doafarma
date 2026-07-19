@@ -40,6 +40,16 @@ class Address extends Model
     }
 
     /**
+     * Determine whether this address is the given user's default address.
+     */
+    public function isDefaultFor(?User $user): bool
+    {
+        return $user !== null
+            && $this->user_id === $user->id
+            && $this->id === $user->default_address_id;
+    }
+
+    /**
      * Get the address formatted as a single readable string.
      *
      * @return Attribute<string, never>

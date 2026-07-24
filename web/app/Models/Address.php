@@ -44,7 +44,7 @@ class Address extends Model
      */
     public function isDefaultFor(?User $user): bool
     {
-        return $user !== null
+        return $user instanceof User
             && $this->user_id === $user->id
             && $this->id === $user->default_address_id;
     }

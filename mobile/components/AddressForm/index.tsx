@@ -1,46 +1,51 @@
 import React, { useEffect, useRef } from 'react';
-import { View, TextInput } from 'react-native';
+import { Alert, StyleSheet, TextInput, View } from 'react-native';
+import { Controller } from 'react-hook-form';
 import { Button, Input } from '@/components/ui';
-import { styles } from './styles';
-import { Controller, UseFormSetError } from 'react-hook-form';
-import { Title } from '@/components/Title';
-import { Caption } from '@/components/Caption';
-import { InputRow } from '@/components/InputRow';
 import { Select, SelectItem, type SelectHandle } from '@/components/ui/Select';
 import { SearchableSelect, SearchableSelectRef } from '@/components/SearchableSelect';
-import { DoctorRegistrationFormData } from '@/stores/doctorRegistrationFormStore';
+import { InputRow } from '@/components/InputRow';
 import { BRAZILIAN_STATES } from '@/constants/BrazilianStates';
-import { z } from 'zod';
-import { addressFormSchema } from '@/utils/validation/addressValidation';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
 import { useCitiesByState } from '@/hooks/useCitiesByState';
+import { addressFormSchema, AddressFormData } from '@/utils/validation/addressValidation';
+import { AddressServiceError } from '@/services/addressService';
+import { getErrorMessage } from '@/types/errors';
 
-interface DoctorAddressStepProps {
-  onSubmit: (
-    data: Partial<DoctorRegistrationFormData>,
-    setError: UseFormSetError<any>
-  ) => Promise<void>;
+const FORM_FIELDS = Object.keys(addressFormSchema.shape) as (keyof AddressFormData)[];
+
+function isFormField(field: string): field is keyof AddressFormData {
+  return (FORM_FIELDS as string[]).includes(field);
 }
 
-const doctorAddressSchema = z.object({
-  addresses: z.array(addressFormSchema),
-});
+interface AddressFormProps {
+  defaultValues?: Partial<AddressFormData>;
+  submitLabel: string;
+  submittingLabel: string;
+  onSubmit: (data: AddressFormData) => Promise<void>;
+  onCancel: () => void;
+}
 
-type DoctorAddressFormData = z.infer<typeof doctorAddressSchema>;
-
-export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
+export function AddressForm({
+  defaultValues,
+  submitLabel,
+  submittingLabel,
+  onSubmit,
+  onCancel,
+}: AddressFormProps) {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     setError,
     watch,
     setValue,
-  } = useFeatureForm<DoctorAddressFormData>({
-    schema: doctorAddressSchema,
+  } = useFeatureForm<AddressFormData>({
+    schema: addressFormSchema,
+    defaultValues,
   });
 
-  const selectedUf = watch('addresses.0.uf');
+  const selectedUf = watch('uf');
   const { cities, isLoading, error: citiesError } = useCitiesByState(selectedUf || null);
 
   const isInitialMount = useRef(true);
@@ -49,11 +54,32 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
       isInitialMount.current = false;
       return;
     }
-    setValue('addresses.0.city', '');
+    setValue('city', '');
   }, [selectedUf, setValue]);
 
-  async function handleFinishRegistration(data: DoctorAddressFormData) {
-    await onSubmit(data, setError);
+  async function handleFormSubmit(data: AddressFormData) {
+    try {
+      await onSubmit(data);
+    } catch (error: unknown) {
+      if (error instanceof AddressServiceError && error.validationErrors) {
+        const unmappedMessages: string[] = [];
+
+        Object.entries(error.validationErrors).forEach(([field, messages], index) => {
+          if (isFormField(field)) {
+            setError(field, { message: messages[0] }, { shouldFocus: index === 0 });
+          } else {
+            unmappedMessages.push(...messages);
+          }
+        });
+
+        if (unmappedMessages.length > 0) {
+          Alert.alert('Erro', unmappedMessages.join('\n'));
+        }
+        return;
+      }
+
+      Alert.alert('Erro', getErrorMessage(error, 'Ocorreu um erro inesperado. Tente novamente.'));
+    }
   }
 
   const cepRef = useRef<TextInput>(null);
@@ -66,15 +92,10 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
 
   return (
     <>
-      <View style={styles.textContainer}>
-        <Title>Onde podemos te encontrar?</Title>
-        <Caption>Você pode adicionar o endereço do seu consultório ou clínica!</Caption>
-      </View>
-
       <View style={styles.inputContainer}>
         <Controller
           control={control}
-          name="addresses.0.label"
+          name="label"
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
               returnKeyType="next"
@@ -83,31 +104,32 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
-              error={errors.addresses?.[0]?.label?.message}
+              error={errors.label?.message}
             />
           )}
         />
         <Controller
           control={control}
-          name="addresses.0.cep"
+          name="cep"
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
               ref={cepRef}
               returnKeyType="next"
               placeholder="CEP"
               keyboardType="numeric"
+              maxLength={8}
               onSubmitEditing={() => ufRef.current?.focus()}
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
-              error={errors.addresses?.[0]?.cep?.message}
+              error={errors.cep?.message}
             />
           )}
         />
         <InputRow>
           <Controller
             control={control}
-            name="addresses.0.uf"
+            name="uf"
             render={({ field: { value, onChange, onBlur } }) => (
               <Select
                 ref={ufRef}
@@ -118,7 +140,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
                 }}
                 onBlur={onBlur}
                 placeholder="Estado"
-                error={errors.addresses?.[0]?.uf?.message}
+                error={errors.uf?.message}
                 containerStyle={{ flex: 1 }}
               >
                 {BRAZILIAN_STATES.map((state) => (
@@ -130,21 +152,21 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
           <SearchableSelect
             ref={cityRef}
             formProps={{
-              name: 'addresses.0.city',
+              name: 'city',
               control: control,
             }}
             placeholder="Cidade"
             cities={cities}
             isLoading={isLoading}
             loadError={citiesError}
-            error={errors.addresses?.[0]?.city?.message}
+            error={errors.city?.message}
             containerStyle={{ flex: 1 }}
             nextRef={neighborhoodRef}
           />
         </InputRow>
         <Controller
           control={control}
-          name="addresses.0.neighborhood"
+          name="neighborhood"
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
               ref={neighborhoodRef}
@@ -154,14 +176,14 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
-              error={errors.addresses?.[0]?.neighborhood?.message}
+              error={errors.neighborhood?.message}
             />
           )}
         />
         <InputRow>
           <Controller
             control={control}
-            name="addresses.0.street"
+            name="street"
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
                 ref={streetRef}
@@ -171,14 +193,14 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
-                error={errors.addresses?.[0]?.street?.message}
+                error={errors.street?.message}
                 containerStyle={{ flex: 3 }}
               />
             )}
           />
           <Controller
             control={control}
-            name="addresses.0.number"
+            name="number"
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
                 ref={numberRef}
@@ -189,7 +211,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
-                error={errors.addresses?.[0]?.number?.message}
+                error={errors.number?.message}
                 containerStyle={{ flex: 1 }}
               />
             )}
@@ -197,24 +219,42 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
         </InputRow>
         <Controller
           control={control}
-          name="addresses.0.complement"
+          name="complement"
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
               ref={complementRef}
               returnKeyType="done"
               placeholder="Complemento"
-              onSubmitEditing={() => handleSubmit(handleFinishRegistration)()}
+              onSubmitEditing={() => handleSubmit(handleFormSubmit)()}
               value={value ?? ''}
               onChangeText={onChange}
               onBlur={onBlur}
-              error={errors.addresses?.[0]?.complement?.message}
+              error={errors.complement?.message}
             />
           )}
         />
       </View>
+
       <View style={styles.buttonContainer}>
-        <Button onPress={() => handleSubmit(handleFinishRegistration)()} label="Próximo" />
+        <Button
+          label={isSubmitting ? submittingLabel : submitLabel}
+          onPress={() => handleSubmit(handleFormSubmit)()}
+          disabled={isSubmitting}
+        />
+        <Button variant="secondary" label="Cancelar" onPress={onCancel} />
       </View>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  inputContainer: {
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  buttonContainer: {
+    marginTop: 30,
+    marginBottom: 20,
+    gap: 16,
+  },
+});

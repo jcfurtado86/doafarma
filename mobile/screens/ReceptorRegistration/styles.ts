@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors } from '@/theme/tokens';
+import { colors, spacing } from '@/theme/tokens';
 
 export const styles = StyleSheet.create({
   container: {
@@ -16,8 +16,8 @@ export const styles = StyleSheet.create({
   },
 
   inputContainer: {
-    justifyContent: 'space-between',
     width: '100%',
+    gap: spacing.md,
   },
 
   passwordContainer: {

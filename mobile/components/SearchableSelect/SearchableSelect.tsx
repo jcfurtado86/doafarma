@@ -78,13 +78,7 @@ function SearchableSelectInner<T extends FieldValues>(
   }, [cities, searchText]);
 
   return (
-    <View
-      style={[
-        styles.container,
-        hasError || loadError ? { marginBottom: 8 } : { marginBottom: 16 },
-        containerStyle,
-      ]}
-    >
+    <View style={[styles.container, containerStyle]}>
       <Controller
         {...formProps}
         render={({ field }) => (

@@ -21,7 +21,7 @@ import { z } from 'zod';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
 import { authService, AuthServiceError } from '@/services/authService';
 import { isUserBlocked, UserRole } from '@/types/user';
-import { colors } from '@/theme/tokens';
+import { colors, spacing } from '@/theme/tokens';
 import { Ionicons } from '@expo/vector-icons';
 import * as Device from 'expo-device';
 import { logger } from '@/utils/logger';
@@ -287,6 +287,7 @@ const styles = StyleSheet.create({
   },
   form: {
     width: '100%',
+    gap: spacing.md,
   },
   passwordContainer: {
     position: 'relative',

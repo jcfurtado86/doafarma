@@ -5,6 +5,7 @@ import { Button, Input } from '@/components/ui';
 import { Select, SelectItem, type SelectHandle } from '@/components/ui/Select';
 import { SearchableSelect, SearchableSelectRef } from '@/components/SearchableSelect';
 import { InputRow } from '@/components/InputRow';
+import { spacing } from '@/theme/tokens';
 import { BRAZILIAN_STATES } from '@/constants/BrazilianStates';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
 import { useCitiesByState } from '@/hooks/useCitiesByState';
@@ -249,8 +250,8 @@ export function AddressForm({
 
 const styles = StyleSheet.create({
   inputContainer: {
-    justifyContent: 'space-between',
     width: '100%',
+    gap: spacing.md,
   },
   buttonContainer: {
     marginTop: 30,

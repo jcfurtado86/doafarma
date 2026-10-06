@@ -23,7 +23,7 @@ import { useFeatureForm } from '@/hooks/useFeatureForm';
 import { authService, AuthServiceError } from '@/services/authService';
 import { resetPasswordSchema, ResetPasswordFormData } from '@/utils/validation/authValidation';
 import { parseResetLink } from '@/utils/parseResetLink';
-import { colors } from '@/theme/tokens';
+import { colors, spacing } from '@/theme/tokens';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function ResetPasswordScreen() {
@@ -329,6 +329,7 @@ const styles = StyleSheet.create({
   },
   form: {
     width: '100%',
+    gap: spacing.md,
   },
   pasteContainer: {
     alignItems: 'center',

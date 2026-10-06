@@ -18,7 +18,7 @@ import { Controller } from 'react-hook-form';
 import { useFeatureForm } from '@/hooks/useFeatureForm';
 import { authService, AuthServiceError } from '@/services/authService';
 import { forgotPasswordSchema, ForgotPasswordFormData } from '@/utils/validation/authValidation';
-import { colors } from '@/theme/tokens';
+import { colors, spacing } from '@/theme/tokens';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function ForgotPasswordScreen() {
@@ -178,6 +178,7 @@ const styles = StyleSheet.create({
   },
   form: {
     width: '100%',
+    gap: spacing.md,
   },
   buttonContainer: {
     marginTop: 24,

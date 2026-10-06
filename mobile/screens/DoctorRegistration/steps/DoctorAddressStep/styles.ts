@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { spacing } from '@/theme/tokens';
 
 export const styles = StyleSheet.create({
   textContainer: {
@@ -9,8 +10,8 @@ export const styles = StyleSheet.create({
   },
 
   inputContainer: {
-    justifyContent: 'space-between',
     width: '100%',
+    gap: spacing.md,
   },
 
   buttonContainer: {

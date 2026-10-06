@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { colors } from '@/theme/tokens';
+import { getErrorMessage } from '@/types/errors';
 import { toast } from '@/utils/toast';
 import { useAddressStore } from '@/stores/addressStore';
 import { Title } from '@/components/Title';
@@ -21,18 +22,23 @@ export default function EditAddressScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const addressId = parseInt(id, 10);
-  const { addresses, ensureAddressesLoaded, updateAddress } = useAddressStore();
+  const address = useAddressStore((state) => state.addresses.find((item) => item.id === addressId));
+  const ensureAddressesLoaded = useAddressStore((state) => state.ensureAddressesLoaded);
+  const updateAddress = useAddressStore((state) => state.updateAddress);
   const [isReady, setIsReady] = useState(false);
-
-  const address = addresses.find((item) => item.id === addressId);
 
   useEffect(() => {
     ensureAddressesLoaded()
-      .catch(() => {
-        // endereço ausente é tratado no efeito abaixo
-      })
-      .finally(() => setIsReady(true));
-  }, [ensureAddressesLoaded]);
+      .then(() => setIsReady(true))
+      .catch((error: unknown) => {
+        // Falha de carga não é "não encontrado": mostra o motivo real e volta
+        Alert.alert(
+          'Erro',
+          getErrorMessage(error, 'Não foi possível carregar o endereço. Tente novamente.'),
+          [{ text: 'OK', onPress: () => router.back() }]
+        );
+      });
+  }, [ensureAddressesLoaded, router]);
 
   useEffect(() => {
     if (isReady && !address) {

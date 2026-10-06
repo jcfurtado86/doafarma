@@ -35,7 +35,8 @@ export default function DoctorReceivedAppointmentsScreen() {
 
   const [filter, setFilter] = useState<FilterOption>('proposed');
 
-  const { addresses, ensureAddressesLoaded } = useAddressStore();
+  const addresses = useAddressStore((state) => state.addresses);
+  const ensureAddressesLoaded = useAddressStore((state) => state.ensureAddressesLoaded);
 
   const loadAppointments = useCallback(() => {
     const status = filter === 'all' ? undefined : filter;

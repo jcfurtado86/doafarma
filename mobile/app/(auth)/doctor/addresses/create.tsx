@@ -11,7 +11,7 @@ import { AddressFormData } from '@/utils/validation/addressValidation';
 
 export default function CreateAddressScreen() {
   const router = useRouter();
-  const { createAddress } = useAddressStore();
+  const createAddress = useAddressStore((state) => state.createAddress);
 
   const handleCreateAddress = async (data: AddressFormData) => {
     await createAddress(data);

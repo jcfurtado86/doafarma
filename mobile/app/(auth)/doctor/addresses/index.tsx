@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, FlatList, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { colors } from '@/theme/tokens';
@@ -13,18 +13,40 @@ import type { Address } from '@/types/address';
 
 export default function AddressesScreen() {
   const router = useRouter();
-  const { addresses, isLoading, fetchAddresses, deleteAddress, setDefaultAddress } =
-    useAddressStore();
+  const addresses = useAddressStore((state) => state.addresses);
+  const isLoading = useAddressStore((state) => state.isLoading);
+  const fetchAddresses = useAddressStore((state) => state.fetchAddresses);
+  const deleteAddress = useAddressStore((state) => state.deleteAddress);
+  const setDefaultAddress = useAddressStore((state) => state.setDefaultAddress);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  // Uma ação por vez: toque duplo não dispara o mesmo PATCH/DELETE duas vezes
+  const isMutating = useRef(false);
 
-  const fetchAddressesCallback = useCallback(() => {
-    fetchAddresses().catch(() => {
-      // erro já fica registrado na store; pull-to-refresh permite tentar de novo
+  const loadAddresses = useCallback(() => {
+    setLoadError(null);
+    fetchAddresses().catch((error: unknown) => {
+      const message = getErrorMessage(error, 'Não foi possível carregar os endereços.');
+      setLoadError(message);
+      // Com a lista já na tela o estado de erro não aparece, então avisa por toast
+      if (useAddressStore.getState().addresses.length > 0) {
+        toast.error(message);
+      }
     });
   }, [fetchAddresses]);
 
   useEffect(() => {
-    fetchAddressesCallback();
-  }, [fetchAddressesCallback]);
+    loadAddresses();
+  }, [loadAddresses]);
+
+  const runExclusive = useCallback(async (action: () => Promise<void>) => {
+    if (isMutating.current) return;
+    isMutating.current = true;
+    try {
+      await action();
+    } finally {
+      isMutating.current = false;
+    }
+  }, []);
 
   const handleDelete = useCallback(
     (address: Address) => {
@@ -36,37 +58,39 @@ export default function AddressesScreen() {
           {
             text: 'Excluir',
             style: 'destructive',
-            onPress: async () => {
-              try {
-                await deleteAddress(address.id);
-                toast.success('Endereço excluído com sucesso!');
-              } catch (error: unknown) {
-                Alert.alert(
-                  'Erro ao excluir',
-                  getErrorMessage(error, 'Não foi possível excluir o endereço. Tente novamente.')
-                );
-              }
-            },
+            onPress: () =>
+              runExclusive(async () => {
+                try {
+                  await deleteAddress(address.id);
+                  toast.success('Endereço excluído com sucesso!');
+                } catch (error: unknown) {
+                  Alert.alert(
+                    'Erro ao excluir',
+                    getErrorMessage(error, 'Não foi possível excluir o endereço. Tente novamente.')
+                  );
+                }
+              }),
           },
         ]
       );
     },
-    [deleteAddress]
+    [deleteAddress, runExclusive]
   );
 
   const handleSetDefault = useCallback(
-    async (address: Address) => {
-      try {
-        await setDefaultAddress(address.id);
-        toast.success(`"${address.label}" definido como endereço padrão!`);
-      } catch (error: unknown) {
-        Alert.alert(
-          'Erro',
-          getErrorMessage(error, 'Não foi possível definir o endereço padrão. Tente novamente.')
-        );
-      }
-    },
-    [setDefaultAddress]
+    (address: Address) =>
+      runExclusive(async () => {
+        try {
+          await setDefaultAddress(address.id);
+          toast.success(`"${address.label}" definido como endereço padrão!`);
+        } catch (error: unknown) {
+          Alert.alert(
+            'Erro',
+            getErrorMessage(error, 'Não foi possível definir o endereço padrão. Tente novamente.')
+          );
+        }
+      }),
+    [setDefaultAddress, runExclusive]
   );
 
   const handleEdit = useCallback(
@@ -103,9 +127,17 @@ export default function AddressesScreen() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.list}
           refreshing={isLoading}
-          onRefresh={fetchAddressesCallback}
+          onRefresh={loadAddresses}
           ListEmptyComponent={
-            !isLoading ? (
+            isLoading ? null : loadError ? (
+              <EmptyState
+                icon="cloud-offline-outline"
+                title="Não foi possível carregar"
+                description={loadError}
+                actionLabel="Tentar novamente"
+                onAction={loadAddresses}
+              />
+            ) : (
               <EmptyState
                 icon="location-outline"
                 title="Nenhum endereço cadastrado"
@@ -113,7 +145,7 @@ export default function AddressesScreen() {
                 actionLabel="Adicionar endereço"
                 onAction={() => router.push('/(auth)/doctor/addresses/create')}
               />
-            ) : null
+            )
           }
         />
       </View>

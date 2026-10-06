@@ -1,4 +1,5 @@
 import { useAddressStore } from '@/stores/addressStore';
+import { useAuthStore } from '@/stores/authStore';
 import { addressService } from '@/services/addressService';
 import { Address } from '@/types/address';
 
@@ -29,7 +30,7 @@ const makeAddress = (overrides: Partial<Address> = {}): Address => ({
 
 beforeEach(() => {
   jest.clearAllMocks();
-  useAddressStore.setState({ addresses: [], isLoading: false, error: null });
+  useAddressStore.setState({ addresses: [], hasLoaded: false, isLoading: false, error: null });
 });
 
 describe('addressStore', () => {
@@ -69,16 +70,37 @@ describe('addressStore', () => {
     });
 
     it('skips the fetch when addresses are already loaded', async () => {
-      useAddressStore.setState({ addresses: [makeAddress()] });
+      useAddressStore.setState({ addresses: [makeAddress()], hasLoaded: true });
 
       await useAddressStore.getState().ensureAddressesLoaded();
 
       expect(addressService.list).not.toHaveBeenCalled();
     });
+
+    it('does not refetch after loading an empty list', async () => {
+      (addressService.list as jest.Mock).mockResolvedValueOnce([]);
+
+      await useAddressStore.getState().ensureAddressesLoaded();
+      await useAddressStore.getState().ensureAddressesLoaded();
+
+      expect(addressService.list).toHaveBeenCalledTimes(1);
+    });
+
+    it('fetches again after a failed load', async () => {
+      (addressService.list as jest.Mock)
+        .mockRejectedValueOnce(new Error('Falha de rede'))
+        .mockResolvedValueOnce([makeAddress()]);
+
+      await expect(useAddressStore.getState().ensureAddressesLoaded()).rejects.toThrow();
+      await useAddressStore.getState().ensureAddressesLoaded();
+
+      expect(addressService.list).toHaveBeenCalledTimes(2);
+      expect(useAddressStore.getState().addresses).toHaveLength(1);
+    });
   });
 
   describe('createAddress', () => {
-    it('prepends the created address to the list', async () => {
+    it('appends the created address, matching the backend order', async () => {
       const existing = makeAddress();
       const created = makeAddress({ id: 2, label: 'Clínica Sul' });
       useAddressStore.setState({ addresses: [existing] });
@@ -94,7 +116,26 @@ describe('addressStore', () => {
         number: created.number,
       });
 
-      expect(useAddressStore.getState().addresses).toEqual([created, existing]);
+      expect(useAddressStore.getState().addresses).toEqual([existing, created]);
+    });
+
+    it('does not flag the list as loading', async () => {
+      (addressService.create as jest.Mock).mockImplementationOnce(async () => {
+        expect(useAddressStore.getState().isLoading).toBe(false);
+        return makeAddress();
+      });
+
+      await useAddressStore.getState().createAddress({
+        label: 'Consultório Centro',
+        cep: '69900100',
+        uf: 'AC',
+        city: 'Rio Branco',
+        neighborhood: 'Centro',
+        street: 'Rua Principal',
+        number: '100',
+      });
+
+      expect(addressService.create).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -173,6 +214,49 @@ describe('addressStore', () => {
       useAddressStore.getState().clearError();
 
       expect(useAddressStore.getState().error).toBeNull();
+    });
+  });
+
+  describe('user change', () => {
+    const doctor = (id: number) => ({
+      id,
+      name: `Médico ${id}`,
+      email: `medico${id}@test.com`,
+      role: 'doctor' as const,
+      status: 'approved' as const,
+    });
+
+    afterEach(() => {
+      useAuthStore.setState({ user: null });
+    });
+
+    it('clears the addresses when the user logs out', () => {
+      useAuthStore.setState({ user: doctor(1) });
+      useAddressStore.setState({ addresses: [makeAddress()], hasLoaded: true });
+
+      useAuthStore.setState({ user: null });
+
+      const state = useAddressStore.getState();
+      expect(state.addresses).toEqual([]);
+      expect(state.hasLoaded).toBe(false);
+    });
+
+    it('clears the addresses when another user logs in', () => {
+      useAuthStore.setState({ user: doctor(1) });
+      useAddressStore.setState({ addresses: [makeAddress()], hasLoaded: true });
+
+      useAuthStore.setState({ user: doctor(2) });
+
+      expect(useAddressStore.getState().addresses).toEqual([]);
+    });
+
+    it('keeps the addresses when the same user is refreshed', () => {
+      useAuthStore.setState({ user: doctor(1) });
+      useAddressStore.setState({ addresses: [makeAddress()], hasLoaded: true });
+
+      useAuthStore.setState({ user: { ...doctor(1), name: 'Nome novo' } });
+
+      expect(useAddressStore.getState().addresses).toHaveLength(1);
     });
   });
 });

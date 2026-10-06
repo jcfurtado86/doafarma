@@ -1,6 +1,15 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { colors, spacing } from '@/theme/tokens';
-import { View, StyleSheet, Alert, TextInput, ActivityIndicator } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Alert,
+  TextInput,
+  ActivityIndicator,
+  ScrollView,
+  Pressable,
+  Keyboard,
+} from 'react-native';
 import { toast } from '@/utils/toast';
 import { getErrorMessage } from '@/types/errors';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -116,114 +125,131 @@ export default function EditMedicationOfferingScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Title>Editar Oferta</Title>
-        <Caption>Atualize os dados da oferta de medicamento</Caption>
-      </View>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="on-drag"
+    >
+      <Pressable style={styles.dismissArea} onPress={Keyboard.dismiss}>
+        <View style={styles.header}>
+          <Title>Editar Oferta</Title>
+          <Caption>Atualize os dados da oferta de medicamento</Caption>
+        </View>
 
-      <View style={styles.form}>
-        <InputRow>
+        <View style={styles.form}>
+          <InputRow>
+            <Controller
+              control={control}
+              name="drug_id"
+              render={({ field: { value, onChange, onBlur } }) => (
+                <Select
+                  ref={drugRef}
+                  value={value}
+                  onValueChange={(next) => {
+                    onChange(next);
+                    if (next) lotNumberRef.current?.focus();
+                  }}
+                  onBlur={onBlur}
+                  placeholder={
+                    loadingDrugs ? 'Carregando medicamentos...' : 'Selecione o medicamento'
+                  }
+                  disabled
+                  error={errors.drug_id?.message}
+                >
+                  {drugs.map((drug) => (
+                    <SelectItem
+                      key={drug.id}
+                      label={drug.product_name}
+                      value={drug.id.toString()}
+                    />
+                  ))}
+                </Select>
+              )}
+            />
+          </InputRow>
+
           <Controller
             control={control}
-            name="drug_id"
-            render={({ field: { value, onChange, onBlur } }) => (
-              <Select
-                ref={drugRef}
+            name="lot_number"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                ref={lotNumberRef}
+                placeholder="Número do lote"
+                autoCapitalize="characters"
+                returnKeyType="next"
+                onSubmitEditing={() => expiresAtRef.current?.focus()}
                 value={value}
-                onValueChange={(next) => {
-                  onChange(next);
-                  if (next) lotNumberRef.current?.focus();
-                }}
+                onChangeText={onChange}
                 onBlur={onBlur}
-                placeholder={
-                  loadingDrugs ? 'Carregando medicamentos...' : 'Selecione o medicamento'
-                }
-                disabled
-                error={errors.drug_id?.message}
-              >
-                {drugs.map((drug) => (
-                  <SelectItem key={drug.id} label={drug.product_name} value={drug.id.toString()} />
-                ))}
-              </Select>
+                error={errors.lot_number?.message}
+              />
             )}
           />
-        </InputRow>
 
-        <Controller
-          control={control}
-          name="lot_number"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              ref={lotNumberRef}
-              placeholder="Número do lote"
-              autoCapitalize="characters"
-              returnKeyType="next"
-              onSubmitEditing={() => expiresAtRef.current?.focus()}
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              error={errors.lot_number?.message}
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="expires_at"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              ref={expiresAtRef}
-              placeholder="DD/MM/AAAA"
-              keyboardType="numeric"
-              maxLength={10}
-              returnKeyType="next"
-              onSubmitEditing={() => quantityRef.current?.focus()}
-              value={value}
-              onChangeText={(text) => onChange(formatDateInput(text))}
-              onBlur={onBlur}
-              error={errors.expires_at?.message}
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="quantity"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              ref={quantityRef}
-              placeholder="Quantidade"
-              keyboardType="numeric"
-              returnKeyType="done"
-              onSubmitEditing={() => handleSubmit(handleUpdateOffering)()}
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              error={errors.quantity?.message}
-            />
-          )}
-        />
-
-        <View style={styles.buttonContainer}>
-          <Button
-            label={isSubmitting ? 'Salvando...' : 'Salvar Alterações'}
-            onPress={() => handleSubmit(handleUpdateOffering)()}
-            disabled={isSubmitting}
+          <Controller
+            control={control}
+            name="expires_at"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                ref={expiresAtRef}
+                placeholder="DD/MM/AAAA"
+                keyboardType="numeric"
+                maxLength={10}
+                returnKeyType="next"
+                onSubmitEditing={() => quantityRef.current?.focus()}
+                value={value}
+                onChangeText={(text) => onChange(formatDateInput(text))}
+                onBlur={onBlur}
+                error={errors.expires_at?.message}
+              />
+            )}
           />
 
-          <Button variant="secondary" label="Cancelar" onPress={handleGoBack} />
+          <Controller
+            control={control}
+            name="quantity"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                ref={quantityRef}
+                placeholder="Quantidade"
+                keyboardType="numeric"
+                returnKeyType="done"
+                onSubmitEditing={() => handleSubmit(handleUpdateOffering)()}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.quantity?.message}
+              />
+            )}
+          />
+
+          <View style={styles.buttonContainer}>
+            <Button
+              label={isSubmitting ? 'Salvando...' : 'Salvar Alterações'}
+              onPress={() => handleSubmit(handleUpdateOffering)()}
+              disabled={isSubmitting}
+            />
+
+            <Button variant="secondary" label="Cancelar" onPress={handleGoBack} />
+          </View>
         </View>
-      </View>
-    </View>
+      </Pressable>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: colors.surface,
+  },
+  content: {
+    flexGrow: 1,
+    padding: 20,
+  },
+  dismissArea: {
+    flex: 1,
   },
   centered: {
     justifyContent: 'center',

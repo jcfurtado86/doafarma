@@ -6,7 +6,9 @@ export const addressValidation = {
     .min(1, 'Nome do consultório é obrigatório')
     .max(255, 'Nome do consultório não pode exceder 255 caracteres'),
 
-  cep: z.string({ error: 'CEP é obrigatório' }).length(8, 'CEP deve ter exatamente 8 dígitos'),
+  cep: z
+    .string({ error: 'CEP é obrigatório' })
+    .regex(/^\d{8}$/, 'CEP deve ter exatamente 8 dígitos'),
 
   uf: z
     .string({ error: 'UF é obrigatório' })

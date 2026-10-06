@@ -117,10 +117,10 @@ export function AddressForm({
               returnKeyType="next"
               placeholder="CEP"
               keyboardType="numeric"
-              maxLength={8}
               onSubmitEditing={() => ufRef.current?.focus()}
               value={value}
-              onChangeText={onChange}
+              // Descarta hífen e afins antes de limitar: "12345-678" vira "12345678"
+              onChangeText={(text) => onChange(text.replace(/\D/g, '').slice(0, 8))}
               onBlur={onBlur}
               error={errors.cep?.message}
             />

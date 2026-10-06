@@ -98,7 +98,7 @@ export function DoctorAddressStep({ onSubmit }: DoctorAddressStepProps) {
               keyboardType="numeric"
               onSubmitEditing={() => ufRef.current?.focus()}
               value={value}
-              onChangeText={onChange}
+              onChangeText={(text) => onChange(text.replace(/\D/g, '').slice(0, 8))}
               onBlur={onBlur}
               error={errors.addresses?.[0]?.cep?.message}
             />

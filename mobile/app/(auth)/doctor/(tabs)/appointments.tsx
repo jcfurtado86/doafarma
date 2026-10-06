@@ -12,6 +12,7 @@ import { toast } from '@/utils/toast';
 import { getErrorMessage } from '@/types/errors';
 import { useMedicationAppointmentStore } from '@/stores/medicationAppointmentStore';
 import { MedicationAppointmentCard } from '@/components/MedicationAppointmentCard';
+import { FilterBar } from '@/components/FilterBar';
 import { FilterButton } from '@/components/FilterButton';
 import { EmptyState } from '@/components/ui';
 import { colors } from '@/theme/tokens';
@@ -161,7 +162,7 @@ export default function DoctorReceivedAppointmentsScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.filterContainer}>
+      <FilterBar>
         <FilterButton
           value="proposed"
           label="Propostas"
@@ -181,7 +182,7 @@ export default function DoctorReceivedAppointmentsScreen() {
           onPress={setFilter}
         />
         <FilterButton value="all" label="Todos" isActive={filter === 'all'} onPress={setFilter} />
-      </View>
+      </FilterBar>
 
       {isLoading && receivedAppointments.length === 0 ? (
         <View style={styles.loadingContainer}>
@@ -214,14 +215,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    padding: 12,
-    backgroundColor: colors.surface,
-    gap: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
   listContent: {
     padding: 16,

@@ -23,7 +23,10 @@ export function FilterButton<T extends string>({
       accessibilityLabel={`Filtro: ${label}`}
       accessibilityState={{ selected: isActive }}
     >
-      <Text style={[styles.filterButtonText, isActive && styles.filterButtonTextActive]}>
+      <Text
+        style={[styles.filterButtonText, isActive && styles.filterButtonTextActive]}
+        numberOfLines={1}
+      >
         {label}
       </Text>
     </Pressable>
@@ -32,9 +35,8 @@ export function FilterButton<T extends string>({
 
 const styles = StyleSheet.create({
   filterButton: {
-    flex: 1,
     paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     borderRadius: 8,
     backgroundColor: colors.background,
     alignItems: 'center',

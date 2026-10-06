@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
      * Run: php artisan migrate:fresh --seed
      *
      * This will create:
+     * - Admin: admin@doafarma.com.br / admin123 (painel Filament)
      * - Doctor: doctor@example.com / password (Dr. João Santos, CRM 123456/SP)
      * - Receptor: receptor@example.com / password (Maria Silva)
      * - 10 real medications (Losartana, Metformina, Omeprazol, etc.)
@@ -28,6 +29,7 @@ class DatabaseSeeder extends Seeder
             DrugSeeder::class,
 
             // 2. Create users with profiles and addresses
+            AdminSeeder::class,
             DoctorUserSeeder::class,
             ReceptorUserSeeder::class,
 
@@ -43,6 +45,10 @@ class DatabaseSeeder extends Seeder
 
         $this->command->info('');
         $this->command->info('===== DADOS DE ACESSO =====');
+        $this->command->info('');
+        $this->command->info('Admin (painel /admin):');
+        $this->command->info('  Email: admin@doafarma.com.br');
+        $this->command->info('  Senha: admin123');
         $this->command->info('');
         $this->command->info('Médico:');
         $this->command->info('  Email: doctor@example.com');

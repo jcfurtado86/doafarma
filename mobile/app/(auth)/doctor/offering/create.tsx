@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { colors } from '@/theme/tokens';
+import { colors, spacing } from '@/theme/tokens';
 import { View, StyleSheet, Alert, TextInput } from 'react-native';
 import { toast } from '@/utils/toast';
 import { getErrorMessage } from '@/types/errors';
@@ -189,11 +189,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   header: {
-    marginTop: 60,
-    marginBottom: 40,
+    marginTop: spacing.sm,
+    marginBottom: spacing.lg,
   },
   form: {
     flex: 1,
+    gap: spacing.md,
   },
   buttonContainer: {
     marginTop: 30,

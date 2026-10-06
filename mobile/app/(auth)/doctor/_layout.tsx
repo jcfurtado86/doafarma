@@ -10,6 +10,7 @@ export default function DoctorLayout() {
         headerStyle: { backgroundColor: colors.surface },
         headerTitleStyle: { color: colors.textPrimary, fontWeight: '600' },
         headerTintColor: colors.primaryPressed,
+        headerBackButtonDisplayMode: 'minimal',
       }}
     >
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

@@ -14,8 +14,12 @@ export default function DoctorLayout() {
       }}
     >
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="offering/create" options={{ title: 'Nova Oferta' }} />
-      <Stack.Screen name="offering/edit/[id]" options={{ title: 'Editar Oferta' }} />
+      {/* Título vazio: essas telas já mostram título e subtítulo no corpo. */}
+      <Stack.Screen name="offering/create" options={{ title: 'Nova Oferta', headerTitle: '' }} />
+      <Stack.Screen
+        name="offering/edit/[id]"
+        options={{ title: 'Editar Oferta', headerTitle: '' }}
+      />
       <Stack.Screen name="ratings" options={{ title: 'Minhas Avaliações' }} />
       <Stack.Screen name="settings" options={{ title: 'Configurações' }} />
     </Stack>

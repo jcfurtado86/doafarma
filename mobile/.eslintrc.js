@@ -6,6 +6,10 @@ module.exports = {
   plugins: ['prettier'],
   rules: {
     'prettier/prettier': 'error',
+    // Regras novas do eslint-config-expo 57 (React Compiler). Adoção é tarefa separada
+    // do backlog de migração do eslint; desligadas aqui pra não misturar com o upgrade do SDK.
+    'react-hooks/set-state-in-effect': 'off',
+    'react-hooks/immutability': 'off',
   },
   settings: {
     node: {

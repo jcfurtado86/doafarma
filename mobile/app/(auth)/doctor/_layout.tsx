@@ -10,11 +10,16 @@ export default function DoctorLayout() {
         headerStyle: { backgroundColor: colors.surface },
         headerTitleStyle: { color: colors.textPrimary, fontWeight: '600' },
         headerTintColor: colors.primaryPressed,
+        headerBackButtonDisplayMode: 'minimal',
       }}
     >
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="offering/create" options={{ title: 'Nova Oferta' }} />
-      <Stack.Screen name="offering/edit/[id]" options={{ title: 'Editar Oferta' }} />
+      {/* Título vazio: essas telas já mostram título e subtítulo no corpo. */}
+      <Stack.Screen name="offering/create" options={{ title: 'Nova Oferta', headerTitle: '' }} />
+      <Stack.Screen
+        name="offering/edit/[id]"
+        options={{ title: 'Editar Oferta', headerTitle: '' }}
+      />
       <Stack.Screen name="ratings" options={{ title: 'Minhas Avaliações' }} />
       <Stack.Screen name="settings" options={{ title: 'Configurações' }} />
     </Stack>

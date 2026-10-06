@@ -1,6 +1,16 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { colors } from '@/theme/tokens';
-import { View, StyleSheet, Alert, TextInput } from 'react-native';
+import { colors, spacing } from '@/theme/tokens';
+import {
+  View,
+  StyleSheet,
+  Alert,
+  TextInput,
+  ScrollView,
+  Pressable,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { toast } from '@/utils/toast';
 import { getErrorMessage } from '@/types/errors';
 import { useRouter } from 'expo-router';
@@ -79,121 +89,144 @@ export default function CreateMedicationOfferingScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Title>Nova Oferta</Title>
-        <Caption>Adicione uma nova oferta de medicamento</Caption>
-      </View>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+      >
+        <Pressable style={styles.dismissArea} onPress={Keyboard.dismiss} accessible={false}>
+          <View style={styles.header}>
+            <Title>Nova Oferta</Title>
+            <Caption>Adicione uma nova oferta de medicamento</Caption>
+          </View>
 
-      <View style={styles.form}>
-        <InputRow>
-          <Controller
-            control={control}
-            name="drug_id"
-            render={({ field: { value, onChange, onBlur } }) => (
-              <Select
-                ref={drugRef}
-                value={value}
-                onValueChange={(next) => {
-                  onChange(next);
-                  if (next) lotNumberRef.current?.focus();
-                }}
-                onBlur={onBlur}
-                placeholder={
-                  loadingDrugs ? 'Carregando medicamentos...' : 'Selecione o medicamento'
-                }
-                disabled={loadingDrugs}
-                error={errors.drug_id?.message}
-              >
-                {drugs.map((drug) => (
-                  <SelectItem key={drug.id} label={drug.product_name} value={drug.id.toString()} />
-                ))}
-              </Select>
-            )}
-          />
-        </InputRow>
+          <View style={styles.form}>
+            <InputRow>
+              <Controller
+                control={control}
+                name="drug_id"
+                render={({ field: { value, onChange, onBlur } }) => (
+                  <Select
+                    ref={drugRef}
+                    value={value}
+                    onValueChange={(next) => {
+                      onChange(next);
+                      if (next) lotNumberRef.current?.focus();
+                    }}
+                    onBlur={onBlur}
+                    placeholder={
+                      loadingDrugs ? 'Carregando medicamentos...' : 'Selecione o medicamento'
+                    }
+                    disabled={loadingDrugs}
+                    error={errors.drug_id?.message}
+                  >
+                    {drugs.map((drug) => (
+                      <SelectItem
+                        key={drug.id}
+                        label={drug.product_name}
+                        value={drug.id.toString()}
+                      />
+                    ))}
+                  </Select>
+                )}
+              />
+            </InputRow>
 
-        <Controller
-          control={control}
-          name="lot_number"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              ref={lotNumberRef}
-              placeholder="Número do lote"
-              autoCapitalize="characters"
-              returnKeyType="next"
-              onSubmitEditing={() => expiresAtRef.current?.focus()}
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              error={errors.lot_number?.message}
+            <Controller
+              control={control}
+              name="lot_number"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  ref={lotNumberRef}
+                  placeholder="Número do lote"
+                  autoCapitalize="characters"
+                  returnKeyType="next"
+                  onSubmitEditing={() => expiresAtRef.current?.focus()}
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={errors.lot_number?.message}
+                />
+              )}
             />
-          )}
-        />
 
-        <Controller
-          control={control}
-          name="expires_at"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              ref={expiresAtRef}
-              placeholder="DD/MM/AAAA"
-              keyboardType="numeric"
-              maxLength={10}
-              returnKeyType="next"
-              onSubmitEditing={() => quantityRef.current?.focus()}
-              value={value}
-              onChangeText={(text) => onChange(formatDateInput(text))}
-              onBlur={onBlur}
-              error={errors.expires_at?.message}
+            <Controller
+              control={control}
+              name="expires_at"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  ref={expiresAtRef}
+                  placeholder="DD/MM/AAAA"
+                  keyboardType="numeric"
+                  maxLength={10}
+                  returnKeyType="next"
+                  onSubmitEditing={() => quantityRef.current?.focus()}
+                  value={value}
+                  onChangeText={(text) => onChange(formatDateInput(text))}
+                  onBlur={onBlur}
+                  error={errors.expires_at?.message}
+                />
+              )}
             />
-          )}
-        />
 
-        <Controller
-          control={control}
-          name="quantity"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              ref={quantityRef}
-              placeholder="Quantidade"
-              keyboardType="numeric"
-              returnKeyType="done"
-              onSubmitEditing={() => handleSubmit(handleCreateOffering)()}
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              error={errors.quantity?.message}
+            <Controller
+              control={control}
+              name="quantity"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  ref={quantityRef}
+                  placeholder="Quantidade"
+                  keyboardType="numeric"
+                  returnKeyType="done"
+                  onSubmitEditing={() => handleSubmit(handleCreateOffering)()}
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={errors.quantity?.message}
+                />
+              )}
             />
-          )}
-        />
 
-        <View style={styles.buttonContainer}>
-          <Button
-            label={isSubmitting ? 'Criando...' : 'Criar Oferta'}
-            onPress={() => handleSubmit(handleCreateOffering)()}
-            disabled={isSubmitting}
-          />
+            <View style={styles.buttonContainer}>
+              <Button
+                label={isSubmitting ? 'Criando...' : 'Criar Oferta'}
+                onPress={() => handleSubmit(handleCreateOffering)()}
+                disabled={isSubmitting}
+              />
 
-          <Button variant="secondary" label="Cancelar" onPress={handleGoBack} />
-        </View>
-      </View>
-    </View>
+              <Button variant="secondary" label="Cancelar" onPress={handleGoBack} />
+            </View>
+          </View>
+        </Pressable>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: colors.surface,
   },
+  content: {
+    flexGrow: 1,
+    padding: 20,
+  },
+  dismissArea: {
+    flex: 1,
+  },
   header: {
-    marginTop: 60,
-    marginBottom: 40,
+    marginTop: spacing.sm,
+    marginBottom: spacing.lg,
   },
   form: {
     flex: 1,
+    gap: spacing.md,
   },
   buttonContainer: {
     marginTop: 30,

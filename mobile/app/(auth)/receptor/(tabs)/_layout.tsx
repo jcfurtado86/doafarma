@@ -11,12 +11,9 @@ export default function ReceptorTabsLayout() {
         tabBarStyle: {
           backgroundColor: colors.surface,
           borderTopColor: colors.border,
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: '600',
         },
         headerStyle: {
@@ -51,7 +48,7 @@ export default function ReceptorTabsLayout() {
       <Tabs.Screen
         name="appointments"
         options={{
-          title: 'Agendamentos',
+          title: 'Agenda',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="calendar-outline" size={size} color={color} />
           ),

@@ -43,7 +43,7 @@ class MedicationRequestSeeder extends Seeder
         }
 
         // Get doctor's first address for the appointment
-        $doctorAddress = $doctor->addresses()->first();
+        $doctorAddress = $doctor->pickupAddress();
 
         if (! $doctorAddress) {
             $this->command->warn('Doctor has no address. Update DoctorUserSeeder.');

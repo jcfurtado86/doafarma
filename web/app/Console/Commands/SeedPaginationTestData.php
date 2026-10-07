@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace App\Console\Commands;
 
-use App\Models\Address;
 use App\Models\Doctor;
 use App\Models\Drug;
 use App\Models\MedicationAppointment;
@@ -52,7 +51,7 @@ class SeedPaginationTestData extends Command
             return 1;
         }
 
-        $address = Address::where('user_id', $doctor->user_id)->first();
+        $address = $doctor->user->pickupAddress();
 
         if (! $address) {
             $this->error('O médico precisa ter pelo menos 1 endereço cadastrado.');

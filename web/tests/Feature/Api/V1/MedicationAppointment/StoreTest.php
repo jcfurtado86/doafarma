@@ -10,6 +10,7 @@ use App\Models\MedicationRequest;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\postJson;
 
@@ -92,10 +93,129 @@ it('should return 201 with appointment data including request and address', func
         ->assertJsonPath('data.proposed_by', 'receptor');
 });
 
-it('should use doctors first address automatically', function (): void {
+// Rule 1
+it('should use the doctors default address even when it is not the oldest one', function (): void {
     $receptor = User::factory()->receptor()->create();
     $doctor   = Doctor::factory()->create();
-    $address1 = Address::factory()->create(['user_id' => $doctor->user->id]);
+    Address::factory()->create(['user_id' => $doctor->user->id]);
+    $defaultAddress = Address::factory()->create(['user_id' => $doctor->user->id]);
+    $doctor->user->update(['default_address_id' => $defaultAddress->id]);
+    $offering = MedicationOffering::factory()->reserved()->create(['doctor_id' => $doctor->id]);
+    $request  = MedicationRequest::factory()
+        ->forReceptor($receptor)
+        ->forOffering($offering)
+        ->confirmed()
+        ->create();
+
+    actingAs($receptor, 'sanctum');
+
+    postJson('/api/v1/medication-appointments', [
+        'medication_request_id' => $request->id,
+        'scheduled_date'        => now()->addDays(3)->toDateString(),
+        'scheduled_time'        => '14:30',
+    ])
+        ->assertCreated()
+        ->assertJsonPath('data.address.id', $defaultAddress->id);
+
+    assertDatabaseHas('medication_appointments', [
+        'medication_request_id' => $request->id,
+        'address_id'            => $defaultAddress->id,
+    ]);
+});
+
+// Rule 2
+it('should use the doctors first registered address when there is no default', function (): void {
+    $receptor     = User::factory()->receptor()->create();
+    $doctor       = Doctor::factory()->create();
+    $firstAddress = Address::factory()->create(['user_id' => $doctor->user->id]);
+    Address::factory()->create(['user_id' => $doctor->user->id]);
+    Address::factory()->create(['user_id' => $doctor->user->id]);
+    $offering = MedicationOffering::factory()->reserved()->create(['doctor_id' => $doctor->id]);
+    $request  = MedicationRequest::factory()
+        ->forReceptor($receptor)
+        ->forOffering($offering)
+        ->confirmed()
+        ->create();
+
+    expect($doctor->user->fresh()->default_address_id)->toBeNull();
+
+    actingAs($receptor, 'sanctum');
+
+    postJson('/api/v1/medication-appointments', [
+        'medication_request_id' => $request->id,
+        'scheduled_date'        => now()->addDays(3)->toDateString(),
+        'scheduled_time'        => '14:30',
+    ])
+        ->assertCreated()
+        ->assertJsonPath('data.address.id', $firstAddress->id);
+});
+
+// Rule 5: a default pointing at someone else's address is never used
+it('should fall back to the doctors oldest address when the default belongs to another user', function (): void {
+    $receptor      = User::factory()->receptor()->create();
+    $strayAddress  = Address::factory()->create(['user_id' => $receptor->id]);
+    $doctor        = Doctor::factory()->create();
+    $doctorAddress = Address::factory()->create(['user_id' => $doctor->user->id]);
+    $doctor->user->forceFill(['default_address_id' => $strayAddress->id])->save();
+    $offering = MedicationOffering::factory()->reserved()->create(['doctor_id' => $doctor->id]);
+    $request  = MedicationRequest::factory()
+        ->forReceptor($receptor)
+        ->forOffering($offering)
+        ->confirmed()
+        ->create();
+
+    actingAs($receptor, 'sanctum');
+
+    postJson('/api/v1/medication-appointments', [
+        'medication_request_id' => $request->id,
+        'scheduled_date'        => now()->addDays(3)->toDateString(),
+        'scheduled_time'        => '14:30',
+    ])
+        ->assertCreated()
+        ->assertJsonPath('data.address.id', $doctorAddress->id);
+});
+
+// Rule 4
+it('should ignore any location sent by the receptor', function (): void {
+    $receptor       = User::factory()->receptor()->create();
+    $doctor         = Doctor::factory()->create();
+    $otherAddress   = Address::factory()->create(['user_id' => $doctor->user->id]);
+    $defaultAddress = Address::factory()->create(['user_id' => $doctor->user->id]);
+    $doctor->user->update(['default_address_id' => $defaultAddress->id]);
+    $receptorAddress = Address::factory()->create(['user_id' => $receptor->id]);
+    $offering        = MedicationOffering::factory()->reserved()->create(['doctor_id' => $doctor->id]);
+    $request         = MedicationRequest::factory()
+        ->forReceptor($receptor)
+        ->forOffering($offering)
+        ->confirmed()
+        ->create();
+
+    actingAs($receptor, 'sanctum');
+
+    postJson('/api/v1/medication-appointments', [
+        'medication_request_id' => $request->id,
+        'scheduled_date'        => now()->addDays(3)->toDateString(),
+        'scheduled_time'        => '14:30',
+        'address_id'            => $otherAddress->id,
+        'address'               => ['id' => $receptorAddress->id],
+    ])
+        ->assertCreated()
+        ->assertJsonPath('data.address.id', $defaultAddress->id);
+
+    assertDatabaseHas('medication_appointments', [
+        'medication_request_id' => $request->id,
+        'address_id'            => $defaultAddress->id,
+    ]);
+});
+
+// Rule 5
+it('should never use addresses from other doctors even when registered earlier', function (): void {
+    $receptor           = User::factory()->receptor()->create();
+    $otherDoctor        = Doctor::factory()->create();
+    $otherDoctorAddress = Address::factory()->create(['user_id' => $otherDoctor->user->id]);
+    $otherDoctor->user->update(['default_address_id' => $otherDoctorAddress->id]);
+    $doctor        = Doctor::factory()->create();
+    $doctorAddress = Address::factory()->create(['user_id' => $doctor->user->id]);
     Address::factory()->create(['user_id' => $doctor->user->id]);
     $offering = MedicationOffering::factory()->reserved()->create(['doctor_id' => $doctor->id]);
     $request  = MedicationRequest::factory()
@@ -106,14 +226,13 @@ it('should use doctors first address automatically', function (): void {
 
     actingAs($receptor, 'sanctum');
 
-    $response = postJson('/api/v1/medication-appointments', [
+    postJson('/api/v1/medication-appointments', [
         'medication_request_id' => $request->id,
         'scheduled_date'        => now()->addDays(3)->toDateString(),
         'scheduled_time'        => '14:30',
-    ]);
-
-    $response->assertCreated()
-        ->assertJsonPath('data.address.id', $address1->id);
+    ])
+        ->assertCreated()
+        ->assertJsonPath('data.address.id', $doctorAddress->id);
 });
 
 it('should allow scheduling for today', function (): void {
@@ -355,6 +474,7 @@ it('should return 409 conflict when appointment already exists for request', fun
         ->assertJson(['message' => 'Já existe um agendamento para esta solicitação.']);
 });
 
+// Rule 3
 it('should return 422 when doctor has no registered addresses', function (): void {
     $receptor = User::factory()->receptor()->create();
     $doctor   = Doctor::factory()->create();
@@ -375,4 +495,6 @@ it('should return 422 when doctor has no registered addresses', function (): voi
     ])
         ->assertStatus(422)
         ->assertJson(['message' => 'O médico não possui endereços cadastrados.']);
+
+    assertDatabaseCount('medication_appointments', 0);
 });

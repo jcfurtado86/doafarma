@@ -150,6 +150,31 @@ it('should use the doctors first registered address when there is no default', f
         ->assertJsonPath('data.address.id', $firstAddress->id);
 });
 
+// Rule 5: a default pointing at someone else's address is never used
+it('should fall back to the doctors oldest address when the default belongs to another user', function (): void {
+    $receptor      = User::factory()->receptor()->create();
+    $strayAddress  = Address::factory()->create(['user_id' => $receptor->id]);
+    $doctor        = Doctor::factory()->create();
+    $doctorAddress = Address::factory()->create(['user_id' => $doctor->user->id]);
+    $doctor->user->forceFill(['default_address_id' => $strayAddress->id])->save();
+    $offering = MedicationOffering::factory()->reserved()->create(['doctor_id' => $doctor->id]);
+    $request  = MedicationRequest::factory()
+        ->forReceptor($receptor)
+        ->forOffering($offering)
+        ->confirmed()
+        ->create();
+
+    actingAs($receptor, 'sanctum');
+
+    postJson('/api/v1/medication-appointments', [
+        'medication_request_id' => $request->id,
+        'scheduled_date'        => now()->addDays(3)->toDateString(),
+        'scheduled_time'        => '14:30',
+    ])
+        ->assertCreated()
+        ->assertJsonPath('data.address.id', $doctorAddress->id);
+});
+
 // Rule 4
 it('should ignore any location sent by the receptor', function (): void {
     $receptor       = User::factory()->receptor()->create();

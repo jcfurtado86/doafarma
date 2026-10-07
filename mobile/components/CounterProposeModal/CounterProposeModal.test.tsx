@@ -186,3 +186,17 @@ describe('CounterProposeModal (médico)', () => {
     expect(markedLabels(getAllByRole('radio'))).toEqual(['Clínica']);
   });
 });
+
+describe('CounterProposeModal (receptor)', () => {
+  it('não mostra escolha de local e nunca envia endereço', async () => {
+    const props = buildProps({ userRole: 'receptor', currentDate: FUTURE_DATE });
+    const { getByRole, queryAllByRole } = render(<CounterProposeModal {...props} />);
+
+    expect(queryAllByRole('radio')).toHaveLength(0);
+
+    fireEvent.press(getByRole('button', { name: 'Contrapropor' }));
+
+    const sent = await submittedData(props.onSubmit);
+    expect(sent).toEqual({ scheduled_date: FUTURE_DATE, scheduled_time: '14:30' });
+  });
+});

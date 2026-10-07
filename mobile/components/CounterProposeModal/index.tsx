@@ -1,4 +1,4 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useState, useCallback, useEffect, useRef, memo } from 'react';
 import { View, Text } from 'react-native';
 import { Controller } from 'react-hook-form';
 import { toast } from '@/utils/toast';
@@ -37,14 +37,14 @@ export const CounterProposeModal = memo(function CounterProposeModal({
   userRole,
   doctorAddresses = EMPTY_ADDRESSES,
 }: CounterProposeModalProps) {
-  const [selectedAddressId, setSelectedAddressId] = useState<number | undefined>(
-    currentAddress?.id
-  );
+  const currentAddressId = currentAddress?.id;
+  const [selectedAddressId, setSelectedAddressId] = useState<number | undefined>(currentAddressId);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useFeatureForm<CounterProposeFormData>({
     schema: counterProposeSchema,
@@ -53,6 +53,20 @@ export const CounterProposeModal = memo(function CounterProposeModal({
       scheduled_time: currentTime.substring(0, 5),
     },
   });
+
+  // O modal continua montado dentro do card entre uma abertura e outra, então o estado
+  // inicial é refeito a cada abertura (só na transição fechado -> aberto, para não
+  // desfazer uma escolha feita com o modal aberto). O marcado é sempre o local atual:
+  // ele nunca é apagado enquanto o agendamento existe, e aparece marcado assim que a
+  // lista de endereços chega.
+  const wasVisible = useRef(visible);
+  useEffect(() => {
+    if (visible && !wasVisible.current) {
+      setSelectedAddressId(currentAddressId);
+      reset({ scheduled_date: currentDate, scheduled_time: currentTime.substring(0, 5) });
+    }
+    wasVisible.current = visible;
+  }, [visible, currentAddressId, currentDate, currentTime, reset]);
 
   const handleFormSubmit = useCallback(
     async (formData: CounterProposeFormData) => {
@@ -63,7 +77,12 @@ export const CounterProposeModal = memo(function CounterProposeModal({
           scheduled_time: formData.scheduled_time,
         };
 
-        if (userRole === 'doctor' && selectedAddressId) {
+        // Só pede troca de local quando o médico escolheu outro endereço
+        if (
+          userRole === 'doctor' &&
+          selectedAddressId !== undefined &&
+          selectedAddressId !== currentAddressId
+        ) {
           data.address_id = selectedAddressId;
         }
 
@@ -75,7 +94,7 @@ export const CounterProposeModal = memo(function CounterProposeModal({
         setIsSubmitting(false);
       }
     },
-    [selectedAddressId, userRole, onSubmit, onClose]
+    [selectedAddressId, currentAddressId, userRole, onSubmit, onClose]
   );
 
   return (

@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace App\Actions\MedicationAppointment;
 
-use App\Models\Address;
 use App\Models\MedicationAppointment;
 use App\Models\MedicationRequest;
 use RuntimeException;
@@ -19,9 +18,7 @@ class CreateMedicationAppointmentAction
         string $scheduledDate,
         string $scheduledTime
     ): MedicationAppointment {
-        $doctorUserId = $request->medicationOffering->doctor->user_id;
-
-        $address = Address::where('user_id', $doctorUserId)->first();
+        $address = $request->medicationOffering->doctor->user->pickupAddress();
 
         if ($address === null) {
             throw new RuntimeException('O médico não possui endereços cadastrados.');

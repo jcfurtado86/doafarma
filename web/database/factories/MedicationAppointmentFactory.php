@@ -51,9 +51,9 @@ class MedicationAppointmentFactory extends Factory
             $request = MedicationRequest::factory()->confirmed()->create();
         }
 
-        $doctorUserId = $request->medicationOffering->doctor->user_id;
-        $address      = Address::where('user_id', $doctorUserId)->first()
-            ?? Address::factory()->create(['user_id' => $doctorUserId]);
+        $doctorUser = $request->medicationOffering->doctor->user;
+        $address    = $doctorUser->pickupAddress()
+            ?? Address::factory()->create(['user_id' => $doctorUser->id]);
 
         return $address->id;
     }
@@ -139,9 +139,9 @@ class MedicationAppointmentFactory extends Factory
      */
     public function forRequest(MedicationRequest $request): static
     {
-        $doctorUserId = $request->medicationOffering->doctor->user_id;
-        $address      = Address::where('user_id', $doctorUserId)->first()
-            ?? Address::factory()->create(['user_id' => $doctorUserId]);
+        $doctorUser = $request->medicationOffering->doctor->user;
+        $address    = $doctorUser->pickupAddress()
+            ?? Address::factory()->create(['user_id' => $doctorUser->id]);
 
         return $this->state(fn (): array => [
             'medication_request_id' => $request->id,

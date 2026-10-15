@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Database\Seeders;
 
-use App\Models\Address;
+use App\Actions\Address\StoreAddressAction;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -12,8 +12,10 @@ class ReceptorUserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     *
+     * @param StoreAddressAction $storeAddress creates the addresses so the first one becomes the default
      */
-    public function run(): void
+    public function run(StoreAddressAction $storeAddress): void
     {
         $receptor = User::factory()->receptor()->create([
             'name'         => 'Maria Silva',
@@ -22,8 +24,7 @@ class ReceptorUserSeeder extends Seeder
             'phone_number' => '11987654321',
         ]);
 
-        Address::create([
-            'user_id'      => $receptor->id,
+        $storeAddress->execute($receptor, [
             'label'        => 'Casa',
             'street'       => 'Rua das Flores',
             'number'       => '123',

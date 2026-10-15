@@ -151,6 +151,24 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get the address where medication handovers take place: the default one,
+     * or the oldest address when no default is set.
+     *
+     * @return Address|null null only when the user has no address at all
+     */
+    public function pickupAddress(): ?Address
+    {
+        $default = $this->defaultAddress;
+
+        // isDefaultFor() also checks ownership, so a stray default_address_id is never used
+        if ($default?->isDefaultFor($this) === true) {
+            return $default;
+        }
+
+        return $this->addresses()->orderBy('id')->first();
+    }
+
+    /**
      * Get the user's doctor.
      *
      * @return HasOne<Doctor, $this>

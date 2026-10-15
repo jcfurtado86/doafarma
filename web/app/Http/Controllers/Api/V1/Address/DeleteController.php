@@ -15,7 +15,8 @@ class DeleteController extends Controller
     /**
      * Delete one of the authenticated user's addresses.
      *
-     * Fails with 422 when the address is linked to a medication appointment.
+     * Fails with 422 when the address is linked to a medication appointment, or when
+     * it is the only address of a doctor (doctors must keep at least one address).
      */
     public function __invoke(DeleteAddressRequest $request, Address $address, DeleteAddressAction $action): Response
     {

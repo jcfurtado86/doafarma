@@ -169,6 +169,18 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Determine whether the user may delete one of their addresses.
+     *
+     * Doctors must keep at least one address, since it is where appointments happen.
+     *
+     * @return bool false when the user is a doctor with a single address
+     */
+    public function canRemoveAnAddress(): bool
+    {
+        return ! $this->isDoctor() || $this->addresses()->count() > 1;
+    }
+
+    /**
      * Get the user's doctor.
      *
      * @return HasOne<Doctor, $this>

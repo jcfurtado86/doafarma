@@ -37,7 +37,7 @@ class MedicationHistorySeeder extends Seeder
             return;
         }
 
-        $doctorAddress = $doctor->addresses()->first();
+        $doctorAddress = $doctor->pickupAddress();
 
         if (! $doctorAddress) {
             $this->command->warn('Doctor has no address. Update DoctorUserSeeder.');
